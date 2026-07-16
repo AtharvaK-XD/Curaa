@@ -1,38 +1,99 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-50: #f0f9ff;
-  --color-brand-100: #e0f2fe;
+  --color-brand-50: #0f172a;
+  --color-brand-100: #1e293b;
   --color-brand-500: #0ea5e9;
   --color-brand-600: #0284c7;
   --color-brand-700: #0369a1;
   --color-brand-800: #075985;
   
-  --color-clinical-blue: #0284c7;
-  --color-clinical-teal: #0d9488;
-  --color-clinical-purple: #7c3aed;
-  --color-clinical-emerald: #059669;
-  --color-clinical-rose: #e11d48;
+  --color-clinical-blue: #38bdf8;
+  --color-clinical-teal: #2dd4bf;
+  --color-clinical-purple: #a78bfa;
+  --color-clinical-emerald: #34d399;
+  --color-clinical-rose: #fb7185;
   
-  --color-alert-amber: #d97706;
+  --color-alert-amber: #fbbf24;
 }
 
 @layer base {
   body {
-    background-color: #f8fafc;
-    color: #1e293b;
+    background-color: #09090b;
+    color: #f4f4f5;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
 }
 
-/* Custom UI Utilities */
+/* Custom 3D & Dark Glass UI Utilities */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: rgba(18, 18, 24, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .clinical-shadow {
-  box-shadow: 0 4px 20px -2px rgba(148, 163, 184, 0.12), 0 2px 8px -1px rgba(148, 163, 184, 0.08);
+  box-shadow: 
+    0 10px 30px -10px rgba(0, 0, 0, 0.5), 
+    0 1px 1px 0 rgba(255, 255, 255, 0.05) inset;
+}
+
+/* Interactive 3D Cards */
+.card-3d {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, border-color 0.4s ease;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.card-3d:hover {
+  transform: translateY(-8px) rotateX(5deg) rotateY(-3deg);
+  border-color: rgba(56, 189, 248, 0.3); /* Subtle clinical blue border on hover */
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.8),
+    0 0 20px 2px rgba(56, 189, 248, 0.15), /* Cyan glow */
+    0 1px 1px 0 rgba(255, 255, 255, 0.1) inset;
+}
+
+/* 3D Inner Layer Depth */
+.depth-3d-text {
+  transform: translateZ(30px);
+  text-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+}
+
+.depth-3d-element {
+  transform: translateZ(20px);
+}
+
+/* Skeuomorphic Raised Button styling */
+.btn-3d {
+  position: relative;
+  transition: all 0.15s ease;
+  box-shadow: 
+    0 4px 0 0 rgba(0, 0, 0, 0.25),
+    0 6px 10px 0 rgba(0, 0, 0, 0.3),
+    0 1px 0 0 rgba(255, 255, 255, 0.1) inset;
+}
+
+.btn-3d:active {
+  transform: translateY(3px);
+  box-shadow: 
+    0 1px 0 0 rgba(0, 0, 0, 0.2),
+    0 2px 4px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* Custom scrollbar for dark mode */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #18181b;
+}
+::-webkit-scrollbar-thumb {
+  background: #27272a;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3f3f46;
 }

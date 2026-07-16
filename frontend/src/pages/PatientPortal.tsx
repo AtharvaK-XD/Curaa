@@ -307,34 +307,34 @@ export default function PatientPortal() {
 
   // Department Color Maps
   const colorMap: Record<string, string> = {
-    blue: 'bg-clinical-blue border-clinical-blue text-white',
-    teal: 'bg-clinical-teal border-clinical-teal text-white',
-    purple: 'bg-clinical-purple border-clinical-purple text-white',
-    emerald: 'bg-clinical-emerald border-clinical-emerald text-white',
-    rose: 'bg-clinical-rose border-clinical-rose text-white'
+    blue: 'bg-clinical-blue border-clinical-blue text-zinc-950 shadow-[0_0_8px_rgba(56,189,248,0.35)]',
+    teal: 'bg-clinical-teal border-clinical-teal text-zinc-950 shadow-[0_0_8px_rgba(45,212,191,0.35)]',
+    purple: 'bg-clinical-purple border-clinical-purple text-zinc-950 shadow-[0_0_8px_rgba(167,139,250,0.35)]',
+    emerald: 'bg-clinical-emerald border-clinical-emerald text-zinc-950 shadow-[0_0_8px_rgba(52,211,153,0.35)]',
+    rose: 'bg-clinical-rose border-clinical-rose text-zinc-950 shadow-[0_0_8px_rgba(251,113,133,0.35)]'
   };
 
   const bgBorderMap: Record<string, string> = {
-    blue: 'bg-sky-50 border-sky-100 text-sky-800',
-    teal: 'bg-teal-50 border-teal-100 text-teal-800',
-    purple: 'bg-purple-50 border-purple-100 text-purple-800',
-    emerald: 'bg-emerald-50 border-emerald-100 text-emerald-800',
-    rose: 'bg-rose-50 border-rose-100 text-rose-800'
+    blue: 'bg-sky-950/40 border border-sky-850/60 text-sky-300 shadow-[0_0_8px_rgba(56,189,248,0.1)]',
+    teal: 'bg-teal-950/40 border border-teal-850/60 text-teal-300 shadow-[0_0_8px_rgba(45,212,191,0.1)]',
+    purple: 'bg-purple-950/40 border border-purple-850/60 text-purple-300 shadow-[0_0_8px_rgba(167,139,250,0.1)]',
+    emerald: 'bg-emerald-950/40 border border-emerald-850/60 text-emerald-300 shadow-[0_0_8px_rgba(52,211,153,0.1)]',
+    rose: 'bg-rose-950/40 border border-rose-850/60 text-rose-300 shadow-[0_0_8px_rgba(251,113,133,0.1)]'
   };
 
   const deptColor = tokenData.departments.color_code;
 
   return (
-    <div className="flex-1 max-w-xl mx-auto w-full px-4 py-6 flex flex-col justify-between relative">
+    <div className="flex-1 max-w-xl mx-auto w-full px-4 py-6 flex flex-col justify-between relative text-zinc-100">
       
       {/* 1. Graceful Connection Status Bar */}
       {connStatus !== 'connected' && (
-        <div className="mb-4 bg-amber-50 border-l-4 border-amber-500 p-3 rounded-r-lg flex items-center justify-between shadow-xs">
-          <div className="flex items-center gap-2 text-xs text-amber-800 font-semibold">
-            <AlertTriangle className="w-4 h-4 shrink-0 animate-pulse" />
-            <span>Connection weak. Falling back to automatic sync...</span>
+        <div className="mb-4 bg-amber-950/20 border-l-4 border-amber-500 border border-amber-900/50 p-3 rounded-r-lg flex items-center justify-between shadow-xs text-amber-350">
+          <div className="flex items-center gap-2 text-xs font-semibold">
+            <AlertTriangle className="w-4 h-4 shrink-0 animate-pulse text-amber-500" />
+            <span>Connection weak. Using background polling mode...</span>
           </div>
-          <button onClick={() => fetchData(true)} className="p-1 text-amber-800 hover:bg-amber-100 rounded">
+          <button onClick={() => fetchData(true)} className="p-1 hover:bg-amber-950/50 rounded">
             <RefreshCw className="w-3.5 h-3.5" />
           </button>
         </div>
@@ -347,18 +347,18 @@ export default function PatientPortal() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="mb-4 bg-brand-600 border border-brand-500 p-4 rounded-xl text-white shadow-lg flex items-start justify-between gap-3"
+            className="mb-4 bg-zinc-900 border border-zinc-800 p-4 rounded-xl text-zinc-100 shadow-xl flex items-start justify-between gap-3 shadow-[0_0_15px_rgba(56,189,248,0.12)]"
           >
             <div className="flex gap-2">
-              <Bot className="w-5 h-5 shrink-0" />
+              <Bot className="w-5 h-5 shrink-0 text-clinical-blue" />
               <div>
-                <h4 className="text-xs font-bold uppercase tracking-wider opacity-90">Queue Announcement</h4>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-clinical-blue">Queue Announcement</h4>
                 <p className="text-xs font-medium mt-0.5">{activeAlert}</p>
               </div>
             </div>
             <button 
               onClick={() => setActiveAlert(null)}
-              className="text-white/80 hover:text-white text-xs font-bold"
+              className="text-zinc-500 hover:text-zinc-300 text-xs font-bold px-2 py-1 rounded"
             >
               Dismiss
             </button>
@@ -369,15 +369,15 @@ export default function PatientPortal() {
       {/* 3. Patient Name Welcome Header */}
       <div className="flex items-center justify-between mb-4">
         <div>
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Patient Portal</span>
-          <h2 className="text-xl font-bold text-slate-800">{tokenData.patients.name}</h2>
+          <span className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Patient Portal</span>
+          <h2 className="text-xl font-bold text-zinc-200">{tokenData.patients.name}</h2>
         </div>
         <button
           onClick={() => setIsMuted(!isMuted)}
-          className={`p-2 rounded-full border transition-all duration-150 ${
+          className={`p-2 rounded-full border transition-all duration-150 cursor-pointer ${
             !isMuted 
-              ? 'bg-brand-50 border-brand-200 text-brand-700' 
-              : 'bg-slate-50 border-slate-200 text-slate-400'
+              ? 'bg-clinical-blue/20 border-clinical-blue/30 text-clinical-blue shadow-[0_0_10px_rgba(56,189,248,0.25)]' 
+              : 'bg-zinc-900 border-zinc-800 text-zinc-500 hover:text-zinc-300'
           }`}
           title={isMuted ? 'Unmute voice announcements' : 'Mute announcements'}
         >
@@ -386,17 +386,17 @@ export default function PatientPortal() {
       </div>
 
       {/* 4. CLINICAL SEQUENCE MAP (Step Tracker) */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-4 mb-5 clinical-shadow">
-        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">OPD Clinical Pathway</h3>
+      <div className="glass-panel rounded-2xl p-4 mb-5 clinical-shadow border border-zinc-800/80 card-3d">
+        <h3 className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-4">OPD Clinical Pathway</h3>
         
         {/* Horizontal Line Step Tracker */}
         <div className="relative flex items-center justify-between mt-2 mb-2 px-1">
           {/* Background line */}
-          <div className="absolute left-6 right-6 top-4 h-0.5 bg-slate-100 -z-1"></div>
+          <div className="absolute left-6 right-6 top-4 h-0.5 bg-zinc-950 -z-1"></div>
           
           {/* Active progress color bar */}
           <div 
-            className="absolute left-6 top-4 h-0.5 bg-brand-500 transition-all duration-300 -z-1"
+            className="absolute left-6 top-4 h-0.5 bg-clinical-blue/80 transition-all duration-300 -z-1 shadow-[0_0_8px_rgba(56,189,248,0.5)]"
             style={{ width: `${(Math.max(0, currentStepIndex) / (DEPT_ORDER.length - 1)) * 90}%` }}
           ></div>
 
@@ -409,18 +409,18 @@ export default function PatientPortal() {
             const isSkipped = histToken?.status === 'skipped';
             const isDone = histToken?.status === 'completed' || isCompleted;
 
-            let circleColor = 'bg-white border-slate-200 text-slate-400';
-            if (isDone) circleColor = 'bg-emerald-500 border-emerald-500 text-white';
-            else if (isSkipped) circleColor = 'bg-rose-500 border-rose-500 text-white';
-            else if (isActive) circleColor = colorMap[deptColor] || 'bg-brand-600 border-brand-600 text-white';
+            let circleColor = 'bg-zinc-950 border-zinc-855 text-zinc-650';
+            if (isDone) circleColor = 'bg-emerald-500 border-emerald-500 text-zinc-950 shadow-[0_0_8px_rgba(16,185,129,0.35)]';
+            else if (isSkipped) circleColor = 'bg-rose-500 border-rose-500 text-zinc-950 shadow-[0_0_8px_rgba(239,68,68,0.35)]';
+            else if (isActive) circleColor = colorMap[deptColor] || 'bg-brand-600 border-brand-600 text-zinc-950';
 
             return (
               <div key={dept} className="flex flex-col items-center shrink-0 w-12 text-center">
                 <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center font-bold text-xs transition-all duration-300 ${circleColor}`}>
-                  {isDone ? <CheckCircle2 className="w-4 h-4" /> : idx + 1}
+                  {isDone ? <CheckCircle2 className="w-4 h-4 text-zinc-950" /> : idx + 1}
                 </div>
                 <span className={`text-[9px] font-bold mt-1.5 leading-tight truncate w-14 ${
-                  isActive ? 'text-slate-800 font-extrabold' : 'text-slate-400'
+                  isActive ? 'text-zinc-200 font-extrabold' : 'text-zinc-500'
                 }`}>
                   {dept.split(' ')[0]}
                 </span>
@@ -438,26 +438,26 @@ export default function PatientPortal() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
-            className="bg-emerald-50 border border-emerald-100 rounded-2xl p-6 text-center clinical-shadow mb-5"
+            className="bg-emerald-950/15 border border-emerald-900/50 rounded-2xl p-6 text-center clinical-shadow mb-5 text-emerald-400"
           >
-            <CheckCircle2 className="w-12 h-12 text-emerald-500 mx-auto mb-3" />
-            <h2 className="text-xl font-bold text-emerald-900 mb-1">OPD Visit Completed!</h2>
-            <p className="text-xs text-emerald-700 leading-relaxed mb-4">
+            <CheckCircle2 className="w-12 h-12 text-clinical-emerald mx-auto mb-3 filter drop-shadow-[0_0_8px_rgba(52,211,153,0.3)]" />
+            <h2 className="text-xl font-bold text-zinc-100 mb-1">OPD Visit Completed!</h2>
+            <p className="text-xs text-zinc-400 leading-relaxed mb-4">
               Thank you for visiting City General Hospital. All your queue tickets have been processed.
             </p>
-            <div className="bg-white/80 rounded-xl p-4 border border-emerald-100 text-left text-xs text-slate-600 space-y-2">
-              <h4 className="font-bold text-slate-800 mb-1">Visit Summary</h4>
-              <div className="flex justify-between">
+            <div className="bg-zinc-900/80 rounded-xl p-4 border border-zinc-800 text-left text-xs text-zinc-300 space-y-2">
+              <h4 className="font-bold text-zinc-200 mb-1">Visit Summary</h4>
+              <div className="flex justify-between border-b border-zinc-800 pb-1.5">
                 <span>Total Departments Visited:</span>
-                <span className="font-semibold text-slate-900">{visitHistory.length}</span>
+                <span className="font-semibold text-zinc-100">{visitHistory.length}</span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex justify-between border-b border-zinc-800 pb-1.5">
                 <span>Check-in Time:</span>
-                <span className="font-semibold text-slate-900">{new Date(visitHistory[0]?.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                <span className="font-semibold text-zinc-100">{new Date(visitHistory[0]?.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
               </div>
               <div className="flex justify-between">
                 <span>Pharmacy Complete:</span>
-                <span className="font-semibold text-slate-900">{new Date(tokenData.completed_at || '').toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                <span className="font-semibold text-zinc-100">{new Date(tokenData.completed_at || '').toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
               </div>
             </div>
           </motion.div>
@@ -467,17 +467,17 @@ export default function PatientPortal() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
-            className="bg-white rounded-3xl border border-slate-200 p-6 clinical-shadow mb-5"
+            className="glass-panel rounded-3xl border border-zinc-800/80 p-6 clinical-shadow mb-5 card-3d"
           >
             {/* Header: Department Code Badge */}
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
+            <div className="flex items-center justify-between border-b border-zinc-800/80 pb-4 mb-4">
               <div>
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Active Station</span>
+                <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Active Station</span>
                 <div className="flex items-center gap-2 mt-0.5">
-                  <span className={`px-2 py-0.5 text-xs font-bold rounded-md ${bgBorderMap[deptColor] || 'bg-slate-100 text-slate-700'}`}>
+                  <span className={`px-2 py-0.5 text-xs font-bold rounded-md ${bgBorderMap[deptColor] || 'bg-zinc-900 text-zinc-300'}`}>
                     {currentDeptName}
                   </span>
-                  <span className="text-xs text-slate-500 font-semibold">
+                  <span className="text-xs text-zinc-400 font-semibold">
                     Floor {tokenData.departments.floor}, {tokenData.departments.room_number}
                   </span>
                 </div>
@@ -485,34 +485,34 @@ export default function PatientPortal() {
               
               {/* Token status tag */}
               <span className={`px-2.5 py-1 text-xs font-bold rounded-full capitalize ${
-                tokenData.status === 'called' ? 'bg-amber-100 text-amber-800 animate-pulse' :
-                tokenData.status === 'in_progress' ? 'bg-emerald-100 text-emerald-800' :
-                'bg-slate-100 text-slate-600'
+                tokenData.status === 'called' ? 'bg-amber-950/40 border border-amber-900/50 text-amber-400 animate-pulse shadow-[0_0_8px_rgba(245,158,11,0.15)]' :
+                tokenData.status === 'in_progress' ? 'bg-emerald-950/40 border border-emerald-900/50 text-emerald-400' :
+                'bg-zinc-900 border border-zinc-800 text-zinc-400'
               }`}>
                 {tokenData.status}
               </span>
             </div>
 
-            {/* Central Queue Info */}
-            <div className="grid grid-cols-2 gap-4 text-center my-4">
+            {/* Central Queue Info - 3D Inset Well */}
+            <div className="bg-zinc-950/90 border border-zinc-900 shadow-inner rounded-2xl py-6 my-4 grid grid-cols-2 gap-4 text-center">
               
               {/* Your Token */}
-              <div className="border-r border-slate-100">
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Your Token</p>
-                <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight leading-none">
+              <div className="border-r border-zinc-900 flex flex-col justify-center items-center">
+                <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1">Your Token</p>
+                <h1 className="text-5xl font-extrabold text-zinc-100 tracking-tight leading-none depth-3d-text">
                   {tokenData.token_number}
                 </h1>
                 {tokenData.is_urgent && (
-                  <span className="inline-block mt-2 px-2 py-0.5 bg-rose-50 border border-rose-200 text-rose-700 text-[10px] font-bold rounded">
-                    Urgent Priority
+                  <span className="inline-block mt-2.5 px-2 py-0.5 bg-rose-950/40 border border-rose-900/60 text-rose-400 text-[10px] font-bold rounded uppercase">
+                    Urgent
                   </span>
                 )}
               </div>
 
               {/* Serving Now */}
-              <div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Serving Now</p>
-                <h1 className="text-4xl font-extrabold text-brand-600 tracking-tight leading-none">
+              <div className="flex flex-col justify-center items-center">
+                <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1">Serving Now</p>
+                <h1 className="text-5xl font-extrabold text-clinical-teal tracking-tight leading-none depth-3d-text filter drop-shadow-[0_0_8px_rgba(45,212,191,0.3)]">
                   {currentServingToken}
                 </h1>
               </div>
@@ -520,43 +520,43 @@ export default function PatientPortal() {
             </div>
 
             {/* Bottom Row Stats */}
-            <div className="bg-slate-50 rounded-2xl p-4 mt-6 grid grid-cols-2 gap-4 border border-slate-100">
+            <div className="bg-zinc-900/40 rounded-2xl p-4 mt-6 grid grid-cols-2 gap-4 border border-zinc-800/80">
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center shrink-0">
+                <div className="w-9 h-9 rounded-xl bg-sky-950/40 text-sky-400 border border-sky-900/50 flex items-center justify-center shrink-0 shadow-inner">
                   <User className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider leading-tight">Patients Ahead</p>
-                  <p className="text-base font-bold text-slate-800">{patientsAhead}</p>
+                  <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider leading-tight">Patients Ahead</p>
+                  <p className="text-base font-bold text-zinc-200">{patientsAhead}</p>
                 </div>
               </div>
 
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
+                <div className="w-9 h-9 rounded-xl bg-amber-950/40 text-amber-400 border border-amber-900/50 flex items-center justify-center shrink-0 shadow-inner">
                   <Clock className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider leading-tight">Est. Wait Time</p>
-                  <p className="text-base font-bold text-slate-800">{estimatedWait} min</p>
+                  <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider leading-tight">Est. Wait Time</p>
+                  <p className="text-base font-bold text-zinc-200">{estimatedWait} min</p>
                 </div>
               </div>
             </div>
 
             {/* Bottleneck Warning Banner */}
             {tokenData.departments.is_bottleneck && (
-              <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl flex gap-2 items-start text-xs text-amber-800 font-medium leading-relaxed">
-                <AlertTriangle className="w-4 h-4 shrink-0 text-amber-600 mt-0.5" />
+              <div className="mt-4 p-3 bg-amber-950/20 border border-amber-900/40 rounded-xl flex gap-2 items-start text-xs text-amber-400 font-medium leading-relaxed">
+                <AlertTriangle className="w-4 h-4 shrink-0 text-amber-500 mt-0.5" />
                 <div>
-                  <span className="font-bold text-amber-900 block">Department Delay Alert</span>
+                  <span className="font-bold text-amber-300 block">Department Delay Alert</span>
                   A temporary bottleneck has been flagged in this department. We apologize for the wait. The AI guide can assist with estimates.
                 </div>
               </div>
             )}
 
             {/* Directions / Next step hint */}
-            <div className="mt-4 p-3 bg-blue-50 border border-blue-100 rounded-xl flex items-center justify-between text-xs text-blue-900 font-semibold">
+            <div className="mt-4 p-3 bg-sky-950/20 border border-sky-900/50 rounded-xl flex items-center justify-between text-xs text-sky-400 font-semibold shadow-inner">
               <span>Directions: Go to Floor {tokenData.departments.floor}, {tokenData.departments.room_number}</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-4 h-4 text-sky-400" />
             </div>
 
           </motion.div>
@@ -569,10 +569,10 @@ export default function PatientPortal() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setChatOpen(true)}
-          className="w-14 h-14 bg-clinical-blue hover:bg-brand-700 text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-shadow cursor-pointer relative"
+          className="w-14 h-14 bg-clinical-blue hover:bg-sky-400 text-zinc-950 rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(56,189,248,0.4)] hover:shadow-[0_0_22px_rgba(56,189,248,0.6)] transition-shadow cursor-pointer relative btn-3d"
         >
-          <Bot className="w-6 h-6" />
-          <span className="absolute -top-1 -right-1 bg-rose-500 text-white w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold animate-pulse">
+          <Bot className="w-6 h-6 text-zinc-950" />
+          <span className="absolute -top-1 -right-1 bg-rose-500 text-white w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold animate-pulse shadow-sm">
             AI
           </span>
         </motion.button>
@@ -585,27 +585,27 @@ export default function PatientPortal() {
             initial={{ opacity: 0, y: 100, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 100, scale: 0.95 }}
-            className="fixed inset-x-4 bottom-4 md:absolute md:inset-auto md:right-6 md:bottom-24 md:w-96 h-[500px] bg-white border border-slate-200 rounded-2xl shadow-2xl flex flex-col z-50 overflow-hidden"
+            className="fixed inset-x-4 bottom-4 md:absolute md:inset-auto md:right-6 md:bottom-24 md:w-96 h-[500px] bg-zinc-900 border border-zinc-800/80 rounded-2xl shadow-2xl shadow-black/85 flex flex-col z-50 overflow-hidden"
           >
             {/* Chat Header */}
-            <div className="bg-brand-800 text-white p-4 flex items-center justify-between">
+            <div className="bg-zinc-950 text-white p-4 flex items-center justify-between border-b border-zinc-800">
               <div className="flex items-center gap-2">
-                <Bot className="w-5 h-5" />
+                <Bot className="w-5 h-5 text-clinical-blue" />
                 <div>
                   <h4 className="text-sm font-bold">Hospital Guide AI</h4>
-                  <p className="text-[10px] text-brand-200 font-semibold">Queue & Logistics Assistant</p>
+                  <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">Queue & Logistics Assistant</p>
                 </div>
               </div>
               <button 
                 onClick={() => setChatOpen(false)}
-                className="text-white/80 hover:text-white text-xs font-bold px-2 py-1 rounded hover:bg-white/10"
+                className="text-zinc-550 hover:text-zinc-350 text-xs font-bold px-2 py-1 rounded hover:bg-zinc-800"
               >
                 Close
               </button>
             </div>
 
             {/* Chat History */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50">
+            <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-zinc-950">
               {chatHistory.map((chat, idx) => (
                 <div 
                   key={idx} 
@@ -613,8 +613,8 @@ export default function PatientPortal() {
                 >
                   <div className={`max-w-[85%] rounded-xl p-3 text-xs leading-relaxed ${
                     chat.sender === 'user'
-                      ? 'bg-brand-600 text-white rounded-br-none'
-                      : 'bg-white border border-slate-200 text-slate-800 rounded-bl-none shadow-xs'
+                      ? 'bg-brand-600 text-white rounded-br-none shadow-md shadow-brand-700/10'
+                      : 'bg-zinc-900 border border-zinc-800 text-zinc-200 rounded-bl-none shadow-sm'
                   }`}>
                     {chat.text}
                   </div>
@@ -623,7 +623,7 @@ export default function PatientPortal() {
               
               {chatLoading && (
                 <div className="flex justify-start">
-                  <div className="bg-white border border-slate-200 rounded-xl p-3 text-xs text-slate-400 flex items-center gap-2 rounded-bl-none">
+                  <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-3 text-xs text-zinc-500 flex items-center gap-2 rounded-bl-none">
                     <RefreshCw className="w-3.5 h-3.5 animate-spin" />
                     <span>Thinking...</span>
                   </div>
@@ -633,40 +633,40 @@ export default function PatientPortal() {
             </div>
 
             {/* Quick Suggestion Prompts */}
-            <div className="p-2 border-t border-slate-100 bg-white flex flex-wrap gap-1">
+            <div className="p-2 border-t border-zinc-800 bg-zinc-900 flex flex-wrap gap-1">
               <button
                 onClick={() => handleSendMessage('Where do I go now?')}
-                className="text-[10px] bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200 px-2 py-1 rounded-md transition-colors"
+                className="text-[10px] bg-zinc-950 hover:bg-zinc-800 text-zinc-400 border border-zinc-800/80 px-2 py-1 rounded-md transition-colors cursor-pointer"
               >
                 Where do I go?
               </button>
               <button
                 onClick={() => handleSendMessage('How much longer to wait?')}
-                className="text-[10px] bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200 px-2 py-1 rounded-md transition-colors"
+                className="text-[10px] bg-zinc-950 hover:bg-zinc-800 text-zinc-400 border border-zinc-800/80 px-2 py-1 rounded-md transition-colors cursor-pointer"
               >
                 How much longer?
               </button>
               <button
                 onClick={() => handleSendMessage('मुझे कहाँ जाना है?')}
-                className="text-[10px] bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200 px-2 py-1 rounded-md transition-colors"
+                className="text-[10px] bg-zinc-950 hover:bg-zinc-800 text-zinc-400 border border-zinc-800/80 px-2 py-1 rounded-md transition-colors cursor-pointer"
               >
                 कहाँ जाना है?
               </button>
             </div>
 
             {/* Input Bar */}
-            <div className="p-3 border-t border-slate-200 bg-white flex items-center gap-2">
+            <div className="p-3 border-t border-zinc-800 bg-zinc-900 flex items-center gap-2">
               <input
                 type="text"
                 placeholder="Ask in English, Hindi, or Gujarati..."
                 value={chatMessage}
                 onChange={(e) => setChatMessage(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-                className="flex-1 px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-500 text-xs"
+                className="flex-1 px-3 py-2 rounded-lg border border-zinc-800 bg-zinc-950 text-zinc-200 placeholder-zinc-650 focus:outline-none focus:ring-1 focus:ring-clinical-blue focus:border-clinical-blue text-xs"
               />
               <button
                 onClick={() => handleSendMessage()}
-                className="p-2 bg-clinical-blue text-white rounded-lg hover:bg-brand-700 transition-colors"
+                className="p-2 bg-clinical-blue hover:bg-sky-400 text-zinc-950 rounded-lg transition-colors cursor-pointer font-bold shadow-sm"
               >
                 <Send className="w-3.5 h-3.5" />
               </button>

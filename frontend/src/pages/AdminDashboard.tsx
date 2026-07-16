@@ -168,19 +168,19 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="flex-1 max-w-7xl mx-auto w-full px-4 py-8">
+    <div className="flex-1 max-w-7xl mx-auto w-full px-4 py-8 text-zinc-100">
       
       {/* 1. Header & Quick Sync */}
       <div className="flex flex-col md:flex-row items-center justify-between mb-8 gap-4">
         <div>
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Management Panel</span>
-          <h2 className="text-2xl font-bold text-slate-800">OPD Bottleneck Analytics</h2>
-          <p className="text-xs text-slate-500 font-medium">Real-time throughput metrics, service times, and queue peaks.</p>
+          <span className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Management Panel</span>
+          <h2 className="text-2xl font-bold text-zinc-200">OPD Bottleneck Analytics</h2>
+          <p className="text-xs text-zinc-450 font-medium">Real-time throughput metrics, service times, and queue peaks.</p>
         </div>
 
         <button 
           onClick={() => fetchKPIs()}
-          className="inline-flex items-center gap-1.5 px-4 py-2 bg-clinical-blue hover:bg-brand-700 text-white text-xs font-bold rounded-lg transition-colors duration-150"
+          className="inline-flex items-center gap-1.5 px-4 py-2 bg-clinical-blue hover:bg-sky-400 text-zinc-950 text-xs font-extrabold rounded-lg transition-all duration-150 btn-3d cursor-pointer"
         >
           <RefreshCw className="w-3.5 h-3.5" />
           <span>Sync Realtime KPIs</span>
@@ -191,61 +191,61 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         
         {/* Total Queue Tickets */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-5 clinical-shadow hover:translate-y-[-2px] transition-transform duration-200">
+        <div className="glass-panel border border-zinc-850 rounded-2xl p-5 clinical-shadow hover:translate-y-[-4px] transition-transform duration-200 card-3d">
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Tickets</p>
-              <h2 className="text-2xl font-extrabold text-slate-900 mt-2">{metrics.totalTokens}</h2>
+              <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Total Tickets</p>
+              <h2 className="text-2xl font-extrabold text-zinc-100 mt-2">{metrics.totalTokens}</h2>
             </div>
-            <div className="p-2 bg-blue-50 text-blue-700 rounded-lg">
+            <div className="p-2 bg-blue-950/40 text-blue-400 border border-blue-900/50 rounded-lg shadow-inner">
               <Users className="w-4 h-4" />
             </div>
           </div>
-          <span className="text-[10px] text-slate-400 font-semibold block mt-3">Checked in today</span>
+          <span className="text-[10px] text-zinc-500 font-semibold block mt-3">Checked in today</span>
         </div>
 
         {/* Completed Visits */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-5 clinical-shadow hover:translate-y-[-2px] transition-transform duration-200">
+        <div className="glass-panel border border-zinc-850 rounded-2xl p-5 clinical-shadow hover:translate-y-[-4px] transition-transform duration-200 card-3d">
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Completed OPD</p>
-              <h2 className="text-2xl font-extrabold text-slate-900 mt-2">{metrics.completed}</h2>
+              <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Completed OPD</p>
+              <h2 className="text-2xl font-extrabold text-zinc-100 mt-2">{metrics.completed}</h2>
             </div>
-            <div className="p-2 bg-emerald-50 text-emerald-700 rounded-lg">
+            <div className="p-2 bg-emerald-950/40 text-emerald-400 border border-emerald-900/50 rounded-lg shadow-inner">
               <CheckCircle2 className="w-4 h-4" />
             </div>
           </div>
-          <span className="text-[10px] text-emerald-600 font-semibold block mt-3">
+          <span className="text-[10px] text-emerald-500 font-semibold block mt-3">
             {metrics.totalTokens > 0 ? Math.round((metrics.completed / metrics.totalTokens) * 100) : 0}% Process rate
           </span>
         </div>
 
         {/* Absent/Skipped */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-5 clinical-shadow hover:translate-y-[-2px] transition-transform duration-200">
+        <div className="glass-panel border border-zinc-850 rounded-2xl p-5 clinical-shadow hover:translate-y-[-4px] transition-transform duration-200 card-3d">
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Absent / Skipped</p>
-              <h2 className="text-2xl font-extrabold text-slate-900 mt-2">{metrics.skipped}</h2>
+              <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Absent / Skipped</p>
+              <h2 className="text-2xl font-extrabold text-zinc-100 mt-2">{metrics.skipped}</h2>
             </div>
-            <div className="p-2 bg-rose-50 text-rose-700 rounded-lg">
+            <div className="p-2 bg-rose-950/40 text-rose-400 border border-rose-900/50 rounded-lg shadow-inner">
               <UserX className="w-4 h-4" />
             </div>
           </div>
-          <span className="text-[10px] text-rose-600 font-semibold block mt-3">Re-queued or sent away</span>
+          <span className="text-[10px] text-rose-500 font-semibold block mt-3">Re-queued or sent away</span>
         </div>
 
         {/* Avg Wait Time */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-5 clinical-shadow hover:translate-y-[-2px] transition-transform duration-200">
+        <div className="glass-panel border border-zinc-850 rounded-2xl p-5 clinical-shadow hover:translate-y-[-4px] transition-transform duration-200 card-3d">
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Avg OPD Wait</p>
-              <h2 className="text-2xl font-extrabold text-slate-900 mt-2">{metrics.avgWaitMinutes}m</h2>
+              <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Avg OPD Wait</p>
+              <h2 className="text-2xl font-extrabold text-zinc-100 mt-2">{metrics.avgWaitMinutes}m</h2>
             </div>
-            <div className="p-2 bg-amber-50 text-amber-700 rounded-lg">
+            <div className="p-2 bg-amber-950/40 text-amber-400 border border-amber-900/50 rounded-lg shadow-inner">
               <Clock className="w-4 h-4" />
             </div>
           </div>
-          <span className="text-[10px] text-amber-600 font-semibold block mt-3">From check-in to consultation</span>
+          <span className="text-[10px] text-amber-500 font-semibold block mt-3">From check-in to consultation</span>
         </div>
 
       </div>
@@ -254,46 +254,46 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         
         {/* Wait Time per Station (Bar Chart) */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 clinical-shadow">
+        <div className="glass-panel border border-zinc-850 rounded-2xl p-6 clinical-shadow card-3d">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-sm font-bold text-slate-800">Average Wait Time by Station</h3>
-            <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Mins per token</span>
+            <h3 className="text-sm font-bold text-zinc-200">Average Wait Time by Station</h3>
+            <span className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">Mins per token</span>
           </div>
 
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                <XAxis dataKey="name" stroke="#94a3b8" fontSize={10} tickLine={false} />
-                <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} />
+              <BarChart data={chartData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1e293b" />
+                <XAxis dataKey="name" stroke="#64748b" fontSize={10} tickLine={false} />
+                <YAxis stroke="#64748b" fontSize={10} tickLine={false} />
                 <Tooltip 
-                  contentStyle={{ backgroundColor: '#ffffff', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '11px' }} 
-                  labelStyle={{ fontWeight: 'bold', color: '#1e293b' }}
+                  contentStyle={{ backgroundColor: '#09090b', borderRadius: '8px', border: '1px solid #27272a', fontSize: '11px', color: '#f4f4f5' }} 
+                  labelStyle={{ fontWeight: 'bold', color: '#f4f4f5' }}
                 />
-                <Bar dataKey="Average Wait (Mins)" fill="#0ea5e9" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="Average Wait (Mins)" fill="#38bdf8" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
         {/* Load Distribution (Line Chart) */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 clinical-shadow">
+        <div className="glass-panel border border-zinc-850 rounded-2xl p-6 clinical-shadow card-3d">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-sm font-bold text-slate-800">Hourly Patient Queue Volume</h3>
-            <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Peak Hour Curve</span>
+            <h3 className="text-sm font-bold text-zinc-200">Hourly Patient Queue Volume</h3>
+            <span className="text-[10px] font-semibold text-zinc-500 uppercase tracking-wider">Peak Hour Curve</span>
           </div>
 
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={timeData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                <XAxis dataKey="hour" stroke="#94a3b8" fontSize={10} tickLine={false} />
-                <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} />
+              <LineChart data={timeData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1e293b" />
+                <XAxis dataKey="hour" stroke="#64748b" fontSize={10} tickLine={false} />
+                <YAxis stroke="#64748b" fontSize={10} tickLine={false} />
                 <Tooltip 
-                  contentStyle={{ backgroundColor: '#ffffff', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '11px' }}
-                  labelStyle={{ fontWeight: 'bold', color: '#1e293b' }}
+                  contentStyle={{ backgroundColor: '#09090b', borderRadius: '8px', border: '1px solid #27272a', fontSize: '11px', color: '#f4f4f5' }}
+                  labelStyle={{ fontWeight: 'bold', color: '#f4f4f5' }}
                 />
-                <Line type="monotone" dataKey="Patient Volume" stroke="#0d9488" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                <Line type="monotone" dataKey="Patient Volume" stroke="#2dd4bf" strokeWidth={3} dot={{ r: 4, fill: '#09090b', stroke: '#2dd4bf' }} activeDot={{ r: 6 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -302,11 +302,11 @@ export default function AdminDashboard() {
       </div>
 
       {/* 4. AUDIT TRAIL TABLE */}
-      <div className="bg-white border border-slate-200 rounded-2xl clinical-shadow overflow-hidden">
-        <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+      <div className="glass-panel border border-zinc-850 rounded-2xl clinical-shadow overflow-hidden">
+        <div className="p-6 border-b border-zinc-850 flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-bold text-slate-800">Today's Token Transaction Audit Trail</h3>
-            <p className="text-xs text-slate-500 mt-0.5">Real-time status of all patient flows running in the system today.</p>
+            <h3 className="text-sm font-bold text-zinc-200">Today's Token Transaction Audit Trail</h3>
+            <p className="text-xs text-zinc-500 mt-0.5">Real-time status of all patient flows running in the system today.</p>
           </div>
         </div>
 
@@ -314,7 +314,7 @@ export default function AdminDashboard() {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs min-w-[600px]">
               <thead>
-                <tr className="bg-slate-50 text-slate-400 font-bold border-b border-slate-100">
+                <tr className="bg-zinc-950 text-zinc-500 font-bold border-b border-zinc-900">
                   <th className="p-4">Token #</th>
                   <th className="p-4">Patient Name</th>
                   <th className="p-4">Active Station</th>
@@ -322,25 +322,25 @@ export default function AdminDashboard() {
                   <th className="p-4">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-zinc-900">
                 {allTokens.map((token) => (
-                  <tr key={token.id} className="hover:bg-slate-50/50">
-                    <td className="p-4 font-bold text-slate-900">{token.token_number}</td>
-                    <td className="p-4 font-medium text-slate-600">{token.patients?.name || 'N/A'}</td>
+                  <tr key={token.id} className="hover:bg-zinc-900/20">
+                    <td className="p-4 font-bold text-zinc-200">{token.token_number}</td>
+                    <td className="p-4 font-medium text-zinc-400">{token.patients?.name || 'N/A'}</td>
                     <td className="p-4">
-                      <span className="font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 rounded">
+                      <span className="font-semibold text-zinc-350 bg-zinc-950 border border-zinc-900 px-2 py-0.5 rounded">
                         {token.departments?.name || 'Unassigned'}
                       </span>
                     </td>
-                    <td className="p-4 text-slate-400">
+                    <td className="p-4 text-zinc-500">
                       {new Date(token.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </td>
                     <td className="p-4">
-                      <span className={`px-2 py-0.5 font-bold rounded-md capitalize ${
-                        token.status === 'completed' ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' :
-                        token.status === 'called' ? 'bg-amber-50 text-amber-700 border border-amber-100' :
-                        token.status === 'skipped' ? 'bg-rose-50 text-rose-700 border border-rose-100' :
-                        'bg-slate-50 text-slate-700 border border-slate-100'
+                      <span className={`px-2 py-0.5 font-bold rounded-md capitalize border ${
+                        token.status === 'completed' ? 'bg-emerald-950/20 text-emerald-400 border border-emerald-900/40 shadow-[0_0_8px_rgba(52,211,153,0.08)]' :
+                        token.status === 'called' ? 'bg-amber-950/20 text-amber-400 border border-amber-900/40' :
+                        token.status === 'skipped' ? 'bg-rose-950/20 text-rose-400 border border-rose-900/40' :
+                        'bg-zinc-950 text-zinc-450 border border-zinc-900'
                       }`}>
                         {token.status}
                       </span>
@@ -351,9 +351,9 @@ export default function AdminDashboard() {
             </table>
           </div>
         ) : (
-          <div className="p-8 text-center text-slate-400 text-xs">
-            <ShieldCheck className="w-8 h-8 text-emerald-500 mx-auto mb-2" />
-            <span className="font-bold text-slate-600 block mb-1">System Standby Mode</span>
+          <div className="p-8 text-center text-zinc-500 text-xs">
+            <ShieldCheck className="w-8 h-8 text-clinical-emerald mx-auto mb-2 opacity-50" />
+            <span className="font-bold text-zinc-400 block mb-1">System Standby Mode</span>
             No live tokens registered today. Displaying demo KPI charts above.
           </div>
         )}

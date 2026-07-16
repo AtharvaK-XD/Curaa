@@ -232,29 +232,29 @@ export default function StaffDashboard() {
   };
 
   return (
-    <div className="flex-1 max-w-7xl mx-auto w-full px-4 py-8">
+    <div className="flex-1 max-w-7xl mx-auto w-full px-4 py-8 text-zinc-100">
       
       {/* 1. Header & Desk Login Selector */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-6 mb-8 clinical-shadow flex flex-col md:flex-row items-center justify-between gap-6">
+      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 mb-8 clinical-shadow flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-teal-50 border border-teal-200 text-teal-700 flex items-center justify-center">
+          <div className="w-12 h-12 rounded-xl bg-teal-950/40 border border-teal-800/50 text-teal-400 flex items-center justify-center shadow-inner">
             <Users className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-slate-800">OPD Staff Operations Desk</h2>
-            <p className="text-xs text-slate-500 font-medium">Manage queue streams, call patients, and signal bottlenecks.</p>
+            <h2 className="text-xl font-bold text-zinc-100">OPD Staff Operations Desk</h2>
+            <p className="text-xs text-zinc-400 font-medium">Manage queue streams, call patients, and signal bottlenecks.</p>
           </div>
         </div>
 
         <div className="flex items-center gap-3 shrink-0">
-          <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Select Desk:</label>
+          <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Select Desk:</label>
           <select
             value={selectedStaffId}
             onChange={handleStaffChange}
-            className="px-4 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white font-medium text-slate-700"
+            className="px-4 py-2 text-sm rounded-lg border border-zinc-800 focus:outline-none focus:ring-2 focus:ring-teal-500 bg-zinc-950 font-medium text-zinc-300"
           >
             {staffList.map((s) => (
-              <option key={s.id} value={s.id}>
+              <option key={s.id} value={s.id} className="bg-zinc-950 text-zinc-350">
                 {s.name} ({s.departments?.name || 'Admin Desk'})
               </option>
             ))}
@@ -262,7 +262,7 @@ export default function StaffDashboard() {
           <button 
             onClick={() => fetchQueueData()}
             disabled={refreshing}
-            className="p-2 border border-slate-200 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-600 transition-colors"
+            className="p-2 border border-zinc-850 rounded-lg bg-zinc-950 hover:bg-zinc-900 text-zinc-400 transition-colors cursor-pointer"
           >
             <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
           </button>
@@ -276,56 +276,58 @@ export default function StaffDashboard() {
           <div className="lg:col-span-1 space-y-6">
             
             {/* Active Patient Card */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 clinical-shadow">
-              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Now Serving</h3>
+            <div className="glass-panel border border-zinc-850 rounded-2xl p-6 clinical-shadow card-3d">
+              <h3 className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-4">Now Serving</h3>
               
               {activeToken ? (
                 <div className="space-y-6">
-                  <div className="text-center bg-teal-50/50 border border-teal-100/50 rounded-2xl py-6">
-                    <span className="text-[10px] font-bold text-teal-800 uppercase bg-teal-100 border border-teal-200 px-2 py-0.5 rounded-md">
-                      Active
-                    </span>
-                    <h1 className="text-5xl font-extrabold text-slate-900 tracking-tight mt-3">
+                  <div className="text-center bg-zinc-950 border border-zinc-900 shadow-inner rounded-2xl py-6 relative overflow-hidden">
+                    <div className="absolute top-2 right-2">
+                      <span className="text-[9px] font-bold text-teal-400 uppercase bg-teal-950/40 border border-teal-900/60 px-1.5 py-0.5 rounded shadow-sm">
+                        Active
+                      </span>
+                    </div>
+                    <h1 className="text-5xl font-extrabold text-zinc-100 tracking-tight mt-3 depth-3d-text">
                       {activeToken.token_number}
                     </h1>
-                    <p className="text-base font-bold text-slate-800 mt-1">{activeToken.patients.name}</p>
-                    <p className="text-xs text-slate-500">{activeToken.patients.phone}</p>
+                    <p className="text-base font-bold text-zinc-200 mt-2">{activeToken.patients.name}</p>
+                    <p className="text-xs text-zinc-500">{activeToken.patients.phone}</p>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
                     <button
                       onClick={handleCompleteActive}
                       disabled={loading}
-                      className="flex items-center justify-center gap-1.5 bg-clinical-emerald hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-xl shadow-xs transition-colors text-xs"
+                      className="flex items-center justify-center gap-1.5 bg-clinical-emerald hover:bg-emerald-500 text-zinc-950 font-extrabold py-2.5 px-4 rounded-xl shadow-md hover:shadow-lg transition-colors text-xs btn-3d cursor-pointer"
                     >
-                      <CheckCircle2 className="w-4 h-4" />
+                      <CheckCircle2 className="w-4 h-4 text-zinc-950" />
                       <span>Complete & Route</span>
                     </button>
                     
                     <button
                       onClick={() => handleOpenSkipModal(activeToken.id)}
                       disabled={loading}
-                      className="flex items-center justify-center gap-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold py-2.5 px-4 rounded-xl transition-colors text-xs"
+                      className="flex items-center justify-center gap-1.5 bg-rose-950/20 hover:bg-rose-950/40 text-rose-400 border border-rose-900/50 font-extrabold py-2.5 px-4 rounded-xl transition-colors text-xs btn-3d cursor-pointer"
                     >
-                      <UserMinus className="w-4 h-4" />
-                      <span>Patient Absent</span>
+                      <UserMinus className="w-4 h-4 text-rose-400" />
+                      <span>Absent / Skip</span>
                     </button>
                   </div>
                 </div>
               ) : (
-                <div className="text-center py-10 border-2 border-dashed border-slate-200 rounded-2xl">
-                  <UserCheck className="w-10 h-10 text-slate-300 mx-auto mb-3" />
-                  <p className="text-sm font-bold text-slate-600">No Active Patient</p>
-                  <p className="text-xs text-slate-400 max-w-[200px] mx-auto mt-1 mb-6 leading-relaxed">
+                <div className="text-center py-10 border-2 border-dashed border-zinc-800 rounded-2xl">
+                  <UserCheck className="w-10 h-10 text-zinc-650 mx-auto mb-3" />
+                  <p className="text-sm font-bold text-zinc-400">No Active Patient</p>
+                  <p className="text-xs text-zinc-650 max-w-[200px] mx-auto mt-1 mb-6 leading-relaxed">
                     Ready to admit the next OPD token in line.
                   </p>
                   
                   <button
                     onClick={handleCallNext}
                     disabled={loading || waitingTokens.length === 0}
-                    className="inline-flex items-center gap-1.5 bg-clinical-teal hover:bg-teal-700 text-white font-bold py-2.5 px-6 rounded-xl shadow-sm hover:shadow transition-colors text-xs disabled:opacity-50"
+                    className="inline-flex items-center gap-1.5 bg-clinical-teal hover:bg-teal-400 text-zinc-950 font-extrabold py-2.5 px-6 rounded-xl shadow-md hover:shadow-lg transition-colors text-xs disabled:opacity-50 btn-3d cursor-pointer"
                   >
-                    <Play className="w-3.5 h-3.5 fill-current" />
+                    <Play className="w-3.5 h-3.5 fill-current text-zinc-950" />
                     <span>Call Next Patient</span>
                   </button>
                 </div>
@@ -333,22 +335,22 @@ export default function StaffDashboard() {
             </div>
 
             {/* Department Bottleneck Control */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 clinical-shadow">
+            <div className="glass-panel border border-zinc-850 rounded-2xl p-6 clinical-shadow">
               <div className="flex items-start gap-4">
                 <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
                 <div>
-                  <h3 className="text-sm font-bold text-slate-800">Station Bottleneck Signal</h3>
-                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                  <h3 className="text-sm font-bold text-zinc-200">Station Bottleneck Signal</h3>
+                  <p className="text-xs text-zinc-500 mt-1 leading-relaxed">
                     If this station experiences delays (e.g., equipment calibration, surge), toggle this flag. The AI guide will automatically inform patients.
                   </p>
                   
                   <button
                     onClick={handleToggleBottleneck}
                     disabled={loading}
-                    className={`mt-4 px-4 py-2 text-xs font-bold rounded-lg border transition-all duration-150 flex items-center gap-1.5 ${
+                    className={`mt-4 px-4 py-2 text-xs font-bold rounded-lg border transition-all duration-150 flex items-center gap-1.5 cursor-pointer ${
                       currentStaff.departments.is_bottleneck
-                        ? 'bg-amber-100 border-amber-300 text-amber-900 shadow-xs'
-                        : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
+                        ? 'bg-amber-950/40 border-amber-800/80 text-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.2)]'
+                        : 'bg-zinc-950 border-zinc-855 text-zinc-500 hover:bg-zinc-900'
                     }`}
                   >
                     <span>Bottleneck Active:</span>
@@ -364,34 +366,34 @@ export default function StaffDashboard() {
           <div className="lg:col-span-2 space-y-6">
             
             {/* Waiting Queue List */}
-            <div className="bg-white border border-slate-200 rounded-2xl clinical-shadow overflow-hidden">
-              <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+            <div className="glass-panel border border-zinc-850 rounded-2xl clinical-shadow overflow-hidden card-3d">
+              <div className="p-6 border-b border-zinc-850 flex items-center justify-between">
                 <div>
-                  <h3 className="text-sm font-bold text-slate-800">Department Queue Waiting Room</h3>
-                  <p className="text-xs text-slate-500 mt-0.5">Patients waiting to be called. Ordered by Priority and Registration time.</p>
+                  <h3 className="text-sm font-bold text-zinc-250">Department Queue Waiting Room</h3>
+                  <p className="text-xs text-zinc-500 mt-0.5">Patients waiting to be called. Ordered by Priority and Registration time.</p>
                 </div>
-                <span className="px-2.5 py-1 bg-slate-100 text-slate-800 text-xs font-bold rounded-full">
+                <span className="px-2.5 py-1 bg-zinc-950 border border-zinc-900 text-zinc-400 text-xs font-bold rounded-full">
                   {waitingTokens.length} Waiting
                 </span>
               </div>
 
               {waitingTokens.length > 0 ? (
-                <div className="divide-y divide-slate-100 max-h-[400px] overflow-y-auto">
+                <div className="divide-y divide-zinc-900 max-h-[400px] overflow-y-auto">
                   {waitingTokens.map((token, index) => (
-                    <div key={token.id} className="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
+                    <div key={token.id} className="p-4 flex items-center justify-between hover:bg-zinc-900/40 transition-colors">
                       <div className="flex items-center gap-4">
-                        <span className="text-slate-300 font-bold text-sm w-5">{index + 1}</span>
+                        <span className="text-zinc-650 font-bold text-sm w-5">{index + 1}</span>
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="text-base font-extrabold text-slate-900">{token.token_number}</span>
+                            <span className="text-base font-extrabold text-zinc-200">{token.token_number}</span>
                             {token.is_urgent && (
-                              <span className="px-1.5 py-0.5 bg-rose-50 border border-rose-200 text-[9px] font-bold text-rose-700 rounded uppercase">
+                              <span className="px-1.5 py-0.5 bg-rose-950/30 border border-rose-900/60 text-[9px] font-bold text-rose-455 rounded uppercase shadow-sm">
                                 Urgent
                               </span>
                             )}
                           </div>
-                          <p className="text-xs font-semibold text-slate-600 mt-0.5">{token.patients.name}</p>
-                          <p className="text-[10px] text-slate-400">Registered: {new Date(token.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                          <p className="text-xs font-semibold text-zinc-450 mt-0.5">{token.patients.name}</p>
+                          <p className="text-[10px] text-zinc-600">Registered: {new Date(token.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                         </div>
                       </div>
 
@@ -399,10 +401,10 @@ export default function StaffDashboard() {
                         {/* Priority Toggle */}
                         <button
                           onClick={() => handleToggleUrgent(token.id)}
-                          className={`p-2 rounded-lg border text-xs font-bold transition-colors ${
+                          className={`p-2 rounded-lg border text-xs font-bold transition-colors cursor-pointer ${
                             token.is_urgent
-                              ? 'bg-rose-50 border-rose-200 text-rose-700 hover:bg-rose-100'
-                              : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100'
+                              ? 'bg-rose-950/30 border-rose-900/60 text-rose-400 hover:bg-rose-950/60 shadow-[0_0_8px_rgba(244,63,94,0.15)]'
+                              : 'bg-zinc-950 border-zinc-850 text-zinc-500 hover:bg-zinc-900'
                           }`}
                           title="Toggle Priority"
                         >
@@ -412,7 +414,7 @@ export default function StaffDashboard() {
                         {/* Direct Call Button */}
                         <button
                           onClick={() => performAction('/staff/call-next', { staffId: currentStaff.id })}
-                          className="px-3 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-teal-600 hover:text-white transition-colors text-xs font-bold"
+                          className="px-3 py-2 bg-zinc-950 text-zinc-400 rounded-lg hover:bg-teal-600 hover:text-white border border-zinc-855 hover:border-teal-500 transition-all text-xs font-bold btn-3d cursor-pointer"
                           disabled={activeToken !== null}
                           title={activeToken ? 'Clear active token first' : 'Call patient'}
                         >
@@ -423,54 +425,56 @@ export default function StaffDashboard() {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-12 text-slate-400">
-                  <UserCheck className="w-10 h-10 mx-auto mb-2 opacity-50" />
+                <div className="text-center py-12 text-zinc-500">
+                  <UserCheck className="w-10 h-10 mx-auto mb-2 opacity-30" />
                   <p className="text-sm font-semibold">Queue Empty</p>
-                  <p className="text-xs">No pending patients in the waiting area.</p>
+                  <p className="text-xs text-zinc-650">No pending patients in the waiting area.</p>
                 </div>
               )}
             </div>
 
             {/* Recent Desk History (Audit table) */}
-            <div className="bg-white border border-slate-200 rounded-2xl clinical-shadow overflow-hidden">
-              <div className="p-6 border-b border-slate-100">
-                <h3 className="text-sm font-bold text-slate-800">Processed Tickets (Recent Today)</h3>
-                <p className="text-xs text-slate-500 mt-0.5">Logs of completed or skipped tokens processed during this shift.</p>
+            <div className="glass-panel border border-zinc-850 rounded-2xl clinical-shadow overflow-hidden">
+              <div className="p-6 border-b border-zinc-850">
+                <h3 className="text-sm font-bold text-zinc-250">Processed Tickets (Recent Today)</h3>
+                <p className="text-xs text-zinc-500 mt-0.5">Logs of completed or skipped tokens processed during this shift.</p>
               </div>
 
               {recentEvents.length > 0 ? (
-                <table className="w-full text-left border-collapse text-xs">
-                  <thead>
-                    <tr className="bg-slate-50 text-slate-400 font-bold border-b border-slate-100">
-                      <th className="p-4">Token</th>
-                      <th className="p-4">Patient Name</th>
-                      <th className="p-4">Status</th>
-                      <th className="p-4">Actioned At</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {recentEvents.map((event) => (
-                      <tr key={event.id} className="hover:bg-slate-50/50">
-                        <td className="p-4 font-bold text-slate-800">{event.token_number}</td>
-                        <td className="p-4 font-medium text-slate-600">{event.patients.name}</td>
-                        <td className="p-4">
-                          <span className={`px-2 py-0.5 font-bold rounded-md capitalize ${
-                            event.status === 'completed' 
-                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' 
-                              : 'bg-rose-50 text-rose-700 border border-rose-100'
-                          }`}>
-                            {event.status}
-                          </span>
-                        </td>
-                        <td className="p-4 text-slate-400">
-                          {new Date(event.completed_at || event.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </td>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse text-xs">
+                    <thead>
+                      <tr className="bg-zinc-950 text-zinc-500 font-bold border-b border-zinc-900">
+                        <th className="p-4">Token</th>
+                        <th className="p-4">Patient Name</th>
+                        <th className="p-4">Status</th>
+                        <th className="p-4">Actioned At</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-zinc-900">
+                      {recentEvents.map((event) => (
+                        <tr key={event.id} className="hover:bg-zinc-900/20">
+                          <td className="p-4 font-bold text-zinc-200">{event.token_number}</td>
+                          <td className="p-4 font-medium text-zinc-400">{event.patients.name}</td>
+                          <td className="p-4">
+                            <span className={`px-2 py-0.5 font-bold rounded-md capitalize border ${
+                              event.status === 'completed' 
+                                ? 'bg-emerald-950/20 text-emerald-400 border-emerald-900/40 shadow-[0_0_8px_rgba(52,211,153,0.08)]' 
+                                : 'bg-rose-950/20 text-rose-400 border-rose-900/40'
+                            }`}>
+                              {event.status}
+                            </span>
+                          </td>
+                          <td className="p-4 text-zinc-500">
+                            {new Date(event.completed_at || event.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               ) : (
-                <div className="p-6 text-center text-slate-400 text-xs">
+                <div className="p-6 text-center text-zinc-600 text-xs">
                   No records actioned yet during this session.
                 </div>
               )}
@@ -480,41 +484,41 @@ export default function StaffDashboard() {
 
         </div>
       ) : (
-        <div className="bg-white border border-slate-200 rounded-2xl p-12 text-center clinical-shadow">
-          <RefreshCw className="w-8 h-8 text-teal-600 animate-spin mx-auto mb-4" />
-          <p className="text-slate-500 font-semibold text-sm">Synchronizing staff configurations...</p>
+        <div className="glass-panel border border-zinc-850 rounded-2xl p-12 text-center clinical-shadow">
+          <RefreshCw className="w-8 h-8 text-teal-400 animate-spin mx-auto mb-4" />
+          <p className="text-zinc-400 font-semibold text-sm">Synchronizing staff configurations...</p>
         </div>
       )}
 
       {/* SKIP REASON MODAL DIALOG */}
       {skipModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center z-50 p-4">
-          <div className="bg-white border border-slate-200 rounded-2xl max-w-md w-full p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
-            <h3 className="text-base font-bold text-slate-800 mb-2">Mark Patient Absent</h3>
-            <p className="text-xs text-slate-500 mb-4">
+        <div className="fixed inset-0 bg-zinc-950/60 backdrop-blur-xs flex items-center justify-center z-50 p-4">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-md w-full p-6 shadow-2xl shadow-black/90 animate-in fade-in zoom-in-95 duration-150 text-zinc-200">
+            <h3 className="text-base font-bold text-zinc-150 mb-2">Mark Patient Absent</h3>
+            <p className="text-xs text-zinc-500 mb-4">
               Enter a reason for skipping this token. This will be logged in the audit history and sent to the patient.
             </p>
             
             <div className="space-y-4 mb-6">
-              <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">Reason for skip</label>
+              <label className="block text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Reason for skip</label>
               <input
                 type="text"
                 value={skipReason}
                 onChange={(e) => setSkipReason(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs focus:ring-1 focus:ring-teal-500 focus:outline-none"
+                className="w-full px-3 py-2 border border-zinc-800 bg-zinc-950 rounded-lg text-xs text-zinc-100 focus:ring-1 focus:ring-teal-500 focus:outline-none"
               />
             </div>
 
-            <div className="flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
+            <div className="flex items-center justify-end gap-3 border-t border-zinc-800 pt-4">
               <button
                 onClick={() => setSkipModalOpen(false)}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold"
+                className="px-4 py-2 bg-zinc-950 hover:bg-zinc-900 border border-zinc-850 text-zinc-400 rounded-lg text-xs font-semibold cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 onClick={handleConfirmSkip}
-                className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold shadow-xs"
+                className="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-lg text-xs font-semibold shadow-md btn-3d cursor-pointer"
               >
                 Skip Patient
               </button>

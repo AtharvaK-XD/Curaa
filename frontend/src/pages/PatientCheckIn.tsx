@@ -82,58 +82,61 @@ export default function PatientCheckIn() {
     <div className="flex-1 max-w-4xl mx-auto w-full px-4 py-8 flex flex-col justify-center">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
         
-        {/* Left Side: Information & Branding */}
-        <div className="bg-gradient-to-br from-brand-700 to-brand-800 rounded-2xl p-8 text-white flex flex-col justify-between clinical-shadow">
+        {/* Left Side: Information & Branding (3D Styled Card) */}
+        <div className="bg-gradient-to-br from-zinc-900 to-zinc-950 rounded-2xl p-8 text-white flex flex-col justify-between border border-zinc-800/80 card-3d clinical-shadow">
           <div>
-            <div className="inline-flex items-center justify-center p-2.5 bg-white/10 rounded-xl mb-6">
-              <ClipboardList className="w-8 h-8 text-brand-100" />
+            <div className="inline-flex items-center justify-center p-2.5 bg-zinc-800/80 border border-zinc-700/50 rounded-xl mb-6 shadow-inner depth-3d-element">
+              <ClipboardList className="w-8 h-8 text-clinical-blue" />
             </div>
-            <h2 className="text-2xl font-bold tracking-tight mb-3">OPD Queue Navigator</h2>
-            <p className="text-brand-100 text-sm leading-relaxed mb-6">
+            <h2 className="text-2xl font-bold tracking-tight mb-3 depth-3d-text text-zinc-100">
+              OPD Queue Navigator
+            </h2>
+            <p className="text-zinc-400 text-sm leading-relaxed mb-6">
               Avoid crowded lobbies and confusing hospital corridors. Scan your QR appointment or check in below to receive a live digital tracking token.
             </p>
             
             <div className="space-y-4">
               <div className="flex gap-3">
-                <div className="w-5 h-5 rounded-full bg-white/15 flex items-center justify-center text-xs font-bold text-white shrink-0 mt-0.5">1</div>
+                <div className="w-5 h-5 rounded-full bg-clinical-blue/20 border border-clinical-blue/30 flex items-center justify-center text-xs font-bold text-clinical-blue shrink-0 mt-0.5">1</div>
                 <div>
-                  <h4 className="text-sm font-semibold">Generate Token</h4>
-                  <p className="text-xs text-brand-200">Register in seconds using your name and phone number.</p>
+                  <h4 className="text-sm font-semibold text-zinc-200">Generate Token</h4>
+                  <p className="text-xs text-zinc-500">Register in seconds using your name and phone number.</p>
                 </div>
               </div>
               
               <div className="flex gap-3">
-                <div className="w-5 h-5 rounded-full bg-white/15 flex items-center justify-center text-xs font-bold text-white shrink-0 mt-0.5">2</div>
+                <div className="w-5 h-5 rounded-full bg-clinical-blue/20 border border-clinical-blue/30 flex items-center justify-center text-xs font-bold text-clinical-blue shrink-0 mt-0.5">2</div>
                 <div>
-                  <h4 className="text-sm font-semibold">Track Live Progress</h4>
-                  <p className="text-xs text-brand-200">See exactly how many patients are ahead of you in real-time.</p>
+                  <h4 className="text-sm font-semibold text-zinc-200">Track Live Progress</h4>
+                  <p className="text-xs text-zinc-500">See exactly how many patients are ahead of you in real-time.</p>
                 </div>
               </div>
               
               <div className="flex gap-3">
-                <div className="w-5 h-5 rounded-full bg-white/15 flex items-center justify-center text-xs font-bold text-white shrink-0 mt-0.5">3</div>
+                <div className="w-5 h-5 rounded-full bg-clinical-blue/20 border border-clinical-blue/30 flex items-center justify-center text-xs font-bold text-clinical-blue shrink-0 mt-0.5">3</div>
                 <div>
-                  <h4 className="text-sm font-semibold">Interact with AI Logistics</h4>
-                  <p className="text-xs text-brand-200">Ask "where do I go next" or "how long to wait" in English, Hindi, or Gujarati.</p>
+                  <h4 className="text-sm font-semibold text-zinc-200">Interact with AI Logistics</h4>
+                  <p className="text-xs text-zinc-500">Ask "where do I go next" or "how long to wait" in English, Hindi, or Gujarati.</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="mt-8 pt-6 border-t border-white/10 flex items-center gap-2.5 text-xs text-brand-200 font-medium">
-            <Info className="w-4 h-4 shrink-0" />
+          <div className="mt-8 pt-6 border-t border-zinc-800/80 flex items-center gap-2.5 text-xs text-zinc-500 font-medium">
+            <Info className="w-4 h-4 shrink-0 text-zinc-600" />
             <span>This tool does not provide medical diagnosis.</span>
           </div>
         </div>
 
-        {/* Right Side: Check-in Actions */}
-        <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 clinical-shadow flex flex-col justify-between">
+        {/* Right Side: Check-in Actions (3D Dark Glass Panel) */}
+        <div className="glass-panel rounded-2xl p-6 sm:p-8 border border-zinc-800/80 card-3d clinical-shadow flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-bold text-slate-800">New Patient Check-in</h3>
+              <h3 className="text-lg font-bold text-zinc-200">New Patient Check-in</h3>
+              
               <button 
                 onClick={handleQuickDemoCheckin}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-bold rounded-lg border border-amber-200 transition-colors duration-150"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-950/20 hover:bg-amber-950/40 text-amber-400 text-xs font-bold rounded-lg border border-amber-800/60 shadow-[0_0_10px_rgba(245,158,11,0.08)] hover:shadow-[0_0_15px_rgba(245,158,11,0.18)] transition-all duration-200 cursor-pointer"
               >
                 <QrCode className="w-3.5 h-3.5" />
                 <span>Quick E2E Demo</span>
@@ -141,42 +144,42 @@ export default function PatientCheckIn() {
             </div>
 
             {error && (
-              <div className="mb-4 p-3.5 bg-rose-50 border-l-4 border-rose-500 rounded-r-lg text-rose-800 text-xs font-medium leading-relaxed">
+              <div className="mb-4 p-3.5 bg-rose-950/20 border-l-4 border-rose-500 rounded-r-lg text-rose-300 text-xs font-medium leading-relaxed border border-rose-900/50">
                 {error}
               </div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Full Name</label>
+                <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-1.5">Full Name</label>
                 <input
                   type="text"
                   placeholder="e.g. Rahul Sharma"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-3.5 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all text-sm"
+                  className="w-full px-3.5 py-2 rounded-lg border border-zinc-800 bg-zinc-950/80 focus:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-clinical-blue focus:border-clinical-blue transition-all text-sm text-zinc-100 placeholder-zinc-600"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Phone Number</label>
+                <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-1.5">Phone Number</label>
                 <input
                   type="tel"
                   placeholder="e.g. +91 98765 43210"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="w-full px-3.5 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all text-sm"
+                  className="w-full px-3.5 py-2 rounded-lg border border-zinc-800 bg-zinc-950/80 focus:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-clinical-blue focus:border-clinical-blue transition-all text-sm text-zinc-100 placeholder-zinc-600"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Preferred Language</label>
+                <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-1.5">Preferred Language</label>
                 <select
                   value={language}
                   onChange={(e) => setLanguage(e.target.value as any)}
-                  className="w-full px-3.5 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all text-sm bg-white"
+                  className="w-full px-3.5 py-2 rounded-lg border border-zinc-800 bg-zinc-950/80 focus:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-clinical-blue focus:border-clinical-blue transition-all text-sm text-zinc-100"
                 >
                   <option value="en">English</option>
                   <option value="hi">हिंदी (Hindi)</option>
@@ -185,30 +188,30 @@ export default function PatientCheckIn() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Scheduled Doctor / OPD Room (Optional)</label>
+                <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-1.5">Scheduled Doctor / OPD Room (Optional)</label>
                 <input
                   type="text"
                   placeholder="e.g. Dr. Ramesh Kumar (OPD Room 12)"
                   value={doctorName}
                   onChange={(e) => setDoctorName(e.target.value)}
-                  className="w-full px-3.5 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all text-sm"
+                  className="w-full px-3.5 py-2 rounded-lg border border-zinc-800 bg-zinc-950/80 focus:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-clinical-blue focus:border-clinical-blue transition-all text-sm text-zinc-100 placeholder-zinc-600"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-clinical-blue hover:bg-brand-700 text-white font-bold py-2.5 px-4 rounded-lg shadow-sm hover:shadow transition-all duration-150 flex items-center justify-center gap-2 text-sm disabled:opacity-50"
+                className="w-full bg-clinical-blue hover:bg-sky-400 text-zinc-950 font-extrabold py-2.5 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 flex items-center justify-center gap-2 text-sm disabled:opacity-50 btn-3d cursor-pointer"
               >
-                <UserCheck className="w-4 h-4" />
+                <UserCheck className="w-4 h-4 text-zinc-950" />
                 <span>{loading ? 'Registering...' : 'Register & Check-in'}</span>
               </button>
             </form>
           </div>
 
-          <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400 font-medium">
+          <div className="mt-6 pt-4 border-t border-zinc-800/80 flex items-center justify-between text-[11px] text-zinc-500 font-medium">
             <span className="flex items-center gap-1">
-              <HelpCircle className="w-3.5 h-3.5" />
+              <HelpCircle className="w-3.5 h-3.5 text-zinc-600" />
               <span>Need help? Ask AI at next step</span>
             </span>
             <span>Version 1.0.0</span>

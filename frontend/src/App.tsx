@@ -14,24 +14,24 @@ function DemoNavBar() {
     return `flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-150 ${
       isActive 
         ? 'bg-brand-600 text-white shadow-sm' 
-        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+        : 'text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100'
     }`;
   };
 
   return (
-    <div className="bg-white border-b border-slate-200 py-2.5 px-4 sticky top-0 z-50 shadow-xs">
+    <div className="bg-zinc-900/90 border-b border-zinc-800 py-2.5 px-4 sticky top-0 z-50 shadow-xs backdrop-blur-md">
       <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-clinical-blue flex items-center justify-center text-white font-bold">
+          <div className="w-8 h-8 rounded-lg bg-clinical-blue flex items-center justify-center text-zinc-950 font-extrabold shadow-[0_0_12px_rgba(56,189,248,0.25)]">
             H
           </div>
           <div>
-            <h1 className="text-sm font-bold text-slate-900 leading-tight">City General Hospital</h1>
-            <p className="text-[10px] text-slate-500 font-semibold tracking-wider uppercase">Queue Navigator</p>
+            <h1 className="text-sm font-bold text-zinc-100 leading-tight">City General Hospital</h1>
+            <p className="text-[10px] text-zinc-500 font-bold tracking-wider uppercase">Queue Navigator</p>
           </div>
         </div>
         
-        <div className="flex items-center gap-2 bg-slate-50 p-1 rounded-lg border border-slate-100">
+        <div className="flex items-center gap-2 bg-zinc-950 p-1 rounded-lg border border-zinc-800">
           <Link to="/" className={linkClass('/')}>
             <UserCheck className="w-4 h-4" />
             <span>Check-in</span>
@@ -50,7 +50,7 @@ function DemoNavBar() {
           </Link>
         </div>
 
-        <div className="hidden lg:flex items-center gap-1.5 text-xs text-slate-400 font-medium">
+        <div className="hidden lg:flex items-center gap-1.5 text-xs text-zinc-500 font-medium">
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
           <span>Live Sync Enabled</span>
         </div>
@@ -62,7 +62,7 @@ function DemoNavBar() {
 function App() {
   return (
     <Router>
-      <div className="min-h-screen flex flex-col bg-slate-50">
+      <div className="min-h-screen flex flex-col bg-zinc-950 text-zinc-100">
         <DemoNavBar />
         
         {/* Main Content Area */}
@@ -77,7 +77,7 @@ function App() {
           </Routes>
         </main>
         
-        <footer className="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-400 font-medium">
+        <footer className="bg-zinc-900 border-t border-zinc-800 py-4 text-center text-xs text-zinc-500 font-medium">
           &copy; {new Date().getFullYear()} Hospital Queue Navigator. Multi-Tenancy Ready OPD Logistics Engine.
         </footer>
       </div>
