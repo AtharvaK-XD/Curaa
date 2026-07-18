@@ -63,7 +63,6 @@ export default function StaffDashboard() {
     const fetchStaff = async () => {
       try {
         if (!isSupabaseConfigured) {
-          // Offline mock staff loading
           const staffRecords = mockDatabase.getStaff() as unknown as StaffMember[];
           setStaffList(staffRecords);
           
@@ -78,7 +77,6 @@ export default function StaffDashboard() {
           return;
         }
 
-        // Online database query
         const { data, error } = await supabase
           .from('staff')
           .select('*, departments(*)');
@@ -108,12 +106,10 @@ export default function StaffDashboard() {
     if (!silent) setRefreshing(true);
 
     if (!isSupabaseConfigured) {
-      // Offline local storage database fetch
       try {
         const deptId = currentStaff.department_id;
         const tokens = mockDatabase.getTokens();
         
-        // Waiting queue
         const waiting = tokens
           .filter((t: any) => t.department_id === deptId && t.status === 'waiting')
           .sort((a: any, b: any) => {
@@ -123,18 +119,15 @@ export default function StaffDashboard() {
           });
         setWaitingTokens(waiting as unknown as QueueToken[]);
 
-        // Active
         const active = tokens.find((t: any) => t.department_id === deptId && ['called', 'in_progress'].includes(t.status));
         setActiveToken(active ? (active as unknown as QueueToken) : null);
 
-        // Recent shift history
         const recent = tokens
           .filter((t: any) => t.department_id === deptId && ['completed', 'skipped'].includes(t.status))
           .sort((a: any, b: any) => new Date(b.completed_at || '').getTime() - new Date(a.completed_at || '').getTime())
           .slice(0, 5);
         setRecentEvents(recent);
 
-        // Update bottleneck locally
         const depts = mockDatabase.getDepartments();
         const curDept = depts.find(d => d.id === deptId);
         if (curDept) {
@@ -148,7 +141,6 @@ export default function StaffDashboard() {
       return;
     }
 
-    // Online Database query
     try {
       const deptId = currentStaff.department_id;
 
@@ -200,12 +192,10 @@ export default function StaffDashboard() {
     }
   };
 
-  // Trigger fetch when staff selection updates
   useEffect(() => {
     fetchQueueData();
   }, [currentStaff?.id, currentStaff?.department_id]);
 
-  // Realtime subscriber for staff view (keeps desk updated when check-ins arrive)
   useEffect(() => {
     if (!currentStaff || !isSupabaseConfigured) return;
 
@@ -232,12 +222,10 @@ export default function StaffDashboard() {
     setCurrentStaff(staff);
   };
 
-  // Action dispatcher wrapper
   const performAction = async (endpoint: string, body: any, mockAction: () => void) => {
     setLoading(true);
     
     if (!isSupabaseConfigured) {
-      // Execute mock operation
       setTimeout(() => {
         try {
           mockAction();
@@ -251,7 +239,6 @@ export default function StaffDashboard() {
       return;
     }
 
-    // Execute server query
     try {
       const res = await fetch(`${API_URL}${endpoint}`, {
         method: 'POST',
@@ -262,7 +249,6 @@ export default function StaffDashboard() {
       await fetchQueueData(true);
     } catch (err) {
       console.error(err);
-      // Fallback locally
       try {
         mockAction();
         fetchQueueData(true);
@@ -274,7 +260,6 @@ export default function StaffDashboard() {
     }
   };
 
-  // Staff calls next waiting patient
   const handleCallNext = () => {
     if (!currentStaff) return;
     performAction(
@@ -284,7 +269,6 @@ export default function StaffDashboard() {
     );
   };
 
-  // Staff completes consultation and routes to next station
   const handleCompleteActive = () => {
     if (!activeToken) return;
     performAction(
@@ -294,13 +278,11 @@ export default function StaffDashboard() {
     );
   };
 
-  // Staff triggers skip modal
   const handleOpenSkipModal = (tokenId: string) => {
     setSkipTokenId(tokenId);
     setSkipModalOpen(true);
   };
 
-  // Staff confirms skip
   const handleConfirmSkip = async () => {
     setSkipModalOpen(false);
     await performAction(
@@ -311,7 +293,6 @@ export default function StaffDashboard() {
     setSkipReason('Patient not present when called');
   };
 
-  // Staff toggles patient priority
   const handleToggleUrgent = (tokenId: string) => {
     performAction(
       '/staff/toggle-urgent',
@@ -320,7 +301,6 @@ export default function StaffDashboard() {
     );
   };
 
-  // Staff toggles department bottleneck delay status
   const handleToggleBottleneck = async () => {
     if (!currentStaff) return;
     await performAction(
@@ -331,17 +311,22 @@ export default function StaffDashboard() {
   };
 
   return (
-    <div className="flex-1 max-w-7xl mx-auto w-full px-6 py-8 text-zinc-100">
+    <motion.div 
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="flex-1 max-w-7xl mx-auto w-full px-6 py-8 text-zinc-100"
+    >
       
       {/* Header and Desk Select panel */}
       <div className="bg-[#0a0a10]/80 border border-white/[0.05] rounded-3xl p-6 mb-8 clinical-shadow flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-2xl bg-teal-500/10 border border-teal-500/20 text-teal-400 flex items-center justify-center shadow-inner">
-            <Users className="w-6 h-6 text-clinical-teal" />
+            <Users className="w-6 h-6 text-clinical-teal animate-pulse" />
           </div>
           <div>
             <h2 className="text-xl font-bold text-zinc-150 font-display">OPD Staff Operations Desk</h2>
-            <p className="text-xs text-zinc-500 font-medium">Manage department streams, call waiting patients, and route tickets.</p>
+            <p className="text-xs text-zinc-550 font-medium">Manage department streams, call waiting patients, and route tickets.</p>
           </div>
         </div>
 
@@ -377,64 +362,79 @@ export default function StaffDashboard() {
           {/* LEFT: Active Patient Panel (1/3 Width) */}
           <div className="lg:col-span-4 space-y-6">
             
-            {/* Now Serving Card */}
+            {/* Now Serving Card - Animated with spring transitions */}
             <div className="glass-panel border border-white/[0.05] rounded-3xl p-6 clinical-shadow card-3d">
               <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-4">Now Serving</h3>
               
-              {activeToken ? (
-                <div className="space-y-6">
-                  <div className="text-center bg-[#040406] border border-white/[0.02] shadow-inner rounded-3xl py-6 relative overflow-hidden">
-                    <div className="absolute top-3 right-3">
-                      <span className="text-[8px] font-bold text-clinical-teal uppercase bg-clinical-teal/10 border border-clinical-teal/20 px-2 py-0.5 rounded shadow-sm">
-                        Called
-                      </span>
-                    </div>
-                    
-                    <h1 className="text-5xl font-extrabold text-zinc-100 tracking-tight mt-4 depth-3d-text font-display">
-                      {activeToken.token_number}
-                    </h1>
-                    <p className="text-sm font-bold text-zinc-200 mt-3 font-display">{activeToken.patients.name}</p>
-                    <p className="text-xs text-zinc-550 mt-1">{activeToken.patients.phone}</p>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <button
-                      onClick={handleCompleteActive}
-                      disabled={loading}
-                      className="flex items-center justify-center gap-1.5 bg-gradient-to-r from-clinical-emerald to-emerald-400 text-zinc-950 font-bold py-3 px-4 rounded-xl shadow-md transition-all text-xs btn-3d cursor-pointer"
-                    >
-                      <CheckCircle2 className="w-4 h-4 text-zinc-950" />
-                      <span>Complete & Route</span>
-                    </button>
-                    
-                    <button
-                      onClick={() => handleOpenSkipModal(activeToken.id)}
-                      disabled={loading}
-                      className="flex items-center justify-center gap-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/25 font-bold py-3 px-4 rounded-xl transition-all text-xs btn-3d cursor-pointer"
-                    >
-                      <UserMinus className="w-4 h-4 text-rose-400" />
-                      <span>Absent / Skip</span>
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="text-center py-12 border border-dashed border-white/[0.08] rounded-2xl">
-                  <UserCheck className="w-10 h-10 text-zinc-700 mx-auto mb-3" />
-                  <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">No Active Patient</p>
-                  <p className="text-[11px] text-zinc-600 max-w-[200px] mx-auto mt-2 mb-6 leading-relaxed">
-                    Ready to admit the next outpatient ticket waiting in line.
-                  </p>
-                  
-                  <button
-                    onClick={handleCallNext}
-                    disabled={loading || waitingTokens.length === 0}
-                    className="inline-flex items-center gap-1.5 bg-gradient-to-r from-clinical-teal to-teal-400 text-zinc-950 font-bold py-2.5 px-6 rounded-xl shadow-md transition-colors text-xs disabled:opacity-40 btn-3d cursor-pointer"
+              <AnimatePresence mode="wait">
+                {activeToken ? (
+                  <motion.div
+                    key={activeToken.id}
+                    initial={{ opacity: 0, scale: 0.94, y: 15 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.94, y: -15 }}
+                    transition={{ type: 'spring', damping: 20 }}
+                    className="space-y-6"
                   >
-                    <Play className="w-3.5 h-3.5 fill-current text-zinc-950" />
-                    <span>Call Next Patient</span>
-                  </button>
-                </div>
-              )}
+                    <div className="text-center bg-[#040406] border border-white/[0.02] shadow-inner rounded-3xl py-6 relative overflow-hidden">
+                      <div className="absolute top-3 right-3">
+                        <span className="text-[8px] font-bold text-clinical-teal uppercase bg-clinical-teal/10 border border-clinical-teal/20 px-2 py-0.5 rounded shadow-sm animate-pulse">
+                          Active
+                        </span>
+                      </div>
+                      
+                      <h1 className="text-5xl font-extrabold text-zinc-100 tracking-tight mt-4 depth-3d-text font-display">
+                        {activeToken.token_number}
+                      </h1>
+                      <p className="text-sm font-bold text-zinc-200 mt-3 font-display">{activeToken.patients.name}</p>
+                      <p className="text-xs text-zinc-550 mt-1">{activeToken.patients.phone}</p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        onClick={handleCompleteActive}
+                        disabled={loading}
+                        className="flex items-center justify-center gap-1.5 bg-gradient-to-r from-clinical-emerald to-emerald-400 text-zinc-950 font-bold py-3 px-4 rounded-xl shadow-md transition-all text-xs btn-3d cursor-pointer"
+                      >
+                        <CheckCircle2 className="w-4 h-4 text-zinc-950" />
+                        <span>Complete & Route</span>
+                      </button>
+                      
+                      <button
+                        onClick={() => handleOpenSkipModal(activeToken.id)}
+                        disabled={loading}
+                        className="flex items-center justify-center gap-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/25 font-bold py-3 px-4 rounded-xl transition-all text-xs btn-3d cursor-pointer"
+                      >
+                        <UserMinus className="w-4 h-4 text-rose-400" />
+                        <span>Absent / Skip</span>
+                      </button>
+                    </div>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="no-active"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="text-center py-12 border border-dashed border-white/[0.08] rounded-2xl"
+                  >
+                    <UserCheck className="w-10 h-10 text-zinc-700 mx-auto mb-3" />
+                    <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">No Active Patient</p>
+                    <p className="text-[11px] text-zinc-650 max-w-[200px] mx-auto mt-2 mb-6 leading-relaxed">
+                      Ready to admit the next outpatient ticket waiting in line.
+                    </p>
+                    
+                    <button
+                      onClick={handleCallNext}
+                      disabled={loading || waitingTokens.length === 0}
+                      className="inline-flex items-center gap-1.5 bg-gradient-to-r from-clinical-teal to-teal-400 text-zinc-950 font-bold py-2.5 px-6 rounded-xl shadow-md transition-colors text-xs disabled:opacity-40 btn-3d cursor-pointer"
+                    >
+                      <Play className="w-3.5 h-3.5 fill-current text-zinc-950" />
+                      <span>Call Next Patient</span>
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
             {/* Department Bottleneck Control Switch */}
@@ -455,10 +455,10 @@ export default function StaffDashboard() {
                     className={`mt-4 px-4 py-2 text-xs font-bold rounded-xl border transition-all duration-200 flex items-center gap-2 cursor-pointer ${
                       currentStaff.departments.is_bottleneck
                         ? 'bg-amber-500/15 border-amber-500/30 text-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.2)]'
-                        : 'bg-[#08080c] border-white/[0.08] text-zinc-500 hover:text-zinc-350'
+                        : 'bg-[#08080c] border-white/[0.08] text-zinc-500 hover:text-zinc-355'
                     }`}
                   >
-                    <span className={`w-2 h-2 rounded-full ${currentStaff.departments.is_bottleneck ? 'bg-amber-500 animate-pulse' : 'bg-zinc-650'}`}></span>
+                    <span className={`w-2 h-2 rounded-full ${currentStaff.departments.is_bottleneck ? 'bg-amber-500 animate-ping' : 'bg-zinc-650'}`}></span>
                     <span>Surge Alert: {currentStaff.departments.is_bottleneck ? 'ACTIVE' : 'STANDBY'}</span>
                   </button>
                 </div>
@@ -483,71 +483,83 @@ export default function StaffDashboard() {
               </div>
 
               {waitingTokens.length > 0 ? (
-                <div className="divide-y divide-white/[0.04] max-h-[350px] overflow-y-auto">
-                  {waitingTokens.map((token, index) => (
-                    <div key={token.id} className="p-4 flex items-center justify-between hover:bg-white/[0.01] transition-colors">
-                      <div className="flex items-center gap-4">
-                        <span className="text-zinc-600 font-bold text-xs w-5 text-right">{index + 1}</span>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-base font-extrabold text-zinc-250 font-display">{token.token_number}</span>
-                            {token.is_urgent && (
-                              <span className="px-2 py-0.5 bg-rose-500/10 border border-rose-500/20 text-[9px] font-bold text-rose-455 rounded uppercase tracking-wider">
-                                Urgent
-                              </span>
-                            )}
+                <motion.div 
+                  layout
+                  className="divide-y divide-white/[0.04] max-h-[350px] overflow-y-auto"
+                >
+                  <AnimatePresence>
+                    {waitingTokens.map((token, index) => (
+                      <motion.div 
+                        layout
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -30 }}
+                        transition={{ type: 'spring', damping: 20 }}
+                        whileHover={{ scale: 1.005, backgroundColor: 'rgba(255,255,255,0.01)' }}
+                        key={token.id} 
+                        className="p-4 flex items-center justify-between transition-colors"
+                      >
+                        <div className="flex items-center gap-4">
+                          <span className="text-zinc-600 font-bold text-xs w-5 text-right">{index + 1}</span>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-base font-extrabold text-zinc-250 font-display">{token.token_number}</span>
+                              {token.is_urgent && (
+                                <span className="px-2 py-0.5 bg-rose-500/10 border border-rose-500/20 text-[9px] font-bold text-rose-455 rounded uppercase tracking-wider animate-pulse">
+                                  Urgent
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-xs font-semibold text-zinc-400 mt-0.5">{token.patients.name}</p>
+                            <p className="text-[10px] text-zinc-600">Registered: {new Date(token.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                           </div>
-                          <p className="text-xs font-semibold text-zinc-400 mt-0.5">{token.patients.name}</p>
-                          <p className="text-[10px] text-zinc-600">Registered: {new Date(token.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                         </div>
-                      </div>
 
-                      <div className="flex items-center gap-2">
-                        {/* Priority Toggle */}
-                        <button
-                          onClick={() => handleToggleUrgent(token.id)}
-                          className={`p-2.5 rounded-xl border transition-colors cursor-pointer ${
-                            token.is_urgent
-                              ? 'bg-rose-500/10 border-rose-500/25 text-rose-400 shadow-[0_0_10px_rgba(244,63,94,0.15)]'
-                              : 'bg-[#08080c] border-white/[0.06] text-zinc-550 hover:text-zinc-350'
-                          }`}
-                          title="Toggle Urgency State"
-                        >
-                          <ShieldAlert className="w-4 h-4" />
-                        </button>
-                        
-                        {/* Direct Call Button */}
-                        <button
-                          onClick={() => {
-                            if (!isSupabaseConfigured) {
-                              performAction('', {}, () => {
-                                const tk = mockDatabase.getToken(token.id)!;
-                                tk.status = 'called';
-                                tk.called_at = new Date().toISOString();
-                                const allT = getStorageItem<any[]>('tokens', []);
-                                const idx = allT.findIndex((t: any) => t.id === token.id);
-                                if (idx >= 0) allT[idx] = tk;
-                                setStorageItem('tokens', allT);
-                              });
-                              return;
-                            }
-                            performAction('/staff/call-next', { staffId: currentStaff.id }, () => {});
-                          }}
-                          className="px-3 py-2 bg-[#08080c] text-zinc-400 rounded-xl hover:bg-clinical-teal hover:text-zinc-950 border border-white/[0.06] hover:border-clinical-teal transition-all text-xs font-bold btn-3d cursor-pointer"
-                          disabled={activeToken !== null}
-                          title={activeToken ? 'Complete active consultation first' : 'Call patient counter'}
-                        >
-                          Call Direct
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => handleToggleUrgent(token.id)}
+                            className={`p-2.5 rounded-xl border transition-colors cursor-pointer ${
+                              token.is_urgent
+                                ? 'bg-rose-500/10 border-rose-500/25 text-rose-400 shadow-[0_0_10px_rgba(244,63,94,0.15)]'
+                                : 'bg-[#08080c] border-white/[0.06] text-zinc-550 hover:text-zinc-350'
+                            }`}
+                            title="Toggle Urgency State"
+                          >
+                            <ShieldAlert className="w-4 h-4" />
+                          </button>
+                          
+                          <button
+                            onClick={() => {
+                              if (!isSupabaseConfigured) {
+                                performAction('', {}, () => {
+                                  const tk = mockDatabase.getToken(token.id)!;
+                                  tk.status = 'called';
+                                  tk.called_at = new Date().toISOString();
+                                  const allT = getStorageItem<any[]>('tokens', []);
+                                  const idx = allT.findIndex((t: any) => t.id === token.id);
+                                  if (idx >= 0) allT[idx] = tk;
+                                  setStorageItem('tokens', allT);
+                                });
+                                return;
+                              }
+                              performAction('/staff/call-next', { staffId: currentStaff.id }, () => {});
+                            }}
+                            className="px-3 py-2 bg-[#08080c] text-zinc-400 rounded-xl hover:bg-clinical-teal hover:text-zinc-950 border border-white/[0.06] hover:border-clinical-teal transition-all text-xs font-bold btn-3d cursor-pointer"
+                            disabled={activeToken !== null}
+                            title={activeToken ? 'Complete active consultation first' : 'Call patient counter'}
+                          >
+                            Call Direct
+                          </button>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </motion.div>
               ) : (
-                <div className="text-center py-12 text-zinc-500">
+                <div className="text-center py-12 text-zinc-550">
                   <ShieldCheck className="w-10 h-10 mx-auto mb-2 opacity-20 text-clinical-teal animate-pulse" />
                   <p className="text-xs font-bold text-zinc-450 uppercase tracking-wider">Queue Cleared</p>
-                  <p className="text-[11px] text-zinc-600 mt-1">No pending outpatient tickets in waiting room.</p>
+                  <p className="text-[11px] text-zinc-650 mt-1">No pending outpatient tickets in waiting room.</p>
                 </div>
               )}
             </div>
@@ -572,14 +584,14 @@ export default function StaffDashboard() {
                     </thead>
                     <tbody className="divide-y divide-white/[0.04]">
                       {recentEvents.map((event) => (
-                        <tr key={event.id} className="hover:bg-white/[0.01]">
+                        <tr key={event.id} className="hover:bg-white/[0.01] transition-colors">
                           <td className="p-4 font-bold text-zinc-200 font-display">{event.token_number}</td>
                           <td className="p-4 font-semibold text-zinc-400">{event.patients?.name || 'Demo Patient'}</td>
                           <td className="p-4">
                             <span className={`px-2 py-0.5 font-bold rounded-lg capitalize border text-[10px] tracking-wide ${
                               event.status === 'completed' 
-                                ? 'bg-emerald-500/10 text-emerald-450 border-emerald-500/20' 
-                                : 'bg-rose-500/10 text-rose-450 border-rose-500/20'
+                                ? 'bg-emerald-500/10 text-emerald-455 border-emerald-500/20' 
+                                : 'bg-rose-500/10 text-rose-455 border-rose-500/20'
                             }`}>
                               {event.status}
                             </span>
@@ -593,7 +605,7 @@ export default function StaffDashboard() {
                   </table>
                 </div>
               ) : (
-                <div className="p-8 text-center text-zinc-600 text-xs">
+                <div className="p-8 text-center text-zinc-650 text-xs">
                   No actions logged during this session shift.
                 </div>
               )}
@@ -653,11 +665,10 @@ export default function StaffDashboard() {
         )}
       </AnimatePresence>
 
-    </div>
+    </motion.div>
   );
 }
 
-// Local storage helper duplicate for single file direct actions
 const DB_PREFIX = 'curaa_mock_';
 const getStorageItem = <T,>(key: string, defaultValue: T): T => {
   const item = localStorage.getItem(DB_PREFIX + key);
@@ -666,4 +677,3 @@ const getStorageItem = <T,>(key: string, defaultValue: T): T => {
 const setStorageItem = (key: string, data: any) => {
   localStorage.setItem(DB_PREFIX + key, JSON.stringify(data));
 };
-

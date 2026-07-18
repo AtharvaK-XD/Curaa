@@ -200,7 +200,6 @@ export default function PatientPortal() {
 
     } catch (err: any) {
       console.error('Error fetching portal data:', err);
-      // Transparently fall back to local database if network drops
       setConnStatus('polling');
       try {
         let fallbackId = tokenId;
@@ -275,11 +274,10 @@ export default function PatientPortal() {
     }
   }, [tokenId, tokenData?.id]);
 
-  // Polling loop fallback (handles offline mock db updates too)
   useEffect(() => {
     const pollInterval = setInterval(() => {
       fetchData(true);
-    }, isSupabaseConfigured ? 5000 : 2000); // Poll quicker locally for snappier demo feel
+    }, isSupabaseConfigured ? 5000 : 2000);
 
     return () => clearInterval(pollInterval);
   }, [tokenId, tokenData?.id]);
@@ -299,7 +297,6 @@ export default function PatientPortal() {
     setChatLoading(true);
 
     if (!isSupabaseConfigured) {
-      // Direct offline chat logic
       setTimeout(() => {
         const lowercaseMsg = userMsg.toLowerCase();
         let reply = '';
@@ -401,6 +398,7 @@ export default function PatientPortal() {
         <motion.div 
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
+          transition={{ type: 'spring', damping: 20 }}
           className="bg-[#0a0a10] rounded-3xl border border-white/[0.05] p-8 text-center clinical-shadow"
         >
           <AlertCircle className="w-12 h-12 text-rose-450 mx-auto mb-4 animate-pulse" />
@@ -424,13 +422,12 @@ export default function PatientPortal() {
   const isTokenFinished = tokenData.status === 'completed' && currentDeptName === 'Pharmacy';
   const estimatedWait = patientsAhead * tokenData.departments.avg_service_time_minutes;
 
-  // Department Color Maps
   const colorMap: Record<string, string> = {
-    blue: 'bg-clinical-blue border-clinical-blue text-zinc-950 shadow-[0_0_12px_rgba(56,189,248,0.4)]',
-    teal: 'bg-clinical-teal border-clinical-teal text-zinc-950 shadow-[0_0_12px_rgba(45,212,191,0.4)]',
-    purple: 'bg-clinical-purple border-clinical-purple text-zinc-950 shadow-[0_0_12px_rgba(167,139,250,0.4)]',
-    emerald: 'bg-clinical-emerald border-clinical-emerald text-zinc-950 shadow-[0_0_12px_rgba(52,211,153,0.4)]',
-    rose: 'bg-clinical-rose border-clinical-rose text-zinc-950 shadow-[0_0_12px_rgba(251,113,133,0.4)]'
+    blue: 'bg-clinical-blue border-clinical-blue text-zinc-950 shadow-[0_0_15px_rgba(56,189,248,0.45)]',
+    teal: 'bg-clinical-teal border-clinical-teal text-zinc-950 shadow-[0_0_15px_rgba(45,212,191,0.45)]',
+    purple: 'bg-clinical-purple border-clinical-purple text-zinc-950 shadow-[0_0_15px_rgba(167,139,250,0.45)]',
+    emerald: 'bg-clinical-emerald border-clinical-emerald text-zinc-950 shadow-[0_0_15px_rgba(52,211,153,0.45)]',
+    rose: 'bg-clinical-rose border-clinical-rose text-zinc-950 shadow-[0_0_15px_rgba(251,113,133,0.45)]'
   };
 
   const badgeColorMap: Record<string, string> = {
@@ -444,11 +441,16 @@ export default function PatientPortal() {
   const deptColor = tokenData.departments.color_code;
 
   return (
-    <div className="flex-1 max-w-xl mx-auto w-full px-4 py-8 flex flex-col justify-between relative text-zinc-100">
+    <motion.div 
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="flex-1 max-w-xl mx-auto w-full px-4 py-8 flex flex-col justify-between relative text-zinc-100"
+    >
       
       {/* 1. Connection Status Toast */}
       {connStatus === 'polling' && (
-        <div className="mb-4 bg-amber-500/10 border-l-2 border-amber-500 border border-amber-500/20 p-3 rounded-r-xl flex items-center justify-between text-amber-400">
+        <div className="mb-4 bg-amber-500/10 border-l-2 border-amber-500 border border-amber-500/20 p-3 rounded-r-xl flex items-center justify-between text-amber-400 shadow-lg">
           <div className="flex items-center gap-2 text-xs font-semibold">
             <AlertTriangle className="w-4 h-4 shrink-0 animate-pulse text-amber-500" />
             <span>Connection weak. Polling data stream...</span>
@@ -473,15 +475,15 @@ export default function PatientPortal() {
                 <Bot className="w-4 h-4 text-clinical-blue" />
               </div>
               <div>
-                <h4 className="text-[10px] font-bold uppercase tracking-widest text-clinical-blue">OPD Announcement</h4>
+                <h4 className="text-[10px] font-bold uppercase tracking-widest text-clinical-blue font-display">OPD Announcement</h4>
                 <p className="text-xs font-medium mt-1 leading-relaxed text-zinc-300">{activeAlert}</p>
               </div>
             </div>
             <button 
               onClick={() => setActiveAlert(null)}
-              className="text-zinc-550 hover:text-zinc-300 p-1 hover:bg-white/[0.04] rounded-lg transition-colors shrink-0"
+              className="text-zinc-550 hover:text-zinc-350 p-1 hover:bg-white/[0.04] rounded-lg transition-colors shrink-0"
             >
-              <X className="w-4 h-4" />
+              <X className="w-4.5 h-4.5" />
             </button>
           </motion.div>
         )}
@@ -499,8 +501,7 @@ export default function PatientPortal() {
             const nextMuted = !isMuted;
             setIsMuted(nextMuted);
             if (!nextMuted) {
-              // Try speaking a welcome cue
-              const utterance = new SpeechSynthesisUtterance("Voice announcement enabled.");
+              const utterance = new SpeechSynthesisUtterance("Voice announcements enabled.");
               utterance.lang = 'en-US';
               window.speechSynthesis.speak(utterance);
             }
@@ -508,7 +509,7 @@ export default function PatientPortal() {
           className={`p-2.5 rounded-xl border transition-all duration-200 cursor-pointer ${
             !isMuted 
               ? 'bg-clinical-blue/15 border-clinical-blue/30 text-clinical-blue shadow-[0_0_12px_rgba(56,189,248,0.2)]' 
-              : 'bg-[#08080c] border-white/[0.08] text-zinc-500 hover:text-zinc-300'
+              : 'bg-[#08080c] border-white/[0.08] text-zinc-500 hover:text-zinc-350'
           }`}
           title={isMuted ? 'Unmute voice announcements' : 'Mute announcements'}
         >
@@ -538,7 +539,7 @@ export default function PatientPortal() {
             const isSkipped = histToken?.status === 'skipped';
             const isDone = histToken?.status === 'completed' || isCompleted;
 
-            let circleStyle = 'bg-[#08080c] border-white/[0.08] text-zinc-600';
+            let circleStyle = 'bg-[#08080c] border-white/[0.08] text-zinc-650';
             if (isDone) {
               circleStyle = 'bg-gradient-to-br from-emerald-400 to-emerald-500 border-emerald-500 text-zinc-950 font-black shadow-[0_0_12px_rgba(16,185,129,0.35)]';
             } else if (isSkipped) {
@@ -548,7 +549,11 @@ export default function PatientPortal() {
             }
 
             return (
-              <div key={dept} className="flex flex-col items-center shrink-0 w-12 text-center">
+              <div key={dept} className="flex flex-col items-center shrink-0 w-12 text-center relative">
+                {/* Ping animation behind active node */}
+                {isActive && (
+                  <span className="absolute top-0 w-8 h-8 rounded-full bg-clinical-blue/20 animate-ping"></span>
+                )}
                 <div className={`w-8 h-8 rounded-full border-[1.5px] flex items-center justify-center font-bold text-xs transition-all duration-300 ${circleStyle} font-display`}>
                   {isDone ? <CheckCircle2 className="w-4 h-4 text-zinc-950" /> : idx + 1}
                 </div>
@@ -568,9 +573,10 @@ export default function PatientPortal() {
         {isTokenFinished ? (
           <motion.div
             key="finished-card"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
+            initial={{ opacity: 0, scale: 0.92, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.92 }}
+            transition={{ type: 'spring', damping: 20 }}
             className="bg-emerald-500/5 border border-emerald-500/20 rounded-3xl p-6 text-center clinical-shadow mb-6 text-emerald-400"
           >
             <CheckCircle2 className="w-12 h-12 text-clinical-emerald mx-auto mb-3 filter drop-shadow-[0_0_12px_rgba(52,211,153,0.35)] animate-bounce" />
@@ -601,15 +607,16 @@ export default function PatientPortal() {
         ) : (
           <motion.div
             key="queue-card"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
+            initial={{ opacity: 0, scale: 0.95, y: 15 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ type: 'spring', damping: 22 }}
             className="glass-panel rounded-[32px] border border-white/[0.05] p-6 clinical-shadow mb-6 card-3d"
           >
             {/* Active Station & Floor Info */}
             <div className="flex items-center justify-between border-b border-white/[0.04] pb-4 mb-4">
               <div>
-                <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Target Station</span>
+                <span className="text-[9px] font-bold text-zinc-550 uppercase tracking-widest">Target Station</span>
                 <div className="flex items-center gap-2 mt-1.5">
                   <span className={`px-2.5 py-0.5 text-[10px] font-bold rounded-lg border uppercase tracking-wider ${badgeColorMap[deptColor] || 'bg-zinc-900 text-zinc-300'}`}>
                     {currentDeptName}
@@ -657,7 +664,7 @@ export default function PatientPortal() {
               </div>
             </div>
 
-            {/* Estimated Stats */}
+            {/* Estimated Stats - With Cross fading numbers */}
             <div className="bg-[#08080c]/50 rounded-2xl p-4 mt-6 grid grid-cols-2 gap-4 border border-white/[0.04]">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-xl bg-sky-500/5 text-sky-400 border border-sky-500/10 flex items-center justify-center shrink-0 shadow-inner">
@@ -665,7 +672,19 @@ export default function PatientPortal() {
                 </div>
                 <div>
                   <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider">Patients Ahead</p>
-                  <p className="text-sm font-bold text-zinc-200 mt-0.5">{patientsAhead}</p>
+                  <div className="text-sm font-bold text-zinc-200 mt-0.5 h-5 flex overflow-hidden">
+                    <AnimatePresence mode="wait">
+                      <motion.span
+                        key={patientsAhead}
+                        initial={{ opacity: 0, y: -12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 12 }}
+                        transition={{ duration: 0.22 }}
+                      >
+                        {patientsAhead}
+                      </motion.span>
+                    </AnimatePresence>
+                  </div>
                 </div>
               </div>
 
@@ -675,7 +694,19 @@ export default function PatientPortal() {
                 </div>
                 <div>
                   <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider">Est. Wait Time</p>
-                  <p className="text-sm font-bold text-zinc-200 mt-0.5">{estimatedWait} min</p>
+                  <div className="text-sm font-bold text-zinc-200 mt-0.5 h-5 flex overflow-hidden">
+                    <AnimatePresence mode="wait">
+                      <motion.span
+                        key={estimatedWait}
+                        initial={{ opacity: 0, y: -12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 12 }}
+                        transition={{ duration: 0.22 }}
+                      >
+                        {estimatedWait} min
+                      </motion.span>
+                    </AnimatePresence>
+                  </div>
                 </div>
               </div>
             </div>
@@ -707,10 +738,10 @@ export default function PatientPortal() {
       {/* 6. Floating AI Assistant Action Trigger */}
       <div className="fixed bottom-6 right-6 z-40">
         <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.06, boxShadow: '0 0 25px rgba(56,189,248,0.5)' }}
+          whileTap={{ scale: 0.94 }}
           onClick={() => setChatOpen(true)}
-          className="w-14 h-14 bg-gradient-to-br from-clinical-blue to-clinical-teal hover:shadow-[0_0_20px_rgba(56,189,248,0.5)] text-zinc-950 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 cursor-pointer relative btn-3d"
+          className="w-14 h-14 bg-gradient-to-br from-clinical-blue to-clinical-teal text-zinc-950 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 cursor-pointer relative btn-3d"
         >
           <Bot className="w-5 h-5 text-zinc-950" />
           <span className="absolute -top-1.5 -right-1.5 bg-rose-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider shadow-md animate-pulse">
@@ -749,10 +780,13 @@ export default function PatientPortal() {
               </button>
             </div>
 
-            {/* Chat Messages */}
+            {/* Chat Messages - with entry list stagger animations */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#050508]">
               {chatHistory.map((chat, idx) => (
-                <div 
+                <motion.div 
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ type: 'spring', damping: 18 }}
                   key={idx} 
                   className={`flex ${chat.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
@@ -763,7 +797,7 @@ export default function PatientPortal() {
                   }`}>
                     {chat.text}
                   </div>
-                </div>
+                </motion.div>
               ))}
               
               {chatLoading && (
@@ -820,6 +854,6 @@ export default function PatientPortal() {
         )}
       </AnimatePresence>
 
-    </div>
+    </motion.div>
   );
 }
