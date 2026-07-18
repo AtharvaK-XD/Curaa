@@ -1,15 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { supabase } from '../lib/supabaseClient';
+import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
+import { mockDatabase } from '../lib/mockDatabase';
 import { 
   Bot, Send, Clock, User, ArrowRight, CheckCircle2, 
-  AlertTriangle, RefreshCw, Volume2, VolumeX, AlertCircle
+  AlertTriangle, RefreshCw, Volume2, VolumeX, AlertCircle, MapPin, Sparkles, X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
-// Department clinical order and metadata
 const DEPT_ORDER = ['Registration', 'Billing', 'Lab', 'OPD Room 12', 'Pharmacy'];
 
 interface TokenInfo {
@@ -47,7 +47,7 @@ export default function PatientPortal() {
   const [tokenData, setTokenData] = useState<TokenInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [connStatus, setConnStatus] = useState<'connected' | 'reconnecting' | 'polling'>('connected');
+  const [connStatus, setConnStatus] = useState<'connected' | 'reconnecting' | 'polling' | 'offline'>('connected');
   
   // Queue stats
   const [patientsAhead, setPatientsAhead] = useState(0);
@@ -74,12 +74,60 @@ export default function PatientPortal() {
   // Load Data
   const fetchData = async (silent = false) => {
     if (!silent) setLoading(true);
+
+    if (!isSupabaseConfigured) {
+      // Offline mock query logic
+      try {
+        let targetId = tokenId;
+        if (isDemo || !targetId) {
+          const all = mockDatabase.getTokens();
+          if (all.length === 0) throw new Error('No local tokens found. Please check in first.');
+          targetId = all[all.length - 1].id;
+        }
+
+        const tData = mockDatabase.getToken(targetId);
+        if (!tData) throw new Error('Token not found in local storage.');
+
+        setTokenData(tData as unknown as TokenInfo);
+        setError('');
+        setConnStatus('offline');
+
+        // History
+        const hist = mockDatabase.getPatientTokens(tData.patient_id);
+        setVisitHistory(hist);
+
+        // Department Queue Waiting
+        const queue = mockDatabase.getDepartmentQueue(tData.department_id);
+        const activeQueue = queue.filter(t => ['waiting', 'called', 'in_progress'].includes(t.status));
+        const index = activeQueue.findIndex(t => t.id === targetId);
+        setPatientsAhead(index >= 0 ? index : 0);
+
+        const serving = activeQueue.find(t => ['called', 'in_progress'].includes(t.status));
+        setCurrentServingToken(serving ? serving.token_number : 'None');
+
+        // Check alerts
+        const alerts = mockDatabase.getAlertsForToken(targetId);
+        const pendingAlert = alerts.find(a => a.status === 'pending');
+        if (pendingAlert) {
+          setActiveAlert(pendingAlert.message);
+          triggerVoiceAlert(pendingAlert.message);
+          mockDatabase.clearAlertsForToken(targetId);
+        }
+
+      } catch (err: any) {
+        console.error('Error fetching mock portal data:', err);
+        setError(err.message || 'Offline data load error');
+      } finally {
+        if (!silent) setLoading(false);
+      }
+      return;
+    }
+
+    // Online Supabase logic
     try {
       let targetId = tokenId;
       
-      // Demo Mode Defaulting
       if (isDemo) {
-        // Query database for the latest created token to demo, or fallback to mock
         const { data: latestTokens, error: lError } = await supabase
           .from('tokens')
           .select('id')
@@ -92,7 +140,6 @@ export default function PatientPortal() {
         targetId = latestTokens[0].id;
       }
 
-      // Fetch Patient Token & Department Details
       const { data: token, error: tokenErr } = await supabase
         .from('tokens')
         .select(`
@@ -109,7 +156,6 @@ export default function PatientPortal() {
       setTokenData(typedToken);
       setError('');
 
-      // Fetch all tokens for this patient to compile visit history
       const { data: history } = await supabase
         .from('tokens')
         .select('*, departments(*)')
@@ -117,7 +163,6 @@ export default function PatientPortal() {
         .order('created_at', { ascending: true });
       if (history) setVisitHistory(history);
 
-      // Fetch queue details of the current department
       const { data: deptTokensData, error: deptError } = await supabase
         .from('tokens')
         .select('id, token_number, status, created_at, is_urgent')
@@ -128,16 +173,12 @@ export default function PatientPortal() {
 
       if (deptError) throw deptError;
 
-      // Calculate patients ahead
       const index = deptTokensData.findIndex(t => t.id === targetId);
-      const ahead = index >= 0 ? index : 0;
-      setPatientsAhead(ahead);
+      setPatientsAhead(index >= 0 ? index : 0);
 
-      // Fetch current token being served in this department (status = called/in_progress)
       const serving = deptTokensData.find(t => t.status === 'called' || t.status === 'in_progress');
       setCurrentServingToken(serving ? serving.token_number : 'None');
 
-      // Fetch latest pending alerts to show in-app toasts
       const { data: alerts } = await supabase
         .from('alerts_log')
         .select('message')
@@ -149,7 +190,7 @@ export default function PatientPortal() {
       if (alerts && alerts.length > 0) {
         setActiveAlert(alerts[0].message);
         triggerVoiceAlert(alerts[0].message);
-        // Mark as sent so we don't display repeatedly
+        
         await supabase
           .from('alerts_log')
           .update({ status: 'sent' })
@@ -159,19 +200,35 @@ export default function PatientPortal() {
 
     } catch (err: any) {
       console.error('Error fetching portal data:', err);
-      setError(err.message || 'Server connection error');
+      // Transparently fall back to local database if network drops
       setConnStatus('polling');
+      try {
+        let fallbackId = tokenId;
+        if (isDemo || !fallbackId) {
+          const all = mockDatabase.getTokens();
+          if (all.length > 0) fallbackId = all[all.length - 1].id;
+        }
+        if (fallbackId) {
+          const tData = mockDatabase.getToken(fallbackId);
+          if (tData) {
+            setTokenData(tData as unknown as TokenInfo);
+            const hist = mockDatabase.getPatientTokens(tData.patient_id);
+            setVisitHistory(hist);
+            setError('');
+          }
+        }
+      } catch (fallbackErr) {
+        setError(err.message || 'Server connection error');
+      }
     } finally {
       if (!silent) setLoading(false);
     }
   };
 
-  // Text to speech voice announcer
   const triggerVoiceAlert = (text: string) => {
     if (isMuted) return;
     try {
       const utterance = new SpeechSynthesisUtterance(text);
-      // Try to match preferred language
       const lang = tokenData?.patients?.preferred_language || 'en';
       if (lang === 'hi') utterance.lang = 'hi-IN';
       else if (lang === 'gu') utterance.lang = 'gu-IN';
@@ -182,55 +239,55 @@ export default function PatientPortal() {
     }
   };
 
-  // Realtime Subscription
   useEffect(() => {
     fetchData();
 
-    // Subscribe to changes on tokens table
-    const subscription = supabase
-      .channel('portal-live-updates')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'tokens' },
-        (payload) => {
-          console.log('Realtime change received:', payload);
-          fetchData(true);
-        }
-      )
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'alerts_log' },
-        (payload) => {
-          if (tokenData && payload.new.token_id === tokenData.id) {
+    if (isSupabaseConfigured) {
+      const subscription = supabase
+        .channel('portal-live-updates')
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'tokens' },
+          () => {
             fetchData(true);
           }
-        }
-      )
-      .subscribe((status) => {
-        if (status === 'SUBSCRIBED') {
-          setConnStatus('connected');
-        } else {
-          setConnStatus('polling');
-        }
-      });
+        )
+        .on(
+          'postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'alerts_log' },
+          (payload) => {
+            if (tokenData && payload.new.token_id === tokenData.id) {
+              fetchData(true);
+            }
+          }
+        )
+        .subscribe((status) => {
+          if (status === 'SUBSCRIBED') {
+            setConnStatus('connected');
+          } else {
+            setConnStatus('polling');
+          }
+        });
 
-    // Polling fallback (runs every 5 seconds for robust connection reliability)
-    const pollInterval = setInterval(() => {
-      fetchData(true);
-    }, 5000);
-
-    return () => {
-      subscription.unsubscribe();
-      clearInterval(pollInterval);
-    };
+      return () => {
+        subscription.unsubscribe();
+      };
+    }
   }, [tokenId, tokenData?.id]);
 
-  // Scroll to bottom of chat when history changes
+  // Polling loop fallback (handles offline mock db updates too)
+  useEffect(() => {
+    const pollInterval = setInterval(() => {
+      fetchData(true);
+    }, isSupabaseConfigured ? 5000 : 2000); // Poll quicker locally for snappier demo feel
+
+    return () => clearInterval(pollInterval);
+  }, [tokenId, tokenData?.id]);
+
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatHistory, chatOpen]);
 
-  // Handle AI Question Submit
   const handleSendMessage = async (customMessage?: string) => {
     const textToSend = customMessage || chatMessage;
     if (!textToSend.trim() || !tokenData) return;
@@ -238,9 +295,70 @@ export default function PatientPortal() {
     const userMsg = textToSend.trim();
     if (!customMessage) setChatMessage('');
     
-    // Add to local history
     setChatHistory(prev => [...prev, { sender: 'user', text: userMsg }]);
     setChatLoading(true);
+
+    if (!isSupabaseConfigured) {
+      // Direct offline chat logic
+      setTimeout(() => {
+        const lowercaseMsg = userMsg.toLowerCase();
+        let reply = '';
+        let lang: 'en' | 'hi' | 'gu' = 'en';
+        if (/कहाँ|समय|कब|मेरा|डॉक्टर|दवाई|कैसे|नमस्ते/.test(userMsg)) {
+          lang = 'hi';
+        } else if (/ક્યાં|સમય|ક્યારે|મારો|દવા|કેવી|નમસ્તે/.test(userMsg)) {
+          lang = 'gu';
+        } else {
+          lang = tokenData.patients?.preferred_language || 'en';
+        }
+
+        const medicalKeywords = [
+          'pain', 'fever', 'headache', 'medicine', 'prescription', 'cough', 'sick', 'diagnose', 'symptom', 'disease', 'cure',
+          'दर्द', 'बुखार', 'सिरदर्द', 'दवा', 'बीमार', 'खांसी', 'इलाज', 'लक्षण',
+          'દુખાવો', 'તાવ', 'માથું', 'દવા', 'બીમાર', 'ખાંસી', 'ઈલાજ', 'લક્ષણો'
+        ];
+        
+        if (medicalKeywords.some(kw => lowercaseMsg.includes(kw))) {
+          if (lang === 'hi') {
+            reply = `मैं एक कतार सहायक हूँ और चिकित्सा या नुस्खे की सलाह नहीं दे सकता। कृपया अपने डॉक्टर से सीधे बात करें।`;
+          } else if (lang === 'gu') {
+            reply = `હું કતાર સહાયક છું અને તબીબી અથવા પ્રિસ્ક્રિપ્શન સલાહ આપી શકતો નથી. કૃપા કરીને ડૉક્ટર સાથે સીધી વાત કરો.`;
+          } else {
+            reply = `I am a queue assistant and cannot provide medical or diagnostic advice. Please consult your doctor directly.`;
+          }
+        } else if (/where|go|room|floor|counter|location|कहाँ|कमरा|मंजिल|स्थान|काउंटर|जाना|ક્યાં|રૂમ|માળ|સ્થાન|કાઉન્ટર|જવું/.test(lowercaseMsg)) {
+          if (lang === 'hi') {
+            reply = `नमस्ते ${tokenData.patients.name}! आपको ${tokenData.departments.name} पर जाना है, जो मंजिल ${tokenData.departments.floor}, ${tokenData.departments.room_number} पर स्थित है।`;
+          } else if (lang === 'gu') {
+            reply = `નમસ્તે ${tokenData.patients.name}! તમારે ${tokenData.departments.name} માં જવાનું છે, જે માળ ${tokenData.departments.floor}, ${tokenData.departments.room_number} પર આવેલ છે.`;
+          } else {
+            reply = `Hi ${tokenData.patients.name}! Please proceed to ${tokenData.departments.name}, situated on Floor ${tokenData.departments.floor}, at ${tokenData.departments.room_number}.`;
+          }
+        } else if (/long|wait|time|position|queue|when|समय|कब|इंतजार|कतार|नंबर|देरी|સમય|ક્યારે|રાહ|કતાર|નંબર|વિલંબ/.test(lowercaseMsg)) {
+          const wait = patientsAhead * tokenData.departments.avg_service_time_minutes;
+          if (lang === 'hi') {
+            reply = `आपके टोकन ${tokenData.token_number} के आगे ${patientsAhead} मरीज हैं। अनुमानित प्रतीक्षा समय लगभग ${wait} मिनट है।`;
+          } else if (lang === 'gu') {
+            reply = `તમારા ટોકન ${tokenData.token_number} ની આગળ ${patientsAhead} દર્દીઓ છે. અંદાજિત પ્રતીક્ષા સમય લગભગ ${wait} મિનિટ છે.`;
+          } else {
+            reply = `Your token is ${tokenData.token_number}. There are ${patientsAhead} patients ahead of you. The estimated wait is ${wait} minutes.`;
+          }
+        } else {
+          if (lang === 'hi') {
+            reply = `नमस्ते! मैं आपका अस्पताल मार्गदर्शक हूँ। आप मुझसे कतार स्थान या प्रतीक्षा समय पूछ सकते हैं।`;
+          } else if (lang === 'gu') {
+            reply = `નમસ્તે! હું તમારો હોસ્પિટલ ગાઇડ છું. તમે મને કતારના સ્થાન અથવા પ્રતીક્ષા સમય વિશે પૂછી શકો છો.`;
+          } else {
+            reply = `Hello! I am your hospital guide. Feel free to ask about your queue status, station room number, or estimated wait time.`;
+          }
+        }
+
+        setChatHistory(prev => [...prev, { sender: 'agent', text: reply }]);
+        setChatLoading(false);
+        triggerVoiceAlert(reply);
+      }, 600);
+      return;
+    }
 
     try {
       const res = await fetch(`${API_URL}/chat`, {
@@ -271,8 +389,8 @@ export default function PatientPortal() {
   if (loading) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-8">
-        <RefreshCw className="w-8 h-8 text-clinical-blue animate-spin mb-4" />
-        <p className="text-slate-500 font-semibold text-sm">Loading live queue status...</p>
+        <RefreshCw className="w-9 h-9 text-clinical-blue animate-spin mb-4" />
+        <p className="text-zinc-550 font-semibold text-xs uppercase tracking-widest">Loading Live OPD Feed...</p>
       </div>
     );
   }
@@ -280,104 +398,117 @@ export default function PatientPortal() {
   if (error || !tokenData) {
     return (
       <div className="flex-1 max-w-md mx-auto w-full p-6 flex flex-col justify-center">
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 text-center clinical-shadow">
-          <AlertCircle className="w-12 h-12 text-rose-500 mx-auto mb-4 animate-bounce" />
-          <h3 className="text-lg font-bold text-slate-800 mb-2">No Active Token Found</h3>
-          <p className="text-xs text-slate-500 mb-6 leading-relaxed">
-            We couldn't retrieve an active queue token. It might have been completed, or you need to check in first.
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="bg-[#0a0a10] rounded-3xl border border-white/[0.05] p-8 text-center clinical-shadow"
+        >
+          <AlertCircle className="w-12 h-12 text-rose-450 mx-auto mb-4 animate-pulse" />
+          <h3 className="text-lg font-bold text-zinc-200 mb-2 font-display">No Active Ticket Found</h3>
+          <p className="text-xs text-zinc-550 mb-6 leading-relaxed">
+            We couldn't retrieve an active queue ticket. Ensure you have checked in at the entry desk to receive a tracking link.
           </p>
           <Link
             to="/"
-            className="w-full bg-clinical-blue hover:bg-brand-700 text-white font-bold py-2.5 px-4 rounded-lg transition-all duration-150 inline-block text-sm"
+            className="w-full bg-gradient-to-r from-clinical-blue to-clinical-teal text-zinc-950 font-bold py-2.5 px-4 rounded-xl transition-all duration-200 inline-block text-xs uppercase tracking-wider btn-3d"
           >
             Go to Check-in Desk
           </Link>
-        </div>
+        </motion.div>
       </div>
     );
   }
 
-  // Find step completion status
   const currentDeptName = tokenData.departments.name;
   const currentStepIndex = DEPT_ORDER.findIndex(d => currentDeptName.toLowerCase().includes(d.toLowerCase().split(' ')[0]));
   const isTokenFinished = tokenData.status === 'completed' && currentDeptName === 'Pharmacy';
-
-  // Estimate wait time
   const estimatedWait = patientsAhead * tokenData.departments.avg_service_time_minutes;
 
   // Department Color Maps
   const colorMap: Record<string, string> = {
-    blue: 'bg-clinical-blue border-clinical-blue text-zinc-950 shadow-[0_0_8px_rgba(56,189,248,0.35)]',
-    teal: 'bg-clinical-teal border-clinical-teal text-zinc-950 shadow-[0_0_8px_rgba(45,212,191,0.35)]',
-    purple: 'bg-clinical-purple border-clinical-purple text-zinc-950 shadow-[0_0_8px_rgba(167,139,250,0.35)]',
-    emerald: 'bg-clinical-emerald border-clinical-emerald text-zinc-950 shadow-[0_0_8px_rgba(52,211,153,0.35)]',
-    rose: 'bg-clinical-rose border-clinical-rose text-zinc-950 shadow-[0_0_8px_rgba(251,113,133,0.35)]'
+    blue: 'bg-clinical-blue border-clinical-blue text-zinc-950 shadow-[0_0_12px_rgba(56,189,248,0.4)]',
+    teal: 'bg-clinical-teal border-clinical-teal text-zinc-950 shadow-[0_0_12px_rgba(45,212,191,0.4)]',
+    purple: 'bg-clinical-purple border-clinical-purple text-zinc-950 shadow-[0_0_12px_rgba(167,139,250,0.4)]',
+    emerald: 'bg-clinical-emerald border-clinical-emerald text-zinc-950 shadow-[0_0_12px_rgba(52,211,153,0.4)]',
+    rose: 'bg-clinical-rose border-clinical-rose text-zinc-950 shadow-[0_0_12px_rgba(251,113,133,0.4)]'
   };
 
-  const bgBorderMap: Record<string, string> = {
-    blue: 'bg-sky-950/40 border border-sky-850/60 text-sky-300 shadow-[0_0_8px_rgba(56,189,248,0.1)]',
-    teal: 'bg-teal-950/40 border border-teal-850/60 text-teal-300 shadow-[0_0_8px_rgba(45,212,191,0.1)]',
-    purple: 'bg-purple-950/40 border border-purple-850/60 text-purple-300 shadow-[0_0_8px_rgba(167,139,250,0.1)]',
-    emerald: 'bg-emerald-950/40 border border-emerald-850/60 text-emerald-300 shadow-[0_0_8px_rgba(52,211,153,0.1)]',
-    rose: 'bg-rose-950/40 border border-rose-850/60 text-rose-300 shadow-[0_0_8px_rgba(251,113,133,0.1)]'
+  const badgeColorMap: Record<string, string> = {
+    blue: 'bg-sky-500/10 border-sky-500/20 text-sky-400',
+    teal: 'bg-teal-500/10 border-teal-500/20 text-teal-400',
+    purple: 'bg-purple-500/10 border-purple-500/20 text-purple-400',
+    emerald: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400',
+    rose: 'bg-rose-500/10 border-rose-500/20 text-rose-400'
   };
 
   const deptColor = tokenData.departments.color_code;
 
   return (
-    <div className="flex-1 max-w-xl mx-auto w-full px-4 py-6 flex flex-col justify-between relative text-zinc-100">
+    <div className="flex-1 max-w-xl mx-auto w-full px-4 py-8 flex flex-col justify-between relative text-zinc-100">
       
-      {/* 1. Graceful Connection Status Bar */}
-      {connStatus !== 'connected' && (
-        <div className="mb-4 bg-amber-950/20 border-l-4 border-amber-500 border border-amber-900/50 p-3 rounded-r-lg flex items-center justify-between shadow-xs text-amber-350">
+      {/* 1. Connection Status Toast */}
+      {connStatus === 'polling' && (
+        <div className="mb-4 bg-amber-500/10 border-l-2 border-amber-500 border border-amber-500/20 p-3 rounded-r-xl flex items-center justify-between text-amber-400">
           <div className="flex items-center gap-2 text-xs font-semibold">
             <AlertTriangle className="w-4 h-4 shrink-0 animate-pulse text-amber-500" />
-            <span>Connection weak. Using background polling mode...</span>
+            <span>Connection weak. Polling data stream...</span>
           </div>
-          <button onClick={() => fetchData(true)} className="p-1 hover:bg-amber-950/50 rounded">
+          <button onClick={() => fetchData(true)} className="p-1 hover:bg-amber-500/20 rounded-lg">
             <RefreshCw className="w-3.5 h-3.5" />
           </button>
         </div>
       )}
 
-      {/* 2. In-App Notification Toast Alert */}
+      {/* 2. Live Alerts log Toast notifications */}
       <AnimatePresence>
         {activeAlert && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="mb-4 bg-zinc-900 border border-zinc-800 p-4 rounded-xl text-zinc-100 shadow-xl flex items-start justify-between gap-3 shadow-[0_0_15px_rgba(56,189,248,0.12)]"
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            className="mb-5 bg-[#0e0e18] border border-white/[0.06] p-4 rounded-2xl text-zinc-200 shadow-2xl flex items-start justify-between gap-3 shadow-[0_0_20px_rgba(56,189,248,0.08)]"
           >
-            <div className="flex gap-2">
-              <Bot className="w-5 h-5 shrink-0 text-clinical-blue" />
+            <div className="flex gap-3">
+              <div className="w-7 h-7 rounded-lg bg-clinical-blue/10 border border-clinical-blue/20 flex items-center justify-center shrink-0">
+                <Bot className="w-4 h-4 text-clinical-blue" />
+              </div>
               <div>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-clinical-blue">Queue Announcement</h4>
-                <p className="text-xs font-medium mt-0.5">{activeAlert}</p>
+                <h4 className="text-[10px] font-bold uppercase tracking-widest text-clinical-blue">OPD Announcement</h4>
+                <p className="text-xs font-medium mt-1 leading-relaxed text-zinc-300">{activeAlert}</p>
               </div>
             </div>
             <button 
               onClick={() => setActiveAlert(null)}
-              className="text-zinc-500 hover:text-zinc-300 text-xs font-bold px-2 py-1 rounded"
+              className="text-zinc-550 hover:text-zinc-300 p-1 hover:bg-white/[0.04] rounded-lg transition-colors shrink-0"
             >
-              Dismiss
+              <X className="w-4 h-4" />
             </button>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* 3. Patient Name Welcome Header */}
-      <div className="flex items-center justify-between mb-4">
+      {/* 3. Welcome Patient Header */}
+      <div className="flex items-center justify-between mb-5">
         <div>
-          <span className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Patient Portal</span>
-          <h2 className="text-xl font-bold text-zinc-200">{tokenData.patients.name}</h2>
+          <span className="text-[9px] font-bold text-zinc-550 uppercase tracking-widest">Active Patient Profile</span>
+          <h2 className="text-xl font-bold text-zinc-150 font-display mt-0.5">{tokenData.patients.name}</h2>
         </div>
+        
         <button
-          onClick={() => setIsMuted(!isMuted)}
-          className={`p-2 rounded-full border transition-all duration-150 cursor-pointer ${
+          onClick={() => {
+            const nextMuted = !isMuted;
+            setIsMuted(nextMuted);
+            if (!nextMuted) {
+              // Try speaking a welcome cue
+              const utterance = new SpeechSynthesisUtterance("Voice announcement enabled.");
+              utterance.lang = 'en-US';
+              window.speechSynthesis.speak(utterance);
+            }
+          }}
+          className={`p-2.5 rounded-xl border transition-all duration-200 cursor-pointer ${
             !isMuted 
-              ? 'bg-clinical-blue/20 border-clinical-blue/30 text-clinical-blue shadow-[0_0_10px_rgba(56,189,248,0.25)]' 
-              : 'bg-zinc-900 border-zinc-800 text-zinc-500 hover:text-zinc-300'
+              ? 'bg-clinical-blue/15 border-clinical-blue/30 text-clinical-blue shadow-[0_0_12px_rgba(56,189,248,0.2)]' 
+              : 'bg-[#08080c] border-white/[0.08] text-zinc-500 hover:text-zinc-300'
           }`}
           title={isMuted ? 'Unmute voice announcements' : 'Mute announcements'}
         >
@@ -385,18 +516,17 @@ export default function PatientPortal() {
         </button>
       </div>
 
-      {/* 4. CLINICAL SEQUENCE MAP (Step Tracker) */}
-      <div className="glass-panel rounded-2xl p-4 mb-5 clinical-shadow border border-zinc-800/80 card-3d">
-        <h3 className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-4">OPD Clinical Pathway</h3>
+      {/* 4. Horizontal subway clinical sequence tracker */}
+      <div className="glass-panel rounded-3xl p-5 mb-5 clinical-shadow border border-white/[0.04] card-3d">
+        <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-5">OPD Station Routing Map</h3>
         
-        {/* Horizontal Line Step Tracker */}
         <div className="relative flex items-center justify-between mt-2 mb-2 px-1">
-          {/* Background line */}
-          <div className="absolute left-6 right-6 top-4 h-0.5 bg-zinc-950 -z-1"></div>
+          {/* Gray track background */}
+          <div className="absolute left-6 right-6 top-4 h-[3px] bg-[#0c0c14] -z-1 rounded-full"></div>
           
-          {/* Active progress color bar */}
+          {/* Active green progress fill */}
           <div 
-            className="absolute left-6 top-4 h-0.5 bg-clinical-blue/80 transition-all duration-300 -z-1 shadow-[0_0_8px_rgba(56,189,248,0.5)]"
+            className="absolute left-6 top-4 h-[3px] bg-gradient-to-r from-clinical-blue to-clinical-teal transition-all duration-500 -z-1 shadow-[0_0_12px_rgba(45,212,191,0.5)] rounded-full"
             style={{ width: `${(Math.max(0, currentStepIndex) / (DEPT_ORDER.length - 1)) * 90}%` }}
           ></div>
 
@@ -404,23 +534,26 @@ export default function PatientPortal() {
             const isCompleted = idx < currentStepIndex;
             const isActive = idx === currentStepIndex;
             
-            // Check matching token status in history
-            const histToken = visitHistory.find(h => h.departments.name.toLowerCase().includes(dept.toLowerCase().split(' ')[0]));
+            const histToken = visitHistory.find(h => h.departments?.name.toLowerCase().includes(dept.toLowerCase().split(' ')[0]));
             const isSkipped = histToken?.status === 'skipped';
             const isDone = histToken?.status === 'completed' || isCompleted;
 
-            let circleColor = 'bg-zinc-950 border-zinc-855 text-zinc-650';
-            if (isDone) circleColor = 'bg-emerald-500 border-emerald-500 text-zinc-950 shadow-[0_0_8px_rgba(16,185,129,0.35)]';
-            else if (isSkipped) circleColor = 'bg-rose-500 border-rose-500 text-zinc-950 shadow-[0_0_8px_rgba(239,68,68,0.35)]';
-            else if (isActive) circleColor = colorMap[deptColor] || 'bg-brand-600 border-brand-600 text-zinc-950';
+            let circleStyle = 'bg-[#08080c] border-white/[0.08] text-zinc-600';
+            if (isDone) {
+              circleStyle = 'bg-gradient-to-br from-emerald-400 to-emerald-500 border-emerald-500 text-zinc-950 font-black shadow-[0_0_12px_rgba(16,185,129,0.35)]';
+            } else if (isSkipped) {
+              circleStyle = 'bg-rose-500 border-rose-550 text-zinc-950 font-black shadow-[0_0_12px_rgba(239,68,68,0.3)]';
+            } else if (isActive) {
+              circleStyle = colorMap[deptColor] || 'bg-clinical-blue border-clinical-blue text-zinc-950';
+            }
 
             return (
               <div key={dept} className="flex flex-col items-center shrink-0 w-12 text-center">
-                <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center font-bold text-xs transition-all duration-300 ${circleColor}`}>
+                <div className={`w-8 h-8 rounded-full border-[1.5px] flex items-center justify-center font-bold text-xs transition-all duration-300 ${circleStyle} font-display`}>
                   {isDone ? <CheckCircle2 className="w-4 h-4 text-zinc-950" /> : idx + 1}
                 </div>
-                <span className={`text-[9px] font-bold mt-1.5 leading-tight truncate w-14 ${
-                  isActive ? 'text-zinc-200 font-extrabold' : 'text-zinc-500'
+                <span className={`text-[9px] font-bold mt-2.5 leading-tight truncate w-14 ${
+                  isActive ? 'text-zinc-200 font-extrabold scale-105' : 'text-zinc-550'
                 }`}>
                   {dept.split(' ')[0]}
                 </span>
@@ -430,7 +563,7 @@ export default function PatientPortal() {
         </div>
       </div>
 
-      {/* 5. LIVE TOKEN STATUS CARD */}
+      {/* 5. Central Live Token Ticket details */}
       <AnimatePresence mode="wait">
         {isTokenFinished ? (
           <motion.div
@@ -438,26 +571,30 @@ export default function PatientPortal() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
-            className="bg-emerald-950/15 border border-emerald-900/50 rounded-2xl p-6 text-center clinical-shadow mb-5 text-emerald-400"
+            className="bg-emerald-500/5 border border-emerald-500/20 rounded-3xl p-6 text-center clinical-shadow mb-6 text-emerald-400"
           >
-            <CheckCircle2 className="w-12 h-12 text-clinical-emerald mx-auto mb-3 filter drop-shadow-[0_0_8px_rgba(52,211,153,0.3)]" />
-            <h2 className="text-xl font-bold text-zinc-100 mb-1">OPD Visit Completed!</h2>
-            <p className="text-xs text-zinc-400 leading-relaxed mb-4">
-              Thank you for visiting City General Hospital. All your queue tickets have been processed.
+            <CheckCircle2 className="w-12 h-12 text-clinical-emerald mx-auto mb-3 filter drop-shadow-[0_0_12px_rgba(52,211,153,0.35)] animate-bounce" />
+            <h2 className="text-lg font-bold text-zinc-150 mb-1 font-display">Hospital Journey Completed!</h2>
+            <p className="text-xs text-zinc-400 leading-relaxed mb-5 max-w-sm mx-auto">
+              Your OPD visits have been completed. All prescriptions have been dispatched. Thank you for choosing City General Hospital.
             </p>
-            <div className="bg-zinc-900/80 rounded-xl p-4 border border-zinc-800 text-left text-xs text-zinc-300 space-y-2">
-              <h4 className="font-bold text-zinc-200 mb-1">Visit Summary</h4>
-              <div className="flex justify-between border-b border-zinc-800 pb-1.5">
-                <span>Total Departments Visited:</span>
-                <span className="font-semibold text-zinc-100">{visitHistory.length}</span>
+            <div className="bg-[#08080c] rounded-2xl p-5 border border-white/[0.04] text-left text-xs text-zinc-350 space-y-3">
+              <h4 className="font-bold text-zinc-200 mb-1 font-display uppercase tracking-wider text-[10px]">Pathway Summary</h4>
+              <div className="flex justify-between border-b border-white/[0.04] pb-2 text-[11px]">
+                <span className="text-zinc-500">Departments Visited:</span>
+                <span className="font-semibold text-zinc-200">{visitHistory.length} Stations</span>
               </div>
-              <div className="flex justify-between border-b border-zinc-800 pb-1.5">
-                <span>Check-in Time:</span>
-                <span className="font-semibold text-zinc-100">{new Date(visitHistory[0]?.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+              <div className="flex justify-between border-b border-white/[0.04] pb-2 text-[11px]">
+                <span className="text-zinc-500">Check-in Time:</span>
+                <span className="font-semibold text-zinc-200">
+                  {new Date(visitHistory[0]?.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </span>
               </div>
-              <div className="flex justify-between">
-                <span>Pharmacy Complete:</span>
-                <span className="font-semibold text-zinc-100">{new Date(tokenData.completed_at || '').toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+              <div className="flex justify-between text-[11px]">
+                <span className="text-zinc-500">Completion Time:</span>
+                <span className="font-semibold text-zinc-200">
+                  {new Date(tokenData.completed_at || '').toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </span>
               </div>
             </div>
           </motion.div>
@@ -467,154 +604,162 @@ export default function PatientPortal() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
-            className="glass-panel rounded-3xl border border-zinc-800/80 p-6 clinical-shadow mb-5 card-3d"
+            className="glass-panel rounded-[32px] border border-white/[0.05] p-6 clinical-shadow mb-6 card-3d"
           >
-            {/* Header: Department Code Badge */}
-            <div className="flex items-center justify-between border-b border-zinc-800/80 pb-4 mb-4">
+            {/* Active Station & Floor Info */}
+            <div className="flex items-center justify-between border-b border-white/[0.04] pb-4 mb-4">
               <div>
-                <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Active Station</span>
-                <div className="flex items-center gap-2 mt-0.5">
-                  <span className={`px-2 py-0.5 text-xs font-bold rounded-md ${bgBorderMap[deptColor] || 'bg-zinc-900 text-zinc-300'}`}>
+                <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Target Station</span>
+                <div className="flex items-center gap-2 mt-1.5">
+                  <span className={`px-2.5 py-0.5 text-[10px] font-bold rounded-lg border uppercase tracking-wider ${badgeColorMap[deptColor] || 'bg-zinc-900 text-zinc-300'}`}>
                     {currentDeptName}
                   </span>
-                  <span className="text-xs text-zinc-400 font-semibold">
-                    Floor {tokenData.departments.floor}, {tokenData.departments.room_number}
+                  <span className="text-xs text-zinc-400 font-semibold flex items-center gap-1">
+                    <MapPin className="w-3.5 h-3.5 text-zinc-500" />
+                    <span>Floor {tokenData.departments.floor}, {tokenData.departments.room_number}</span>
                   </span>
                 </div>
               </div>
               
-              {/* Token status tag */}
-              <span className={`px-2.5 py-1 text-xs font-bold rounded-full capitalize ${
-                tokenData.status === 'called' ? 'bg-amber-950/40 border border-amber-900/50 text-amber-400 animate-pulse shadow-[0_0_8px_rgba(245,158,11,0.15)]' :
-                tokenData.status === 'in_progress' ? 'bg-emerald-950/40 border border-emerald-900/50 text-emerald-400' :
-                'bg-zinc-900 border border-zinc-800 text-zinc-400'
+              <span className={`px-3 py-1 text-[10px] font-bold rounded-full capitalize tracking-wider border ${
+                tokenData.status === 'called' ? 'bg-amber-500/10 border-amber-500/20 text-amber-450 animate-pulse shadow-[0_0_12px_rgba(245,158,11,0.12)]' :
+                tokenData.status === 'in_progress' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-450' :
+                'bg-[#08080c] border-white/[0.08] text-zinc-400'
               }`}>
                 {tokenData.status}
               </span>
             </div>
 
-            {/* Central Queue Info - 3D Inset Well */}
-            <div className="bg-zinc-950/90 border border-zinc-900 shadow-inner rounded-2xl py-6 my-4 grid grid-cols-2 gap-4 text-center">
+            {/* Glowing Digital Ticket Card */}
+            <div className="bg-[#040406] border border-white/[0.02] shadow-inner rounded-3xl py-6 my-4 grid grid-cols-2 gap-4 text-center relative overflow-hidden">
+              <div className="absolute top-[-50px] left-[-50px] w-24 h-24 bg-clinical-blue/5 rounded-full blur-2xl"></div>
+              <div className="absolute bottom-[-50px] right-[-50px] w-24 h-24 bg-clinical-teal/5 rounded-full blur-2xl"></div>
               
-              {/* Your Token */}
-              <div className="border-r border-zinc-900 flex flex-col justify-center items-center">
-                <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1">Your Token</p>
-                <h1 className="text-5xl font-extrabold text-zinc-100 tracking-tight leading-none depth-3d-text">
+              {/* Patient Token Ticket */}
+              <div className="border-r border-white/[0.04] flex flex-col justify-center items-center py-2">
+                <p className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5">Your Queue ID</p>
+                <h1 className="text-4xl font-extrabold text-zinc-100 tracking-tight leading-none depth-3d-text font-display">
                   {tokenData.token_number}
                 </h1>
                 {tokenData.is_urgent && (
-                  <span className="inline-block mt-2.5 px-2 py-0.5 bg-rose-950/40 border border-rose-900/60 text-rose-400 text-[10px] font-bold rounded uppercase">
-                    Urgent
+                  <span className="inline-block mt-3 px-2 py-0.5 bg-rose-500/10 border border-rose-500/20 text-rose-455 text-[9px] font-bold rounded uppercase tracking-wider">
+                    High Priority
                   </span>
                 )}
               </div>
 
-              {/* Serving Now */}
-              <div className="flex flex-col justify-center items-center">
-                <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1">Serving Now</p>
-                <h1 className="text-5xl font-extrabold text-clinical-teal tracking-tight leading-none depth-3d-text filter drop-shadow-[0_0_8px_rgba(45,212,191,0.3)]">
+              {/* Serving Now ID */}
+              <div className="flex flex-col justify-center items-center py-2">
+                <p className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5">Serving Now</p>
+                <h1 className="text-4xl font-extrabold text-clinical-teal tracking-tight leading-none depth-3d-text filter drop-shadow-[0_0_12px_rgba(45,212,191,0.3)] font-display">
                   {currentServingToken}
                 </h1>
               </div>
-
             </div>
 
-            {/* Bottom Row Stats */}
-            <div className="bg-zinc-900/40 rounded-2xl p-4 mt-6 grid grid-cols-2 gap-4 border border-zinc-800/80">
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-sky-950/40 text-sky-400 border border-sky-900/50 flex items-center justify-center shrink-0 shadow-inner">
-                  <User className="w-5 h-5" />
+            {/* Estimated Stats */}
+            <div className="bg-[#08080c]/50 rounded-2xl p-4 mt-6 grid grid-cols-2 gap-4 border border-white/[0.04]">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-sky-500/5 text-sky-400 border border-sky-500/10 flex items-center justify-center shrink-0 shadow-inner">
+                  <User className="w-4 h-4 text-clinical-blue" />
                 </div>
                 <div>
-                  <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider leading-tight">Patients Ahead</p>
-                  <p className="text-base font-bold text-zinc-200">{patientsAhead}</p>
+                  <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider">Patients Ahead</p>
+                  <p className="text-sm font-bold text-zinc-200 mt-0.5">{patientsAhead}</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-amber-950/40 text-amber-400 border border-amber-900/50 flex items-center justify-center shrink-0 shadow-inner">
-                  <Clock className="w-5 h-5" />
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-amber-500/5 text-amber-400 border border-amber-500/10 flex items-center justify-center shrink-0 shadow-inner">
+                  <Clock className="w-4 h-4 text-clinical-rose" />
                 </div>
                 <div>
-                  <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider leading-tight">Est. Wait Time</p>
-                  <p className="text-base font-bold text-zinc-200">{estimatedWait} min</p>
+                  <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider">Est. Wait Time</p>
+                  <p className="text-sm font-bold text-zinc-200 mt-0.5">{estimatedWait} min</p>
                 </div>
               </div>
             </div>
 
-            {/* Bottleneck Warning Banner */}
+            {/* Delay alert banner */}
             {tokenData.departments.is_bottleneck && (
-              <div className="mt-4 p-3 bg-amber-950/20 border border-amber-900/40 rounded-xl flex gap-2 items-start text-xs text-amber-400 font-medium leading-relaxed">
-                <AlertTriangle className="w-4 h-4 shrink-0 text-amber-500 mt-0.5" />
+              <div className="mt-4 p-3.5 bg-amber-500/10 border border-amber-500/20 rounded-2xl flex gap-3 items-start text-xs text-amber-400 font-medium leading-relaxed">
+                <AlertTriangle className="w-4 h-4 shrink-0 text-amber-500 mt-0.5 animate-pulse" />
                 <div>
-                  <span className="font-bold text-amber-300 block">Department Delay Alert</span>
-                  A temporary bottleneck has been flagged in this department. We apologize for the wait. The AI guide can assist with estimates.
+                  <span className="font-bold text-amber-300 block text-[11px] uppercase tracking-wider">Station Surge Alert</span>
+                  This counter is experiencing temporary equipment calibration delays. Thank you for your patience.
                 </div>
               </div>
             )}
 
-            {/* Directions / Next step hint */}
-            <div className="mt-4 p-3 bg-sky-950/20 border border-sky-900/50 rounded-xl flex items-center justify-between text-xs text-sky-400 font-semibold shadow-inner">
-              <span>Directions: Go to Floor {tokenData.departments.floor}, {tokenData.departments.room_number}</span>
-              <ArrowRight className="w-4 h-4 text-sky-400" />
+            {/* Directions hint */}
+            <div className="mt-4 p-3.5 bg-[#08080c] border border-white/[0.04] rounded-2xl flex items-center justify-between text-xs text-clinical-blue font-bold shadow-inner">
+              <span className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-clinical-teal" />
+                <span>Go to Floor {tokenData.departments.floor}, Counter {tokenData.departments.room_number}</span>
+              </span>
+              <ArrowRight className="w-4 h-4 text-clinical-blue" />
             </div>
 
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* 6. FLOATING AI ASSISTANT TRIGGER BUTTON */}
+      {/* 6. Floating AI Assistant Action Trigger */}
       <div className="fixed bottom-6 right-6 z-40">
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setChatOpen(true)}
-          className="w-14 h-14 bg-clinical-blue hover:bg-sky-400 text-zinc-950 rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(56,189,248,0.4)] hover:shadow-[0_0_22px_rgba(56,189,248,0.6)] transition-shadow cursor-pointer relative btn-3d"
+          className="w-14 h-14 bg-gradient-to-br from-clinical-blue to-clinical-teal hover:shadow-[0_0_20px_rgba(56,189,248,0.5)] text-zinc-950 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 cursor-pointer relative btn-3d"
         >
-          <Bot className="w-6 h-6 text-zinc-950" />
-          <span className="absolute -top-1 -right-1 bg-rose-500 text-white w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold animate-pulse shadow-sm">
-            AI
+          <Bot className="w-5 h-5 text-zinc-950" />
+          <span className="absolute -top-1.5 -right-1.5 bg-rose-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider shadow-md animate-pulse">
+            AI Guide
           </span>
         </motion.button>
       </div>
 
-      {/* 7. CHAT WIDGET MODAL */}
+      {/* 7. Slide-in Chat Widget Modal */}
       <AnimatePresence>
         {chatOpen && (
           <motion.div
             initial={{ opacity: 0, y: 100, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 100, scale: 0.95 }}
-            className="fixed inset-x-4 bottom-4 md:absolute md:inset-auto md:right-6 md:bottom-24 md:w-96 h-[500px] bg-zinc-900 border border-zinc-800/80 rounded-2xl shadow-2xl shadow-black/85 flex flex-col z-50 overflow-hidden"
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className="fixed inset-x-4 bottom-4 md:absolute md:inset-auto md:right-6 md:bottom-24 md:w-96 h-[510px] bg-[#0c0d16] border border-white/[0.06] rounded-3xl shadow-2xl shadow-black/85 flex flex-col z-50 overflow-hidden"
           >
-            {/* Chat Header */}
-            <div className="bg-zinc-950 text-white p-4 flex items-center justify-between border-b border-zinc-800">
-              <div className="flex items-center gap-2">
-                <Bot className="w-5 h-5 text-clinical-blue" />
+            {/* Header bar */}
+            <div className="bg-[#050508] p-4 flex items-center justify-between border-b border-white/[0.04]">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-clinical-blue/10 border border-clinical-blue/20 flex items-center justify-center text-clinical-blue">
+                  <Bot className="w-4 h-4" />
+                </div>
                 <div>
-                  <h4 className="text-sm font-bold">Hospital Guide AI</h4>
-                  <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">Queue & Logistics Assistant</p>
+                  <h4 className="text-xs font-bold text-zinc-200 font-display">Hospital Guide AI</h4>
+                  <p className="text-[9px] text-zinc-550 font-bold uppercase tracking-widest mt-0.5">Logistics & Queue Helper</p>
                 </div>
               </div>
+              
               <button 
                 onClick={() => setChatOpen(false)}
-                className="text-zinc-550 hover:text-zinc-350 text-xs font-bold px-2 py-1 rounded hover:bg-zinc-800"
+                className="text-zinc-500 hover:text-zinc-350 p-1.5 hover:bg-white/[0.04] rounded-lg transition-colors cursor-pointer"
               >
-                Close
+                <X className="w-4.5 h-4.5" />
               </button>
             </div>
 
-            {/* Chat History */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-zinc-950">
+            {/* Chat Messages */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#050508]">
               {chatHistory.map((chat, idx) => (
                 <div 
                   key={idx} 
                   className={`flex ${chat.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
-                  <div className={`max-w-[85%] rounded-xl p-3 text-xs leading-relaxed ${
+                  <div className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-xs leading-relaxed ${
                     chat.sender === 'user'
-                      ? 'bg-brand-600 text-white rounded-br-none shadow-md shadow-brand-700/10'
-                      : 'bg-zinc-900 border border-zinc-800 text-zinc-200 rounded-bl-none shadow-sm'
+                      ? 'bg-gradient-to-r from-clinical-blue to-clinical-teal text-zinc-950 font-medium rounded-br-none shadow-md'
+                      : 'bg-[#101018] border border-white/[0.04] text-zinc-300 rounded-bl-none shadow-sm'
                   }`}>
                     {chat.text}
                   </div>
@@ -623,52 +768,52 @@ export default function PatientPortal() {
               
               {chatLoading && (
                 <div className="flex justify-start">
-                  <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-3 text-xs text-zinc-500 flex items-center gap-2 rounded-bl-none">
-                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                    <span>Thinking...</span>
+                  <div className="bg-[#101018] border border-white/[0.04] rounded-2xl px-4 py-2.5 text-xs text-zinc-500 flex items-center gap-2 rounded-bl-none">
+                    <RefreshCw className="w-3 h-3 animate-spin text-clinical-blue" />
+                    <span>Analyzing queue data...</span>
                   </div>
                 </div>
               )}
               <div ref={chatEndRef} />
             </div>
 
-            {/* Quick Suggestion Prompts */}
-            <div className="p-2 border-t border-zinc-800 bg-zinc-900 flex flex-wrap gap-1">
+            {/* Quick Chips Suggestion */}
+            <div className="p-2 border-t border-white/[0.04] bg-[#0c0d16] flex flex-wrap gap-1">
               <button
                 onClick={() => handleSendMessage('Where do I go now?')}
-                className="text-[10px] bg-zinc-950 hover:bg-zinc-800 text-zinc-400 border border-zinc-800/80 px-2 py-1 rounded-md transition-colors cursor-pointer"
+                className="text-[9px] font-bold bg-[#050508] hover:bg-[#12121e] text-zinc-400 border border-white/[0.04] px-2.5 py-1.5 rounded-xl transition-all cursor-pointer"
               >
                 Where do I go?
               </button>
               <button
                 onClick={() => handleSendMessage('How much longer to wait?')}
-                className="text-[10px] bg-zinc-950 hover:bg-zinc-800 text-zinc-400 border border-zinc-800/80 px-2 py-1 rounded-md transition-colors cursor-pointer"
+                className="text-[9px] font-bold bg-[#050508] hover:bg-[#12121e] text-zinc-400 border border-white/[0.04] px-2.5 py-1.5 rounded-xl transition-all cursor-pointer"
               >
-                How much longer?
+                How long?
               </button>
               <button
                 onClick={() => handleSendMessage('मुझे कहाँ जाना है?')}
-                className="text-[10px] bg-zinc-950 hover:bg-zinc-800 text-zinc-400 border border-zinc-800/80 px-2 py-1 rounded-md transition-colors cursor-pointer"
+                className="text-[9px] font-bold bg-[#050508] hover:bg-[#12121e] text-zinc-400 border border-white/[0.04] px-2.5 py-1.5 rounded-xl transition-all cursor-pointer"
               >
                 कहाँ जाना है?
               </button>
             </div>
 
-            {/* Input Bar */}
-            <div className="p-3 border-t border-zinc-800 bg-zinc-900 flex items-center gap-2">
+            {/* Send input bar */}
+            <div className="p-3 border-t border-white/[0.04] bg-[#0c0d16] flex items-center gap-2">
               <input
                 type="text"
                 placeholder="Ask in English, Hindi, or Gujarati..."
                 value={chatMessage}
                 onChange={(e) => setChatMessage(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-                className="flex-1 px-3 py-2 rounded-lg border border-zinc-800 bg-zinc-950 text-zinc-200 placeholder-zinc-650 focus:outline-none focus:ring-1 focus:ring-clinical-blue focus:border-clinical-blue text-xs"
+                className="flex-1 px-4 py-2.5 rounded-xl border border-white/[0.06] bg-[#050508] text-zinc-200 placeholder-zinc-700 focus:outline-none focus:border-clinical-blue text-xs"
               />
               <button
                 onClick={() => handleSendMessage()}
-                className="p-2 bg-clinical-blue hover:bg-sky-400 text-zinc-950 rounded-lg transition-colors cursor-pointer font-bold shadow-sm"
+                className="p-2.5 bg-gradient-to-r from-clinical-blue to-clinical-teal text-zinc-950 rounded-xl transition-all hover:shadow-[0_0_10px_rgba(56,189,248,0.25)] cursor-pointer font-bold shadow-sm"
               >
-                <Send className="w-3.5 h-3.5" />
+                <Send className="w-3.5 h-3.5 text-zinc-950" />
               </button>
             </div>
           </motion.div>
