@@ -1453,17 +1453,50 @@ export const WaitingRoom3DCanvas: React.FC<WaitingRoom3DProps> = ({
           scene.add(humanoid);
         }
 
-        // Highlight beam under user seat
+        // Highlight spotlight & rings under user seat
         if (isUserSeat) {
+          // Inner glowing disc
           const ring = new THREE.Mesh(
             new THREE.RingGeometry(0.15, 1.5, 48),
-            new THREE.MeshBasicMaterial({ color: 0x38bdf8, side: THREE.DoubleSide, transparent: true, opacity: 0.6 })
+            new THREE.MeshBasicMaterial({ color: 0x38bdf8, side: THREE.DoubleSide, transparent: true, opacity: 0.7 })
           );
           ring.rotation.x = -Math.PI / 2;
           ring.position.set(x, 0.02, z);
           scene.add(ring);
 
+          // Outer pulsing glow ring
+          const outerRing = new THREE.Mesh(
+            new THREE.RingGeometry(1.5, 2.2, 48),
+            new THREE.MeshBasicMaterial({ color: 0x0ea5e9, side: THREE.DoubleSide, transparent: true, opacity: 0.35 })
+          );
+          outerRing.rotation.x = -Math.PI / 2;
+          outerRing.position.set(x, 0.015, z);
+          scene.add(outerRing);
+
+          // Vertical volumetric beam of light from top
+          const beamGeo = new THREE.CylinderGeometry(0.05, 1.4, 12, 24, 1, true);
+          const beamMat = new THREE.MeshBasicMaterial({
+            color: 0x38bdf8,
+            transparent: true,
+            opacity: 0.12,
+            side: THREE.DoubleSide,
+            depthWrite: false,
+            blending: THREE.AdditiveBlending,
+          });
+          const beam = new THREE.Mesh(beamGeo, beamMat);
+          beam.position.set(x, 6, z);
+          scene.add(beam);
+
+          // Dedicated overhead SpotLight shining down from ceiling directly on user
+          const userSpotLight = new THREE.SpotLight(0x38bdf8, 12, 16, Math.PI / 6, 0.4, 1.2);
+          userSpotLight.position.set(x, 12, z);
+          userSpotLight.target.position.set(x, 0, z);
+          scene.add(userSpotLight);
+          scene.add(userSpotLight.target);
+
           tweens.push(gsap.to(ring.scale, { x: 1.2, y: 1.2, duration: 1.5, repeat: -1, yoyo: true, ease: 'sine.inOut' }));
+          tweens.push(gsap.to(outerRing.scale, { x: 1.18, y: 1.18, duration: 2, repeat: -1, yoyo: true, ease: 'sine.inOut' }));
+          tweens.push(gsap.to(beamMat, { opacity: 0.18, duration: 1.8, repeat: -1, yoyo: true, ease: 'sine.inOut' }));
         }
 
         const worldPos = new THREE.Vector3(x, 3.0, z);
