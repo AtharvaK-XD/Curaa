@@ -24,9 +24,11 @@ function DemoNavBar() {
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
         {/* Brand Logo & Name */}
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-clinical-blue to-clinical-teal flex items-center justify-center text-zinc-950 font-black shadow-[0_0_15px_rgba(56,189,248,0.25)] text-base font-display">
-            C
-          </div>
+          <img 
+            src="/favicon.svg" 
+            alt="Curaa Logo" 
+            className="w-9 h-9 rounded-xl shadow-[0_0_15px_rgba(56,189,248,0.25)] object-cover" 
+          />
           <div>
             <h1 className="text-sm font-bold tracking-tight text-zinc-100 flex items-center gap-1.5">
               Curaa <span className="text-[10px] text-zinc-500 font-bold tracking-widest uppercase">OPD Logix</span>
