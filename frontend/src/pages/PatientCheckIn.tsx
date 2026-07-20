@@ -130,15 +130,15 @@ export default function PatientCheckIn() {
   };
 
   return (
-    <div className="flex-1 max-w-6xl 2xl:max-w-7xl mx-auto w-full px-6 lg:px-10 py-12 flex flex-col justify-center">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+    <div className="flex-1 max-w-6xl 2xl:max-w-7xl mx-auto w-full px-3 sm:px-6 lg:px-10 py-6 sm:py-12 flex flex-col justify-center overflow-x-hidden">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-stretch">
         
         {/* Left Side: Information & Branding (3D Styled Card) */}
         <motion.div 
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="lg:col-span-5 bg-gradient-to-br from-[#0b0c16] to-[#05060d] rounded-3xl p-8 text-white flex flex-col justify-between border border-white/[0.05] card-3d clinical-shadow"
+          className="lg:col-span-5 bg-gradient-to-br from-[#0b0c16] to-[#05060d] rounded-3xl p-5 sm:p-8 text-white flex flex-col justify-between border border-white/[0.05] card-3d clinical-shadow"
         >
           <div>
             <div className="inline-flex items-center justify-center p-3 bg-clinical-blue/10 border border-clinical-blue/20 rounded-2xl mb-6 shadow-inner depth-3d-element">
@@ -189,7 +189,7 @@ export default function PatientCheckIn() {
           initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-          className="lg:col-span-7 bg-[#0a0a10]/60 backdrop-blur-xl rounded-3xl p-8 border border-white/[0.05] clinical-shadow flex flex-col justify-between"
+          className="lg:col-span-7 bg-[#0a0a10]/60 backdrop-blur-xl rounded-3xl p-5 sm:p-8 border border-white/[0.05] clinical-shadow flex flex-col justify-between"
         >
           <div>
             <div className="flex items-center justify-between mb-8">

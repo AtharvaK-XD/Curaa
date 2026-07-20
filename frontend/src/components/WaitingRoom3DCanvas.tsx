@@ -1654,8 +1654,8 @@ export const WaitingRoom3DCanvas: React.FC<WaitingRoom3DProps> = ({
   }, [cameraView, isEmergency]);
 
   return (
-    <div className="relative w-full h-full min-h-[500px] rounded-3xl overflow-hidden shadow-2xl border border-white/[0.06] bg-[#03050b] select-none">
-      <div ref={mountRef} className="w-full h-full cursor-grab active:cursor-grabbing" />
+    <div className="relative w-full h-full min-h-[320px] sm:min-h-[480px] rounded-3xl overflow-hidden shadow-2xl border border-white/[0.06] bg-[#03050b] select-none touch-none">
+      <div ref={mountRef} className="w-full h-full cursor-grab active:cursor-grabbing touch-none" style={{ touchAction: 'none' }} />
 
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {badges.map((badge) => {
@@ -1667,9 +1667,9 @@ export const WaitingRoom3DCanvas: React.FC<WaitingRoom3DProps> = ({
               style={{ left: `${badge.x}px`, top: `${badge.y}px` }}
             >
               <div
-                className={`px-2.5 py-1 rounded-xl text-[10px] font-bold shadow-lg backdrop-blur-lg whitespace-nowrap border ${
+                className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-xl text-[9px] sm:text-[10px] font-bold shadow-lg backdrop-blur-lg whitespace-nowrap border ${
                   badge.isUser
-                    ? 'bg-sky-400 text-zinc-950 border-white shadow-[0_0_20px_rgba(56,189,248,0.7)] animate-pulse font-display text-xs'
+                    ? 'bg-sky-400 text-zinc-950 border-white shadow-[0_0_20px_rgba(56,189,248,0.7)] animate-pulse font-display text-[10px] sm:text-xs'
                     : badge.isServing
                     ? 'bg-teal-400 text-zinc-950 border-teal-200 shadow-[0_0_14px_rgba(45,212,191,0.5)] font-display'
                     : badge.label.includes('Emergency')
@@ -1686,9 +1686,10 @@ export const WaitingRoom3DCanvas: React.FC<WaitingRoom3DProps> = ({
         })}
       </div>
 
-      <div className="absolute top-4 left-4 flex items-center gap-2 bg-[#050508]/90 backdrop-blur-xl px-4 py-2.5 rounded-2xl border border-white/[0.06] text-xs font-bold text-zinc-400 shadow-xl">
-        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-        <span>🖱️ Drag to Rotate • Scroll to Zoom • Right-click to Pan</span>
+      <div className="absolute top-3 left-3 sm:top-4 sm:left-4 flex items-center gap-2 bg-[#050508]/90 backdrop-blur-xl px-3 py-1.5 sm:px-4 sm:py-2.5 rounded-xl sm:rounded-2xl border border-white/[0.06] text-[10px] sm:text-xs font-bold text-zinc-400 shadow-xl max-w-[calc(100%-24px)]">
+        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+        <span className="hidden sm:inline">🖱️ Drag to Rotate • Scroll to Zoom • Right-click to Pan</span>
+        <span className="sm:hidden">📱 Touch & Drag to Orbit • Pinch to Zoom</span>
       </div>
     </div>
   );

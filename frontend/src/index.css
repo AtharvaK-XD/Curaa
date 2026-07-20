@@ -29,6 +29,7 @@
     color: #f4f4f5;
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
   }
   
   h1, h2, h3, h4, .font-display {
@@ -147,9 +148,10 @@
   background: rgba(12, 12, 20, 0.9);
 }
 
-/* Custom scrollbar */
+/* Custom scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
   background: #050508;
@@ -162,3 +164,11 @@
   background: #2d2d3d;
 }
 
+/* Hide scrollbars for pill bars */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

@@ -204,15 +204,15 @@ export default function WaitingRoom3DPage() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="flex-1 max-w-[1800px] mx-auto w-full px-6 py-6 flex flex-col justify-between text-zinc-100"
+      className="flex-1 max-w-[1800px] mx-auto w-full px-3 sm:px-6 py-4 sm:py-6 flex flex-col justify-between text-zinc-100 overflow-x-hidden"
     >
       
       {/* 1. Header Navigation Bar & Language Selector Controls */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
+      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
         <div className="flex items-center gap-3">
           <Link
             to={tokenId ? `/patient/${tokenId}` : '/patient/demo'}
-            className="p-2.5 bg-[#0a0a10] border border-white/[0.06] hover:bg-white/[0.04] text-zinc-400 rounded-xl transition-all"
+            className="p-2.5 bg-[#0a0a10] border border-white/[0.06] hover:bg-white/[0.04] text-zinc-400 rounded-xl transition-all shrink-0"
             title="Back to Patient Portal"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -225,18 +225,18 @@ export default function WaitingRoom3DPage() {
               </span>
               <span className="text-xs text-zinc-550 font-medium font-display">&bull; {t.roomName}</span>
             </div>
-            <h2 className="text-2xl font-bold text-zinc-150 font-display mt-0.5">{t.title}</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-zinc-150 font-display mt-0.5">{t.title}</h2>
           </div>
         </div>
 
         {/* Language Selector Buttons (English / Hindi / Gujarati) */}
-        <div className="flex items-center gap-2 bg-[#0a0a10] p-1.5 rounded-2xl border border-white/[0.06] shadow-inner">
-          <Globe className="w-4 h-4 text-clinical-teal ml-2 mr-1" />
-          <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mr-2">{t.languageLabel}:</span>
+        <div className="flex items-center gap-1.5 sm:gap-2 bg-[#0a0a10] p-1.5 rounded-2xl border border-white/[0.06] shadow-inner overflow-x-auto max-w-full no-scrollbar">
+          <Globe className="w-4 h-4 text-clinical-teal ml-1.5 mr-0.5 shrink-0" />
+          <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mr-1 shrink-0">{t.languageLabel}:</span>
           
           <button
             onClick={() => setLanguage('en')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 whitespace-nowrap ${
               language === 'en'
                 ? 'bg-clinical-blue text-zinc-950 shadow-[0_0_12px_rgba(56,189,248,0.3)]'
                 : 'text-zinc-400 hover:text-zinc-200'
@@ -247,7 +247,7 @@ export default function WaitingRoom3DPage() {
 
           <button
             onClick={() => setLanguage('hi')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 whitespace-nowrap ${
               language === 'hi'
                 ? 'bg-clinical-teal text-zinc-950 shadow-[0_0_12px_rgba(45,212,191,0.3)]'
                 : 'text-zinc-400 hover:text-zinc-200'
@@ -258,7 +258,7 @@ export default function WaitingRoom3DPage() {
 
           <button
             onClick={() => setLanguage('gu')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 whitespace-nowrap ${
               language === 'gu'
                 ? 'bg-clinical-purple text-zinc-950 shadow-[0_0_12px_rgba(167,139,250,0.3)]'
                 : 'text-zinc-400 hover:text-zinc-200'
@@ -270,19 +270,19 @@ export default function WaitingRoom3DPage() {
       </div>
 
       {/* 2. Main 3D Canvas & Side HUD Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch flex-1">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-stretch flex-1">
         
         {/* LEFT / CENTER: Three.js 3D Interactive Virtual Waiting Room (8 Cols) */}
-        <div className="lg:col-span-8 flex flex-col space-y-4">
+        <div className="lg:col-span-8 flex flex-col space-y-3 sm:space-y-4">
           
           {/* Camera View Mode Controls */}
-          <div className="flex items-center justify-between bg-[#0a0a10] border border-white/[0.05] px-4 py-2.5 rounded-2xl">
-            <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">3D Camera View Angle:</span>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 bg-[#0a0a10] border border-white/[0.05] p-2.5 sm:px-4 sm:py-2.5 rounded-2xl">
+            <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest shrink-0">3D Camera View Angle:</span>
             
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto max-w-full no-scrollbar w-full sm:w-auto pb-1 sm:pb-0">
               <button
                 onClick={() => setCameraView('orbit')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold transition-all cursor-pointer shrink-0 whitespace-nowrap ${
                   cameraView === 'orbit'
                     ? 'bg-clinical-blue text-zinc-950 shadow-md'
                     : 'bg-[#050508] text-zinc-400 border border-white/[0.05] hover:text-zinc-200'
@@ -293,7 +293,7 @@ export default function WaitingRoom3DPage() {
 
               <button
                 onClick={() => setCameraView('user')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold transition-all cursor-pointer shrink-0 whitespace-nowrap ${
                   cameraView === 'user'
                     ? 'bg-clinical-teal text-zinc-950 shadow-md'
                     : 'bg-[#050508] text-zinc-400 border border-white/[0.05] hover:text-zinc-200'
@@ -304,7 +304,7 @@ export default function WaitingRoom3DPage() {
 
               <button
                 onClick={() => setCameraView('doctor')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold transition-all cursor-pointer shrink-0 whitespace-nowrap ${
                   cameraView === 'doctor'
                     ? 'bg-sky-500 text-zinc-950 shadow-md'
                     : 'bg-[#050508] text-zinc-400 border border-white/[0.05] hover:text-zinc-200'
@@ -315,7 +315,7 @@ export default function WaitingRoom3DPage() {
 
               <button
                 onClick={() => setCameraView('emergency')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold transition-all cursor-pointer shrink-0 whitespace-nowrap ${
                   cameraView === 'emergency'
                     ? 'bg-rose-500 text-white shadow-md'
                     : 'bg-[#050508] text-zinc-400 border border-white/[0.05] hover:text-zinc-200'
@@ -326,7 +326,7 @@ export default function WaitingRoom3DPage() {
             </div>
           </div>
 
-          <div className="flex-1 h-[540px] min-h-[480px]">
+          <div className="flex-1 h-[360px] sm:h-[480px] lg:h-[540px] min-h-[320px]">
             <WaitingRoom3DCanvas
               queuePosition={patientsAhead}
               totalWaiting={totalWaiting}
@@ -339,50 +339,50 @@ export default function WaitingRoom3DPage() {
         </div>
 
         {/* RIGHT: Live Patient Telemetry & Emergency Controls HUD (4 Cols) */}
-        <div className="lg:col-span-4 flex flex-col justify-between space-y-6">
+        <div className="lg:col-span-4 flex flex-col justify-between space-y-4 sm:space-y-6">
           
           {/* Active Token & ETA HUD Card */}
-          <div className="glass-panel border border-white/[0.05] rounded-3xl p-6 clinical-shadow card-3d space-y-5">
+          <div className="glass-panel border border-white/[0.05] rounded-3xl p-4 sm:p-6 clinical-shadow card-3d space-y-4 sm:space-y-5">
             
             <div className="flex items-center justify-between border-b border-white/[0.04] pb-4">
               <div>
                 <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">{t.yourToken}</span>
-                <h1 className="text-4xl font-extrabold text-zinc-100 tracking-tight depth-3d-text font-display mt-0.5">
+                <h1 className="text-3xl sm:text-4xl font-extrabold text-zinc-100 tracking-tight depth-3d-text font-display mt-0.5">
                   {tokenNum}
                 </h1>
               </div>
 
               <div className="text-right">
                 <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">{t.serving}</span>
-                <h2 className="text-2xl font-extrabold text-clinical-teal font-display filter drop-shadow-[0_0_10px_rgba(45,212,191,0.3)]">
+                <h2 className="text-xl sm:text-2xl font-extrabold text-clinical-teal font-display filter drop-shadow-[0_0_10px_rgba(45,212,191,0.3)]">
                   {servingToken}
                 </h2>
               </div>
             </div>
 
             {/* Patients Ahead & Dynamic ETA Countdown */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-[#050508] border border-white/[0.05] p-4 rounded-2xl">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
+              <div className="bg-[#050508] border border-white/[0.05] p-3 sm:p-4 rounded-2xl">
                 <div className="flex items-center gap-2 text-clinical-blue mb-1">
-                  <User className="w-4 h-4" />
+                  <User className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   <span className="text-[9px] font-bold uppercase tracking-wider text-zinc-400">{t.patientsAhead}</span>
                 </div>
-                <h3 className="text-2xl font-bold text-zinc-150 font-display">{patientsAhead}</h3>
+                <h3 className="text-xl sm:text-2xl font-bold text-zinc-150 font-display">{patientsAhead}</h3>
               </div>
 
-              <div className="bg-[#050508] border border-white/[0.05] p-4 rounded-2xl">
+              <div className="bg-[#050508] border border-white/[0.05] p-3 sm:p-4 rounded-2xl">
                 <div className="flex items-center gap-2 text-clinical-rose mb-1">
-                  <Clock className="w-4 h-4" />
+                  <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   <span className="text-[9px] font-bold uppercase tracking-wider text-zinc-400">{t.estWaitTime}</span>
                 </div>
-                <h3 className="text-2xl font-bold text-zinc-150 font-display">
+                <h3 className="text-xl sm:text-2xl font-bold text-zinc-150 font-display">
                   ~{estimatedWaitMins} <span className="text-xs text-zinc-500 font-semibold">{t.minutes}</span>
                 </h3>
               </div>
             </div>
 
             {/* Department & Floor Information */}
-            <div className="bg-[#08080c] border border-white/[0.04] p-4 rounded-2xl flex items-center justify-between text-xs">
+            <div className="bg-[#08080c] border border-white/[0.04] p-3.5 sm:p-4 rounded-2xl flex items-center justify-between text-xs">
               <div className="flex items-center gap-2.5">
                 <MapPin className="w-4 h-4 text-clinical-teal shrink-0" />
                 <div>
@@ -391,7 +391,7 @@ export default function WaitingRoom3DPage() {
                 </div>
               </div>
 
-              <span className="px-2.5 py-1 bg-clinical-teal/10 border border-clinical-teal/20 text-clinical-teal text-[10px] font-bold rounded-lg">
+              <span className="px-2.5 py-1 bg-clinical-teal/10 border border-clinical-teal/20 text-clinical-teal text-[10px] font-bold rounded-lg shrink-0">
                 {t.floor} {floorNum}, {roomNum}
               </span>
             </div>
@@ -402,20 +402,20 @@ export default function WaitingRoom3DPage() {
           </div>
 
           {/* CRITICAL EMERGENCY ROOM FAST-TRACK SWITCH */}
-          <div className={`rounded-3xl p-6 border transition-all duration-300 ${
+          <div className={`rounded-3xl p-4 sm:p-6 border transition-all duration-300 ${
             isEmergency 
               ? 'bg-rose-500/15 border-rose-500/40 shadow-[0_0_30px_rgba(244,63,94,0.25)]' 
               : 'glass-panel border-white/[0.05]'
           }`}>
-            <div className="flex items-start gap-4 mb-4">
-              <div className={`p-3 rounded-2xl shrink-0 ${isEmergency ? 'bg-rose-500 text-zinc-950 animate-bounce' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'}`}>
-                <ShieldAlert className="w-6 h-6" />
+            <div className="flex items-start gap-3 sm:gap-4 mb-4">
+              <div className={`p-2.5 sm:p-3 rounded-2xl shrink-0 ${isEmergency ? 'bg-rose-500 text-zinc-950 animate-bounce' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'}`}>
+                <ShieldAlert className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
               <div>
-                <h3 className={`text-sm font-bold font-display uppercase tracking-wider ${isEmergency ? 'text-rose-400' : 'text-zinc-200'}`}>
+                <h3 className={`text-xs sm:text-sm font-bold font-display uppercase tracking-wider ${isEmergency ? 'text-rose-400' : 'text-zinc-200'}`}>
                   {isEmergency ? t.emergencyActiveTitle : 'Emergency Fast-Track Triage'}
                 </h3>
-                <p className="text-xs text-zinc-400 mt-1 leading-relaxed">
+                <p className="text-[11px] sm:text-xs text-zinc-400 mt-1 leading-relaxed">
                   {isEmergency ? t.emergencyActiveSub : 'Critical condition requiring immediate ICU / Trauma Bay transfer.'}
                 </p>
               </div>
@@ -423,13 +423,13 @@ export default function WaitingRoom3DPage() {
 
             <button
               onClick={handleToggleEmergency}
-              className={`w-full py-3.5 px-6 rounded-2xl text-xs font-bold transition-all duration-200 flex items-center justify-center gap-2 uppercase tracking-widest font-display btn-3d cursor-pointer ${
+              className={`w-full py-3 sm:py-3.5 px-4 sm:px-6 rounded-2xl text-[11px] sm:text-xs font-bold transition-all duration-200 flex items-center justify-center gap-2 uppercase tracking-widest font-display btn-3d cursor-pointer ${
                 isEmergency
                   ? 'bg-rose-600 hover:bg-rose-500 text-white shadow-lg'
                   : 'bg-rose-500/15 hover:bg-rose-500/25 text-rose-400 border border-rose-500/30'
               }`}
             >
-              <AlertTriangle className="w-4 h-4 fill-current" />
+              <AlertTriangle className="w-4 h-4 fill-current shrink-0" />
               <span>{isEmergency ? t.emergencyUndo : t.emergencyBtn}</span>
             </button>
           </div>
