@@ -1434,8 +1434,7 @@ export const WaitingRoom3DCanvas: React.FC<WaitingRoom3DProps> = ({
     composer.addPass(bloomPass);
 
     // SMAA — high quality anti-aliasing
-    const pixelRatio = renderer.getPixelRatio();
-    const smaaPass = new SMAAPass(width * pixelRatio, height * pixelRatio);
+    const smaaPass = new SMAAPass();
     composer.addPass(smaaPass);
 
     // Output — handles tone mapping and color space
