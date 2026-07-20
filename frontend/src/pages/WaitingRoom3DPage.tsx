@@ -196,6 +196,9 @@ export default function WaitingRoom3DPage() {
   const roomNum = tokenData?.departments?.room_number || 'Room 305';
   const floorNum = tokenData?.departments?.floor || 3;
 
+  // Camera Preset View state: 'orbit' | 'user' | 'doctor' | 'emergency'
+  const [cameraView, setCameraView] = useState<'orbit' | 'user' | 'doctor' | 'emergency'>('orbit');
+
   return (
     <motion.div 
       initial={{ opacity: 0 }}
@@ -270,14 +273,69 @@ export default function WaitingRoom3DPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch flex-1">
         
         {/* LEFT / CENTER: Three.js 3D Interactive Virtual Waiting Room (8 Cols) */}
-        <div className="lg:col-span-8 flex flex-col h-[520px] lg:h-auto min-h-[480px]">
-          <WaitingRoom3DCanvas
-            queuePosition={patientsAhead}
-            totalWaiting={totalWaiting}
-            tokenNumber={tokenNum}
-            servingToken={servingToken}
-            isEmergency={isEmergency}
-          />
+        <div className="lg:col-span-8 flex flex-col space-y-4">
+          
+          {/* Camera View Mode Controls */}
+          <div className="flex items-center justify-between bg-[#0a0a10] border border-white/[0.05] px-4 py-2.5 rounded-2xl">
+            <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">3D Camera View Angle:</span>
+            
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setCameraView('orbit')}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  cameraView === 'orbit'
+                    ? 'bg-clinical-blue text-zinc-950 shadow-md'
+                    : 'bg-[#050508] text-zinc-400 border border-white/[0.05] hover:text-zinc-200'
+                }`}
+              >
+                🎥 Orbit View
+              </button>
+
+              <button
+                onClick={() => setCameraView('user')}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  cameraView === 'user'
+                    ? 'bg-clinical-teal text-zinc-950 shadow-md'
+                    : 'bg-[#050508] text-zinc-400 border border-white/[0.05] hover:text-zinc-200'
+                }`}
+              >
+                👤 Focus On Me
+              </button>
+
+              <button
+                onClick={() => setCameraView('doctor')}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  cameraView === 'doctor'
+                    ? 'bg-sky-500 text-zinc-950 shadow-md'
+                    : 'bg-[#050508] text-zinc-400 border border-white/[0.05] hover:text-zinc-200'
+                }`}
+              >
+                🚪 Doctor Desk
+              </button>
+
+              <button
+                onClick={() => setCameraView('emergency')}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  cameraView === 'emergency'
+                    ? 'bg-rose-500 text-white shadow-md'
+                    : 'bg-[#050508] text-zinc-400 border border-white/[0.05] hover:text-zinc-200'
+                }`}
+              >
+                🚨 Emergency Bay
+              </button>
+            </div>
+          </div>
+
+          <div className="flex-1 h-[540px] min-h-[480px]">
+            <WaitingRoom3DCanvas
+              queuePosition={patientsAhead}
+              totalWaiting={totalWaiting}
+              userTokenNumber={tokenNum}
+              servingTokenNumber={servingToken}
+              isEmergency={isEmergency}
+              cameraView={cameraView}
+            />
+          </div>
         </div>
 
         {/* RIGHT: Live Patient Telemetry & Emergency Controls HUD (4 Cols) */}
