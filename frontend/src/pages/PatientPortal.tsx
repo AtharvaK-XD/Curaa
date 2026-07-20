@@ -731,6 +731,16 @@ export default function PatientPortal() {
               <ArrowRight className="w-4 h-4 text-clinical-blue" />
             </div>
 
+            {/* Launch 3D Virtual Lounge Button */}
+            <Link
+              to={tokenData ? `/waiting-room/${tokenData.id}` : '/waiting-room'}
+              className="mt-3 w-full bg-gradient-to-r from-clinical-blue/20 to-clinical-teal/20 hover:from-clinical-blue/30 hover:to-clinical-teal/30 border border-clinical-blue/30 text-clinical-blue font-bold py-3 px-4 rounded-2xl flex items-center justify-center gap-2 text-xs transition-all cursor-pointer font-display shadow-lg"
+            >
+              <Sparkles className="w-4 h-4 text-clinical-teal animate-pulse" />
+              <span>Launch 3D VR Hospital Waiting Room</span>
+              <ArrowRight className="w-4 h-4 text-clinical-blue" />
+            </Link>
+
           </motion.div>
         )}
       </AnimatePresence>
