@@ -190,7 +190,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="flex-1 max-w-7xl mx-auto w-full px-6 py-8 text-zinc-100">
+    <div className="flex-1 max-w-[1800px] mx-auto w-full px-6 lg:px-10 py-8 text-zinc-100">
       
       {/* Header and Sync controls */}
       <div className="flex flex-col md:flex-row items-center justify-between mb-8 gap-4">

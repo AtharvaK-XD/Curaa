@@ -21,7 +21,7 @@ function DemoNavBar() {
 
   return (
     <div className="bg-[#050508]/80 border-b border-white/[0.04] py-3.5 px-6 sticky top-0 z-50 backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.4)]">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="max-w-[1800px] w-full mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
         {/* Brand Logo & Name */}
         <div className="flex items-center gap-3">
           <img 

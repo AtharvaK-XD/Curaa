@@ -130,7 +130,7 @@ export default function PatientCheckIn() {
   };
 
   return (
-    <div className="flex-1 max-w-5xl mx-auto w-full px-6 py-12 flex flex-col justify-center">
+    <div className="flex-1 max-w-6xl 2xl:max-w-7xl mx-auto w-full px-6 lg:px-10 py-12 flex flex-col justify-center">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
         
         {/* Left Side: Information & Branding (3D Styled Card) */}

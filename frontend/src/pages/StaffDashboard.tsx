@@ -315,7 +315,7 @@ export default function StaffDashboard() {
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="flex-1 max-w-7xl mx-auto w-full px-6 py-8 text-zinc-100"
+      className="flex-1 max-w-[1800px] mx-auto w-full px-6 lg:px-10 py-8 text-zinc-100"
     >
       
       {/* Header and Desk Select panel */}

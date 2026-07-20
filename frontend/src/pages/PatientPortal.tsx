@@ -445,7 +445,7 @@ export default function PatientPortal() {
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="flex-1 max-w-xl mx-auto w-full px-4 py-8 flex flex-col justify-between relative text-zinc-100"
+      className="flex-1 max-w-2xl 2xl:max-w-3xl mx-auto w-full px-4 md:px-8 py-8 flex flex-col justify-between relative text-zinc-100"
     >
       
       {/* 1. Connection Status Toast */}
