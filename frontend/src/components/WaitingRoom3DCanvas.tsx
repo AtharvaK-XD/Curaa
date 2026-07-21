@@ -606,10 +606,14 @@ function createHumanoid(
   const group = new THREE.Group();
   const idx = seatIndex || 0;
 
-  const skinMat = new THREE.MeshStandardMaterial({
+  // Realistic Subsurface Physical Skin Material
+  const skinMat = new THREE.MeshPhysicalMaterial({
     color: skinColor,
-    roughness: 0.50,
-    metalness: 0.02,
+    roughness: 0.45,
+    metalness: 0.01,
+    clearcoat: 0.25,
+    clearcoatRoughness: 0.3,
+    reflectivity: 0.5,
     ...(isHighlight && emissiveColor ? { emissive: emissiveColor, emissiveIntensity: emissiveIntensity || 0.4 } : {}),
   });
 
@@ -630,6 +634,7 @@ function createHumanoid(
   });
 
   const shoeMat = new THREE.MeshStandardMaterial({ color: 0x1a1a2e, roughness: 0.35, metalness: 0.1 });
+  const soleMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.8 });
 
   const hairColors = [0x0a0a0a, 0x1a0a00, 0x2c1508, 0x0a0a0a, 0x3d2514, 0x100e0a, 0x1a0800, 0x0c0c0c];
   const hairMat = new THREE.MeshStandardMaterial({ color: hairColors[idx % hairColors.length], roughness: 0.85 });
@@ -641,41 +646,58 @@ function createHumanoid(
   group.add(hips);
 
   // Thighs
-  const thighL = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.12, 0.55, 12), pantsMat);
+  const thighL = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.12, 0.55, 14), pantsMat);
   thighL.position.set(-0.16, 0.1, 0.28);
   thighL.rotation.x = Math.PI / 2;
   thighL.castShadow = true;
   group.add(thighL);
 
-  const thighR = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.12, 0.55, 12), pantsMat);
+  const thighR = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.12, 0.55, 14), pantsMat);
   thighR.position.set(0.16, 0.1, 0.28);
   thighR.rotation.x = Math.PI / 2;
   thighR.castShadow = true;
   group.add(thighR);
 
+  // Knee Caps
+  const kneeL = new THREE.Mesh(new THREE.SphereGeometry(0.11, 10, 10), pantsMat);
+  kneeL.position.set(-0.16, 0.08, 0.52);
+  group.add(kneeL);
+
+  const kneeR = new THREE.Mesh(new THREE.SphereGeometry(0.11, 10, 10), pantsMat);
+  kneeR.position.set(0.16, 0.08, 0.52);
+  group.add(kneeR);
+
   // Shins
-  const shinL = new THREE.Mesh(new THREE.CylinderGeometry(0.10, 0.085, 0.52, 12), pantsMat);
+  const shinL = new THREE.Mesh(new THREE.CylinderGeometry(0.10, 0.085, 0.52, 14), pantsMat);
   shinL.position.set(-0.16, -0.15, 0.52);
   shinL.castShadow = true;
   group.add(shinL);
 
-  const shinR = new THREE.Mesh(new THREE.CylinderGeometry(0.10, 0.085, 0.52, 12), pantsMat);
+  const shinR = new THREE.Mesh(new THREE.CylinderGeometry(0.10, 0.085, 0.52, 14), pantsMat);
   shinR.position.set(0.16, -0.15, 0.52);
   shinR.castShadow = true;
   group.add(shinR);
 
-  // Shoes
+  // Shoes Uppers & Soles
   const shoeL = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.08, 0.26), shoeMat);
   shoeL.position.set(-0.16, -0.42, 0.56);
   shoeL.castShadow = true;
   group.add(shoeL);
+
+  const soleL = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.03, 0.28), soleMat);
+  soleL.position.set(-0.16, -0.46, 0.56);
+  group.add(soleL);
 
   const shoeR = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.08, 0.26), shoeMat);
   shoeR.position.set(0.16, -0.42, 0.56);
   shoeR.castShadow = true;
   group.add(shoeR);
 
-  // Torso
+  const soleR = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.03, 0.28), soleMat);
+  soleR.position.set(0.16, -0.46, 0.56);
+  group.add(soleR);
+
+  // Torso & Chest Contour
   const torsoProfile = [
     new THREE.Vector2(0, 0),
     new THREE.Vector2(0.22, 0.03),
@@ -687,7 +709,7 @@ function createHumanoid(
     new THREE.Vector2(0.10, 0.67),
     new THREE.Vector2(0, 0.70),
   ];
-  const torso = new THREE.Mesh(new THREE.LatheGeometry(torsoProfile, 20), shirtMat);
+  const torso = new THREE.Mesh(new THREE.LatheGeometry(torsoProfile, 24), shirtMat);
   torso.position.y = 0.23;
   torso.castShadow = true;
   group.add(torso);
@@ -716,7 +738,7 @@ function createHumanoid(
   group.add(collar);
 
   // Neck & Head
-  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.10, 0.14, 12), skinMat);
+  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.10, 0.14, 14), skinMat);
   neck.position.y = 1.02;
   group.add(neck);
 
@@ -736,6 +758,17 @@ function createHumanoid(
   head.castShadow = true;
   group.add(head);
 
+  // Ears
+  const earL = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.035, 0.06, 8), skinMat);
+  earL.rotation.z = Math.PI / 2;
+  earL.position.set(-0.19, 1.28, 0.02);
+  group.add(earL);
+
+  const earR = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.035, 0.06, 8), skinMat);
+  earR.rotation.z = -Math.PI / 2;
+  earR.position.set(0.19, 1.28, 0.02);
+  group.add(earR);
+
   // Head micro-movement animation
   if (tweens) {
     tweens.push(gsap.to(head.rotation, {
@@ -749,9 +782,10 @@ function createHumanoid(
     }));
   }
 
-  // Facial features (eyes, eyebrows, nose)
+  // Facial features (eyes, eyebrows, nose, mouth, irises)
   const eyeMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.3 });
-  const eyeWhiteMat = new THREE.MeshStandardMaterial({ color: 0xe8e8e8, roughness: 0.4 });
+  const eyeWhiteMat = new THREE.MeshStandardMaterial({ color: 0xf0f0f0, roughness: 0.3 });
+  const irisMat = new THREE.MeshStandardMaterial({ color: 0x0c0c0c, roughness: 0.1 });
   const eyeGeo = new THREE.SphereGeometry(0.028, 8, 8);
   const eyeWhiteGeo = new THREE.SphereGeometry(0.022, 8, 8);
 
@@ -761,6 +795,9 @@ function createHumanoid(
   const lWhite = new THREE.Mesh(eyeWhiteGeo, eyeWhiteMat);
   lWhite.position.set(-0.065, 1.29, 0.165);
   group.add(lWhite);
+  const lPupil = new THREE.Mesh(new THREE.SphereGeometry(0.012, 6, 6), irisMat);
+  lPupil.position.set(-0.065, 1.29, 0.178);
+  group.add(lPupil);
 
   const rEye = new THREE.Mesh(eyeGeo, eyeMat);
   rEye.position.set(0.065, 1.29, 0.155);
@@ -768,11 +805,33 @@ function createHumanoid(
   const rWhite = new THREE.Mesh(eyeWhiteGeo, eyeWhiteMat);
   rWhite.position.set(0.065, 1.29, 0.165);
   group.add(rWhite);
+  const rPupil = new THREE.Mesh(new THREE.SphereGeometry(0.012, 6, 6), irisMat);
+  rPupil.position.set(0.065, 1.29, 0.178);
+  group.add(rPupil);
 
+  // 3D Eyebrows
+  const browMat = hairMat;
+  const browL = new THREE.Mesh(new THREE.BoxGeometry(0.045, 0.012, 0.015), browMat);
+  browL.position.set(-0.065, 1.325, 0.17);
+  browL.rotation.z = 0.05;
+  group.add(browL);
+
+  const browR = new THREE.Mesh(new THREE.BoxGeometry(0.045, 0.012, 0.015), browMat);
+  browR.position.set(0.065, 1.325, 0.17);
+  browR.rotation.z = -0.05;
+  group.add(browR);
+
+  // Nose
   const nose = new THREE.Mesh(new THREE.ConeGeometry(0.02, 0.055, 6), skinMat);
   nose.rotation.x = Math.PI / 2;
   nose.position.set(0, 1.24, 0.19);
   group.add(nose);
+
+  // Lips / Mouth Contour
+  const lipMat = new THREE.MeshStandardMaterial({ color: 0xa86058, roughness: 0.6 });
+  const mouth = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.012, 0.015), lipMat);
+  mouth.position.set(0, 1.18, 0.185);
+  group.add(mouth);
 
   // Hair styles
   const hairStyle = idx % 4;
@@ -809,7 +868,7 @@ function createHumanoid(
     group.add(cap);
   }
 
-  // Spectacles / Glasses
+  // Spectacles / Glasses with side temple arms
   if (idx % 3 === 1) {
     const glassFrameMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.8, roughness: 0.2 });
     const lensMat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, transparent: true, opacity: 0.3, transmission: 0.8 });
@@ -827,6 +886,14 @@ function createHumanoid(
     const bridge = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.01, 0.01), glassFrameMat);
     bridge.position.set(0, 1.29, 0.18);
     group.add(bridge);
+
+    const gArmL = new THREE.Mesh(new THREE.BoxGeometry(0.01, 0.01, 0.16), glassFrameMat);
+    gArmL.position.set(-0.11, 1.29, 0.09);
+    group.add(gArmL);
+
+    const gArmR = new THREE.Mesh(new THREE.BoxGeometry(0.01, 0.01, 0.16), glassFrameMat);
+    gArmR.position.set(0.11, 1.29, 0.09);
+    group.add(gArmR);
   }
 
   // Smart Phone in hand
@@ -850,28 +917,47 @@ function createHumanoid(
     group.add(phoneScreen);
   }
 
-  // Upper Arms & Forearms
-  const upperArmL = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.075, 0.38, 10), shirtMat);
+  // Shoulders & Arms
+  const shoulderL = new THREE.Mesh(new THREE.SphereGeometry(0.08, 12, 12), shirtMat);
+  shoulderL.position.set(-0.30, 0.88, 0);
+  group.add(shoulderL);
+
+  const shoulderR = new THREE.Mesh(new THREE.SphereGeometry(0.08, 12, 12), shirtMat);
+  shoulderR.position.set(0.30, 0.88, 0);
+  group.add(shoulderR);
+
+  const upperArmL = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.075, 0.38, 12), shirtMat);
   upperArmL.position.set(-0.36, 0.72, 0.05);
   upperArmL.rotation.z = 0.25;
   upperArmL.castShadow = true;
   group.add(upperArmL);
 
-  const upperArmR = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.075, 0.38, 10), shirtMat);
+  const upperArmR = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.075, 0.38, 12), shirtMat);
   upperArmR.position.set(0.36, 0.72, 0.05);
   upperArmR.rotation.z = -0.25;
   upperArmR.castShadow = true;
   group.add(upperArmR);
 
-  const forearmL = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.065, 0.34, 10), skinMat);
+  const forearmL = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.065, 0.34, 12), skinMat);
   forearmL.position.set(-0.32, 0.42, 0.22);
   forearmL.rotation.x = Math.PI / 3;
   group.add(forearmL);
 
-  const forearmR = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.065, 0.34, 10), skinMat);
+  const forearmR = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.065, 0.34, 12), skinMat);
   forearmR.position.set(0.32, 0.42, 0.22);
   forearmR.rotation.x = Math.PI / 3;
   group.add(forearmR);
+
+  // Sculpted Hands
+  const handL = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.05, 0.12), skinMat);
+  handL.position.set(-0.30, 0.30, 0.32);
+  handL.rotation.x = 0.4;
+  group.add(handL);
+
+  const handR = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.05, 0.12), skinMat);
+  handR.position.set(0.30, 0.30, 0.32);
+  handR.rotation.x = 0.4;
+  group.add(handR);
 
   group.userData = {
     thighL,
@@ -1269,15 +1355,16 @@ function createDoorway(isEmergency: boolean): THREE.Group {
   doorR.position.set(0.85, 0, 0);
   doorGroup.add(doorR);
 
-  // Door handles
+  // Door handles (attached to sliding door panels)
   const handleMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, metalness: 0.95, roughness: 0.05 });
   const hL = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.8, 8), handleMat);
-  hL.position.set(-0.15, 0, 0.08);
-  doorGroup.add(hL);
-
+  hL.position.set(0.70, 0, 0.04);
+  doorL.add(hL);
   const hR = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.8, 8), handleMat);
-  hR.position.set(0.15, 0, 0.08);
-  doorGroup.add(hR);
+  hR.position.set(-0.70, 0, 0.04);
+  doorR.add(hR);
+
+  doorGroup.userData = { doorL, doorR };
 
   // Illuminated Header Sign Box
   const signColor = isEmergency ? 0xdc2626 : 0x0284c7;
@@ -1322,6 +1409,7 @@ export const WaitingRoom3DCanvas: React.FC<WaitingRoom3DProps> = ({
   const emergencyLightRef = useRef<THREE.PointLight | null>(null);
   const tvScreenMeshRef = useRef<THREE.Mesh | null>(null);
   const clockRef = useRef<THREE.Group | null>(null);
+  const erDoorRef = useRef<THREE.Group | null>(null);
   const userHumanoidRef = useRef<{ group: THREE.Group; seatPos: THREE.Vector3 } | null>(null);
   const isWalkingRef = useRef<boolean>(false);
   const walkPhaseRef = useRef<number>(0);
@@ -1561,6 +1649,7 @@ export const WaitingRoom3DCanvas: React.FC<WaitingRoom3DProps> = ({
     const erDoor = createDoorway(true);
     erDoor.position.set(9, 3, -roomDepth / 2 + 0.1);
     scene.add(erDoor);
+    erDoorRef.current = erDoor;
 
     // MEDICAL WALL POSTERS
     const poster1Mat = new THREE.MeshStandardMaterial({ map: createPosterTexture('hygiene'), roughness: 0.3 });
@@ -1915,7 +2004,7 @@ export const WaitingRoom3DCanvas: React.FC<WaitingRoom3DProps> = ({
     }
   }, [cameraView]);
 
-  // Handle Emergency Flash Light Intensity & Walking Animation to Emergency Gate
+  // Handle Emergency Flash Light Intensity & Walking Animation into Emergency Room
   useEffect(() => {
     if (emergencyLightRef.current) {
       emergencyLightRef.current.intensity = isEmergency ? 8 : 0;
@@ -1925,26 +2014,37 @@ export const WaitingRoom3DCanvas: React.FC<WaitingRoom3DProps> = ({
     const userH = userHumanoidRef.current.group;
     const seatPos = userHumanoidRef.current.seatPos;
     const emergencyGatePos = new THREE.Vector3(9, 0, -13.5);
+    const insideRoomPos = new THREE.Vector3(9, 0, -15.5);
     const { thighL, thighR, shinL, shinR, shoeL, shoeR, upperArmL, upperArmR } = userH.userData;
 
+    const erDoor = erDoorRef.current;
+    const doorL = erDoor?.userData?.doorL;
+    const doorR = erDoor?.userData?.doorR;
+
     if (isEmergency) {
+      userH.visible = true;
+      userH.scale.set(1, 1, 1);
+
       const dx = emergencyGatePos.x - userH.position.x;
       const dz = emergencyGatePos.z - userH.position.z;
       const targetAngle = Math.atan2(dx, dz);
 
       gsap.timeline()
+        // 1. Stand up from chair
         .to([thighL.rotation, thighR.rotation], { x: 0, duration: 0.4, ease: 'power1.inOut' })
+        .to([upperArmL.rotation, upperArmR.rotation], { x: 0, duration: 0.4, ease: 'power1.inOut' }, 0)
         .to(userH.position, { y: 0.82, duration: 0.4, ease: 'power1.inOut' }, 0)
         .to([shinL.position, shinR.position], { z: 0, y: -0.42, duration: 0.4, ease: 'power1.inOut' }, 0)
         .to([shoeL.position, shoeR.position], { z: 0.05, y: -0.70, duration: 0.4, ease: 'power1.inOut' }, 0)
         .to(userH.rotation, { y: targetAngle, duration: 0.4, ease: 'power1.inOut' })
+        // 2. Walk to front of Emergency Gate
         .call(() => {
           isWalkingRef.current = true;
         })
         .to(userH.position, {
           x: emergencyGatePos.x,
           z: emergencyGatePos.z,
-          duration: 3.5,
+          duration: 3.2,
           ease: 'power1.inOut',
           onUpdate: () => {
             const userBadge = seatPositionsRef.current.find((s) => s.isUser);
@@ -1952,47 +2052,103 @@ export const WaitingRoom3DCanvas: React.FC<WaitingRoom3DProps> = ({
               userBadge.position.copy(userH.position).add(new THREE.Vector3(0, 2.3, 0));
             }
           },
-          onComplete: () => {
-            isWalkingRef.current = false;
-            gsap.to(userH.rotation, { y: 0, duration: 0.4 });
-            if (thighL && thighR) {
-              thighL.rotation.x = 0;
-              thighR.rotation.x = 0;
-            }
-            if (shinL && shinR) {
-              shinL.rotation.x = 0;
-              shinR.rotation.x = 0;
-            }
-            if (upperArmL && upperArmR) {
-              upperArmL.rotation.x = 0;
-              upperArmR.rotation.x = 0;
+        })
+        // 3. Open Emergency Doors as character reaches gate
+        .call(() => {
+          gsap.to(userH.rotation, { y: 0, duration: 0.3 });
+          if (doorL && doorR) {
+            gsap.to(doorL.position, { x: -2.3, duration: 0.7, ease: 'power2.out' });
+            gsap.to(doorR.position, { x: 2.3, duration: 0.7, ease: 'power2.out' });
+          }
+        })
+        .to({}, { duration: 0.4 })
+        // 4. Walk inside room and disappear
+        .to(userH.position, {
+          z: insideRoomPos.z,
+          duration: 1.4,
+          ease: 'power1.in',
+          onUpdate: () => {
+            const userBadge = seatPositionsRef.current.find((s) => s.isUser);
+            if (userBadge) {
+              userBadge.position.copy(userH.position).add(new THREE.Vector3(0, 2.3, 0));
             }
           },
-        });
-    } else {
-      if (userH.position.distanceTo(seatPos) > 0.5) {
-        const dx = seatPos.x - userH.position.x;
-        const dz = seatPos.z - userH.position.z;
-        const targetAngle = Math.atan2(dx, dz);
+        })
+        .to(userH.scale, {
+          x: 0,
+          y: 0,
+          z: 0,
+          duration: 0.5,
+          ease: 'power2.in',
+          onComplete: () => {
+            isWalkingRef.current = false;
+            userH.visible = false;
 
+            // Close sliding doors behind entered patient
+            if (doorL && doorR) {
+              gsap.to(doorL.position, { x: -0.85, duration: 0.8, ease: 'power2.inOut' });
+              gsap.to(doorR.position, { x: 0.85, duration: 0.8, ease: 'power2.inOut' });
+            }
+
+            // Update badge text to entered status
+            const userBadge = seatPositionsRef.current.find((s) => s.isUser);
+            if (userBadge) {
+              userBadge.statusLabel = `🏥 Entered Trauma Bay`;
+            }
+          },
+        }, '-=0.5');
+    } else {
+      // Emergency Mode OFF: Return to Lounge
+      userH.visible = true;
+      const userBadge = seatPositionsRef.current.find((s) => s.isUser);
+      if (userBadge) {
+        userBadge.statusLabel = `📍 YOU — ${userTokenNumber}`;
+      }
+
+      if (userH.position.distanceTo(seatPos) > 0.5) {
         gsap.timeline()
-          .to(userH.rotation, { y: targetAngle, duration: 0.4, ease: 'power1.inOut' })
+          // 1. Open Emergency Doors
+          .call(() => {
+            if (doorL && doorR) {
+              gsap.to(doorL.position, { x: -2.3, duration: 0.6, ease: 'power2.out' });
+              gsap.to(doorR.position, { x: 2.3, duration: 0.6, ease: 'power2.out' });
+            }
+            userH.position.set(emergencyGatePos.x, 0.82, insideRoomPos.z);
+            gsap.to(userH.scale, { x: 1, y: 1, z: 1, duration: 0.4 });
+            const dx = seatPos.x - emergencyGatePos.x;
+            const dz = seatPos.z - emergencyGatePos.z;
+            userH.rotation.y = Math.atan2(dx, dz);
+          })
+          .to({}, { duration: 0.4 })
+          // 2. Walk out of room onto lounge floor
           .call(() => {
             isWalkingRef.current = true;
           })
           .to(userH.position, {
+            z: emergencyGatePos.z,
+            duration: 1.0,
+            ease: 'linear',
+            onComplete: () => {
+              if (doorL && doorR) {
+                gsap.to(doorL.position, { x: -0.85, duration: 0.7, ease: 'power2.inOut' });
+                gsap.to(doorR.position, { x: 0.85, duration: 0.7, ease: 'power2.inOut' });
+              }
+            },
+          })
+          // 3. Walk back to assigned seat
+          .to(userH.position, {
             x: seatPos.x,
             z: seatPos.z,
-            duration: 3.5,
+            duration: 3.2,
             ease: 'power1.inOut',
             onUpdate: () => {
-              const userBadge = seatPositionsRef.current.find((s) => s.isUser);
               if (userBadge) {
                 userBadge.position.copy(userH.position).add(new THREE.Vector3(0, 2.3, 0));
               }
             },
             onComplete: () => {
               isWalkingRef.current = false;
+              // Sit back down
               gsap.timeline()
                 .to(userH.rotation, { y: 0, duration: 0.4 })
                 .to([thighL.rotation, thighR.rotation], { x: Math.PI / 2, duration: 0.5, ease: 'power1.inOut' }, 0)
