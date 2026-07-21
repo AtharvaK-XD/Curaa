@@ -527,65 +527,177 @@ function createPosterTexture(type: 'hygiene' | 'guide' | 'emergency'): THREE.Can
 }
 
 // ══════════════════════════════════════════════════════════════
-// ██  OUTDOOR SCENERY (Window Backdrop) & LIGHT SHAFTS  ██
+// ██  INNER ROOM FRAMED SCENIC PHOTOS & ARTWORK  ██
 // ══════════════════════════════════════════════════════════════
 
-function createOutdoorScenery(): THREE.Mesh {
-  const w = 512, h = 256;
+function createScenicPhotoTexture(type: 'city' | 'nature' | 'abstract'): THREE.CanvasTexture {
+  const w = 512, h = 384;
   const canvas = document.createElement('canvas');
   canvas.width = w;
   canvas.height = h;
   const ctx = canvas.getContext('2d')!;
 
-  const skyGrad = ctx.createLinearGradient(0, 0, 0, h);
-  skyGrad.addColorStop(0, '#06101e');
-  skyGrad.addColorStop(0.30, '#0f2040');
-  skyGrad.addColorStop(0.55, '#1a3558');
-  skyGrad.addColorStop(0.72, '#3a5a7a');
-  skyGrad.addColorStop(0.82, '#8a7060');
-  skyGrad.addColorStop(0.90, '#c49060');
-  skyGrad.addColorStop(1.0, '#e0a878');
-  ctx.fillStyle = skyGrad;
-  ctx.fillRect(0, 0, w, h);
+  if (type === 'city') {
+    // City Skyline at twilight
+    const grad = ctx.createLinearGradient(0, 0, 0, h);
+    grad.addColorStop(0, '#06101e');
+    grad.addColorStop(0.35, '#0f2040');
+    grad.addColorStop(0.65, '#1e3a5f');
+    grad.addColorStop(0.85, '#8a6050');
+    grad.addColorStop(1.0, '#d98860');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
 
-  for (let i = 0; i < 60; i++) {
-    const sx = Math.random() * w;
-    const sy = Math.random() * h * 0.45;
-    ctx.fillStyle = `rgba(255, 255, 255, ${0.25 + Math.random() * 0.55})`;
-    ctx.beginPath();
-    ctx.arc(sx, sy, 0.4 + Math.random() * 0.6, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  const buildings = [
-    { x: 5, w: 38, h: 55 }, { x: 50, w: 28, h: 95 }, { x: 82, w: 42, h: 70 },
-    { x: 130, w: 32, h: 125 }, { x: 168, w: 48, h: 50 }, { x: 222, w: 36, h: 88 },
-    { x: 264, w: 52, h: 115 }, { x: 322, w: 28, h: 65 }, { x: 355, w: 42, h: 135 },
-    { x: 402, w: 38, h: 80 }, { x: 445, w: 46, h: 60 }, { x: 495, w: 20, h: 100 },
-  ];
-
-  for (const b of buildings) {
-    ctx.fillStyle = '#050a16';
-    ctx.fillRect(b.x, h - b.h, b.w, b.h);
-
-    for (let wy = h - b.h + 8; wy < h - 6; wy += 10) {
-      for (let wx = b.x + 4; wx < b.x + b.w - 5; wx += 8) {
-        if (Math.random() > 0.35) {
-          ctx.fillStyle = Math.random() > 0.3 ? '#fbbf24' : '#f59e0b';
-          ctx.globalAlpha = 0.5 + Math.random() * 0.5;
-          ctx.fillRect(wx, wy, 3, 4);
-        }
-      }
+    // Stars
+    ctx.fillStyle = '#ffffff';
+    for (let i = 0; i < 50; i++) {
+      ctx.globalAlpha = 0.3 + Math.random() * 0.7;
+      ctx.beginPath();
+      ctx.arc(Math.random() * w, Math.random() * h * 0.45, 0.8 + Math.random() * 0.8, 0, Math.PI * 2);
+      ctx.fill();
     }
     ctx.globalAlpha = 1;
+
+    // City Silhouette
+    const bldgs = [
+      { x: 5, w: 38, h: 220 }, { x: 50, w: 28, h: 290 }, { x: 82, w: 42, h: 240 },
+      { x: 130, w: 32, h: 325 }, { x: 168, w: 48, h: 200 }, { x: 222, w: 36, h: 268 },
+      { x: 264, w: 52, h: 315 }, { x: 322, w: 28, h: 225 }, { x: 355, w: 42, h: 345 },
+      { x: 402, w: 38, h: 250 }, { x: 445, w: 46, h: 210 }, { x: 495, w: 20, h: 280 },
+    ];
+
+    for (const b of bldgs) {
+      ctx.fillStyle = '#050a16';
+      ctx.fillRect(b.x, h - b.h, b.w, b.h);
+
+      for (let wy = h - b.h + 10; wy < h - 8; wy += 12) {
+        for (let wx = b.x + 4; wx < b.x + b.w - 5; wx += 8) {
+          if (Math.random() > 0.35) {
+            ctx.fillStyle = Math.random() > 0.3 ? '#fbbf24' : '#38bdf8';
+            ctx.globalAlpha = 0.4 + Math.random() * 0.6;
+            ctx.fillRect(wx, wy, 3, 4);
+          }
+        }
+      }
+      ctx.globalAlpha = 1;
+    }
+  } else if (type === 'nature') {
+    // Serene Nature Mountain Sunset
+    const grad = ctx.createLinearGradient(0, 0, 0, h);
+    grad.addColorStop(0, '#0c4a6e');
+    grad.addColorStop(0.4, '#0284c7');
+    grad.addColorStop(0.75, '#f59e0b');
+    grad.addColorStop(1.0, '#ef4444');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+
+    // Glowing Sun
+    ctx.fillStyle = '#fef08a';
+    ctx.beginPath();
+    ctx.arc(360, 160, 45, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Mountain Ridges
+    ctx.fillStyle = '#0f172a';
+    ctx.beginPath();
+    ctx.moveTo(0, h);
+    ctx.lineTo(130, h - 230);
+    ctx.lineTo(270, h);
+    ctx.fill();
+
+    ctx.fillStyle = '#1e293b';
+    ctx.beginPath();
+    ctx.moveTo(190, h);
+    ctx.lineTo(350, h - 280);
+    ctx.lineTo(512, h);
+    ctx.fill();
+
+    // Foreground lake reflection
+    ctx.fillStyle = '#0369a1';
+    ctx.fillRect(0, h - 75, w, 75);
+    ctx.fillStyle = '#fef08a';
+    ctx.globalAlpha = 0.25;
+    ctx.fillRect(320, h - 75, 80, 75);
+    ctx.globalAlpha = 1;
+  } else {
+    // Modern Abstract Art
+    ctx.fillStyle = '#020617';
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.fillStyle = '#0284c7';
+    ctx.beginPath();
+    ctx.arc(160, 210, 110, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#f59e0b';
+    ctx.beginPath();
+    ctx.arc(340, 140, 90, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#10b981';
+    ctx.fillRect(210, 90, 150, 150);
+
+    ctx.strokeStyle = '#f43f5e';
+    ctx.lineWidth = 8;
+    ctx.beginPath();
+    ctx.moveTo(60, 60);
+    ctx.lineTo(450, 320);
+    ctx.stroke();
   }
 
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
-  return new THREE.Mesh(
-    new THREE.PlaneGeometry(14, 7),
-    new THREE.MeshBasicMaterial({ map: tex, side: THREE.DoubleSide })
+  return tex;
+}
+
+function createFramedPhoto(type: 'city' | 'nature' | 'abstract', width: number = 4.2, height: number = 3.0): THREE.Group {
+  const group = new THREE.Group();
+
+  // Dark Wood / Metallic Frame
+  const frameMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.25, metalness: 0.8 });
+  const thickness = 0.16;
+  const depth = 0.10;
+
+  // Outer Frame Borders
+  const fTop = new THREE.Mesh(new THREE.BoxGeometry(width + thickness * 2, thickness, depth), frameMat);
+  fTop.position.y = height / 2 + thickness / 2;
+  fTop.castShadow = true;
+  group.add(fTop);
+
+  const fBot = new THREE.Mesh(new THREE.BoxGeometry(width + thickness * 2, thickness, depth), frameMat);
+  fBot.position.y = -height / 2 - thickness / 2;
+  fBot.castShadow = true;
+  group.add(fBot);
+
+  const fL = new THREE.Mesh(new THREE.BoxGeometry(thickness, height, depth), frameMat);
+  fL.position.x = -width / 2 - thickness / 2;
+  fL.castShadow = true;
+  group.add(fL);
+
+  const fR = new THREE.Mesh(new THREE.BoxGeometry(thickness, height, depth), frameMat);
+  fR.position.x = width / 2 + thickness / 2;
+  fR.castShadow = true;
+  group.add(fR);
+
+  // Inner Matting Border
+  const matBorder = new THREE.Mesh(
+    new THREE.PlaneGeometry(width, height),
+    new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.8 })
   );
+  matBorder.position.z = depth / 2 + 0.002;
+  group.add(matBorder);
+
+  // Scenic Photo Surface
+  const photoTex = createScenicPhotoTexture(type);
+  const photoMat = new THREE.MeshStandardMaterial({
+    map: photoTex,
+    roughness: 0.20,
+  });
+  const photoMesh = new THREE.Mesh(new THREE.PlaneGeometry(width * 0.88, height * 0.86), photoMat);
+  photoMesh.position.z = depth / 2 + 0.006;
+  group.add(photoMesh);
+
+  return group;
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1679,17 +1791,12 @@ export const WaitingRoom3DCanvas: React.FC<WaitingRoom3DProps> = ({
     ceiling.position.y = roomHeight;
     scene.add(ceiling);
 
-    // WINDOWS & OUTDOOR SCENERY
+    // WINDOWS & LIGHT RAYS SHAFTS
     for (let i = 0; i < 2; i++) {
       const win = createWindow();
       win.position.set(-roomWidth / 2 + 0.1, 6, -4 + i * 10);
       win.rotation.y = Math.PI / 2;
       scene.add(win);
-
-      const scenery = createOutdoorScenery();
-      scenery.position.set(-roomWidth / 2 - 1.5, 6, -4 + i * 10);
-      scenery.rotation.y = Math.PI / 2;
-      scene.add(scenery);
 
       // Light Rays Shaft
       const rayGeo = new THREE.CylinderGeometry(0.5, 3.5, 12, 16, 1, true);
@@ -1707,6 +1814,29 @@ export const WaitingRoom3DCanvas: React.FC<WaitingRoom3DProps> = ({
       scene.add(ray);
     }
 
+    // FRAMED SCENIC ARTWORK PHOTOS MOUNTED ON INNER ROOM WALLS
+    // Left Wall Inner Photos (Facing +X into room)
+    const photoLeft1 = createFramedPhoto('nature', 4.5, 3.2);
+    photoLeft1.position.set(-roomWidth / 2 + 0.15, 6.5, -4);
+    photoLeft1.rotation.y = Math.PI / 2;
+    scene.add(photoLeft1);
+
+    const photoLeft2 = createFramedPhoto('city', 4.5, 3.2);
+    photoLeft2.position.set(-roomWidth / 2 + 0.15, 6.5, 6);
+    photoLeft2.rotation.y = Math.PI / 2;
+    scene.add(photoLeft2);
+
+    // Right Wall Inner Photos (Facing -X into room)
+    const photoRight1 = createFramedPhoto('abstract', 4.5, 3.2);
+    photoRight1.position.set(roomWidth / 2 - 0.15, 6.5, -4);
+    photoRight1.rotation.y = -Math.PI / 2;
+    scene.add(photoRight1);
+
+    const photoRight2 = createFramedPhoto('nature', 4.5, 3.2);
+    photoRight2.position.set(roomWidth / 2 - 0.15, 6.5, 6);
+    photoRight2.rotation.y = -Math.PI / 2;
+    scene.add(photoRight2);
+
     // ARCHITECTURAL GLASS DOORS
     const docDoor = createDoorway(false);
     docDoor.position.set(-9, 3, -roomDepth / 2 + 0.1);
@@ -1717,7 +1847,7 @@ export const WaitingRoom3DCanvas: React.FC<WaitingRoom3DProps> = ({
     scene.add(erDoor);
     erDoorRef.current = erDoor;
 
-    // MEDICAL WALL POSTERS
+    // MEDICAL WALL POSTERS & ARTWORK ON BACK INNER WALL
     const poster1Mat = new THREE.MeshStandardMaterial({ map: createPosterTexture('hygiene'), roughness: 0.3 });
     const poster1 = new THREE.Mesh(new THREE.PlaneGeometry(2.2, 3.3), poster1Mat);
     poster1.position.set(-3.5, 6.5, -roomDepth / 2 + 0.05);
