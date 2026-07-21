@@ -1389,6 +1389,72 @@ function createDoorway(isEmergency: boolean): THREE.Group {
   return doorGroup;
 }
 
+function createIndoorPlant(potColor: number = 0xf8fafc): THREE.Group {
+  const group = new THREE.Group();
+
+  // Ceramic Pot
+  const potMat = new THREE.MeshPhysicalMaterial({
+    color: potColor,
+    roughness: 0.15,
+    clearcoat: 0.8,
+    clearcoatRoughness: 0.1,
+  });
+  const potGeo = new THREE.CylinderGeometry(0.9, 0.6, 1.6, 24);
+  const pot = new THREE.Mesh(potGeo, potMat);
+  pot.position.y = 0.8;
+  pot.castShadow = true;
+  group.add(pot);
+
+  // Soil
+  const soilMat = new THREE.MeshStandardMaterial({ color: 0x1c120c, roughness: 1.0 });
+  const soil = new THREE.Mesh(new THREE.CylinderGeometry(0.85, 0.85, 0.1, 24), soilMat);
+  soil.position.y = 1.55;
+  group.add(soil);
+
+  // Leaves
+  const leafMat = new THREE.MeshStandardMaterial({
+    color: 0x126933,
+    roughness: 0.35,
+    side: THREE.DoubleSide,
+  });
+
+  const leafCount = 20;
+  for (let i = 0; i < leafCount; i++) {
+    // Flattened diamond-like leaf
+    const leafGeo = new THREE.CylinderGeometry(0.45, 0.05, 1.8, 7);
+    leafGeo.scale(1, 1, 0.05);
+    
+    const leaf = new THREE.Mesh(leafGeo, leafMat);
+    
+    const angle = (i / leafCount) * Math.PI * 2 + (Math.random() * 0.5);
+    const radius = 0.3 + Math.random() * 0.6;
+    const height = 1.8 + Math.random() * 2.8;
+    
+    leaf.position.set(Math.cos(angle) * radius, height, Math.sin(angle) * radius);
+    
+    // Arching outward
+    leaf.rotation.z = Math.PI / 6 + Math.random() * 0.6;
+    leaf.rotation.y = angle;
+    
+    leaf.castShadow = true;
+    group.add(leaf);
+    
+    // Stem
+    const stemGeo = new THREE.CylinderGeometry(0.05, 0.02, height - 1.4, 5);
+    const stem = new THREE.Mesh(stemGeo, leafMat);
+    stem.position.set(leaf.position.x * 0.5, 1.55 + (height - 1.55) / 2, leaf.position.z * 0.5);
+    
+    // Simple aim towards leaf center
+    stem.lookAt(leaf.position);
+    stem.rotation.x -= Math.PI / 2; // correct lookAt for cylinder
+    
+    stem.castShadow = true;
+    group.add(stem);
+  }
+
+  return group;
+}
+
 // ══════════════════════════════════════════════════════════════
 // ██  MAIN COMPONENT  ██
 // ══════════════════════════════════════════════════════════════
@@ -1668,6 +1734,36 @@ export const WaitingRoom3DCanvas: React.FC<WaitingRoom3DProps> = ({
     poster3.rotation.y = -Math.PI / 2;
     scene.add(poster3);
 
+    // INDOOR POTTED PLANTS
+    const newPlant1 = createIndoorPlant(0xf8fafc);
+    newPlant1.position.set(-16, 0.15, -14);
+    scene.add(newPlant1);
+
+    const newPlant2 = createIndoorPlant(0x0f172a);
+    newPlant2.position.set(16, 0.15, 14);
+    scene.add(newPlant2);
+
+    // AMBIENT DUST MOTES (VOLUMETRIC PARTICLES)
+    const particleCount = 500;
+    const dustGeo = new THREE.BufferGeometry();
+    const dustPos = new Float32Array(particleCount * 3);
+    for (let i = 0; i < particleCount; i++) {
+      dustPos[i * 3] = (Math.random() - 0.5) * roomWidth;
+      dustPos[i * 3 + 1] = Math.random() * roomHeight;
+      dustPos[i * 3 + 2] = (Math.random() - 0.5) * roomDepth;
+    }
+    dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
+    const dustMat = new THREE.PointsMaterial({
+      color: 0xffffff,
+      size: 0.06,
+      transparent: true,
+      opacity: 0.3,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
+    const dustSystem = new THREE.Points(dustGeo, dustMat);
+    scene.add(dustSystem);
+
     // DYNAMIC LIVE QUEUE TV DISPLAY
     const tvGroup = new THREE.Group();
     tvGroup.position.set(0, 9.5, -12);
@@ -1925,6 +2021,12 @@ export const WaitingRoom3DCanvas: React.FC<WaitingRoom3DProps> = ({
       // Emergency strobe
       if (emergencyLightRef.current && emergencyLightRef.current.intensity > 0) {
         emergencyLightRef.current.intensity = 5 + Math.sin(elapsed * 10) * 4;
+      }
+
+      // Animate Dust Particles
+      if (typeof dustSystem !== 'undefined') {
+        dustSystem.rotation.y += 0.0003;
+        dustSystem.position.y = Math.sin(elapsed * 0.5) * 0.3;
       }
 
       // 3D Badges projection
