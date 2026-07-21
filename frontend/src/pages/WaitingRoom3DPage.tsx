@@ -156,6 +156,7 @@ export default function WaitingRoom3DPage() {
   const handleToggleEmergency = async () => {
     const nextEmergency = !isEmergency;
     setIsEmergency(nextEmergency);
+    setCameraView(nextEmergency ? 'emergency' : 'orbit');
 
     if (tokenData) {
       if (!isSupabaseConfigured) {

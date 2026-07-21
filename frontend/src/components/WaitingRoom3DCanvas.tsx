@@ -873,6 +873,21 @@ function createHumanoid(
   forearmR.rotation.x = Math.PI / 3;
   group.add(forearmR);
 
+  group.userData = {
+    thighL,
+    thighR,
+    shinL,
+    shinR,
+    shoeL,
+    shoeR,
+    upperArmL,
+    upperArmR,
+    forearmL,
+    forearmR,
+    torso,
+    head,
+  };
+
   return group;
 }
 
@@ -1307,6 +1322,9 @@ export const WaitingRoom3DCanvas: React.FC<WaitingRoom3DProps> = ({
   const emergencyLightRef = useRef<THREE.PointLight | null>(null);
   const tvScreenMeshRef = useRef<THREE.Mesh | null>(null);
   const clockRef = useRef<THREE.Group | null>(null);
+  const userHumanoidRef = useRef<{ group: THREE.Group; seatPos: THREE.Vector3 } | null>(null);
+  const isWalkingRef = useRef<boolean>(false);
+  const walkPhaseRef = useRef<number>(0);
 
   const [badges, setBadges] = useState<
     Array<{ id: string; label: string; x: number; y: number; isUser: boolean; isServing: boolean; visible: boolean }>
@@ -1669,6 +1687,13 @@ export const WaitingRoom3DCanvas: React.FC<WaitingRoom3DProps> = ({
           );
           humanoid.position.set(x, 0.74, z);
           scene.add(humanoid);
+
+          if (isUserSeat) {
+            userHumanoidRef.current = {
+              group: humanoid,
+              seatPos: new THREE.Vector3(x, 0.74, z),
+            };
+          }
         }
 
         // Highlight spotlight & rings under user seat
@@ -1764,6 +1789,25 @@ export const WaitingRoom3DCanvas: React.FC<WaitingRoom3DProps> = ({
       const elapsed = clock.getElapsedTime();
 
       controls.update();
+
+      // Walking Limb Animation
+      if (isWalkingRef.current && userHumanoidRef.current) {
+        walkPhaseRef.current += 0.15;
+        const phase = walkPhaseRef.current;
+        const { thighL, thighR, shinL, shinR, upperArmL, upperArmR } = userHumanoidRef.current.group.userData;
+        if (thighL && thighR) {
+          thighL.rotation.x = Math.sin(phase) * 0.45;
+          thighR.rotation.x = -Math.sin(phase) * 0.45;
+        }
+        if (shinL && shinR) {
+          shinL.rotation.x = Math.max(0, -Math.sin(phase) * 0.35);
+          shinR.rotation.x = Math.max(0, Math.sin(phase) * 0.35);
+        }
+        if (upperArmL && upperArmR) {
+          upperArmL.rotation.x = -Math.sin(phase) * 0.35;
+          upperArmR.rotation.x = Math.sin(phase) * 0.35;
+        }
+      }
 
       // Dynamic TV Ticker & Screen Update
       tickerCount += 2;
@@ -1871,10 +1915,95 @@ export const WaitingRoom3DCanvas: React.FC<WaitingRoom3DProps> = ({
     }
   }, [cameraView]);
 
-  // Handle Emergency Flash Light Intensity
+  // Handle Emergency Flash Light Intensity & Walking Animation to Emergency Gate
   useEffect(() => {
     if (emergencyLightRef.current) {
       emergencyLightRef.current.intensity = isEmergency ? 8 : 0;
+    }
+
+    if (!userHumanoidRef.current) return;
+    const userH = userHumanoidRef.current.group;
+    const seatPos = userHumanoidRef.current.seatPos;
+    const emergencyGatePos = new THREE.Vector3(9, 0, -13.5);
+    const { thighL, thighR, shinL, shinR, shoeL, shoeR, upperArmL, upperArmR } = userH.userData;
+
+    if (isEmergency) {
+      const dx = emergencyGatePos.x - userH.position.x;
+      const dz = emergencyGatePos.z - userH.position.z;
+      const targetAngle = Math.atan2(dx, dz);
+
+      gsap.timeline()
+        .to([thighL.rotation, thighR.rotation], { x: 0, duration: 0.4, ease: 'power1.inOut' })
+        .to(userH.position, { y: 0.82, duration: 0.4, ease: 'power1.inOut' }, 0)
+        .to([shinL.position, shinR.position], { z: 0, y: -0.42, duration: 0.4, ease: 'power1.inOut' }, 0)
+        .to([shoeL.position, shoeR.position], { z: 0.05, y: -0.70, duration: 0.4, ease: 'power1.inOut' }, 0)
+        .to(userH.rotation, { y: targetAngle, duration: 0.4, ease: 'power1.inOut' })
+        .call(() => {
+          isWalkingRef.current = true;
+        })
+        .to(userH.position, {
+          x: emergencyGatePos.x,
+          z: emergencyGatePos.z,
+          duration: 3.5,
+          ease: 'power1.inOut',
+          onUpdate: () => {
+            const userBadge = seatPositionsRef.current.find((s) => s.isUser);
+            if (userBadge) {
+              userBadge.position.copy(userH.position).add(new THREE.Vector3(0, 2.3, 0));
+            }
+          },
+          onComplete: () => {
+            isWalkingRef.current = false;
+            gsap.to(userH.rotation, { y: 0, duration: 0.4 });
+            if (thighL && thighR) {
+              thighL.rotation.x = 0;
+              thighR.rotation.x = 0;
+            }
+            if (shinL && shinR) {
+              shinL.rotation.x = 0;
+              shinR.rotation.x = 0;
+            }
+            if (upperArmL && upperArmR) {
+              upperArmL.rotation.x = 0;
+              upperArmR.rotation.x = 0;
+            }
+          },
+        });
+    } else {
+      if (userH.position.distanceTo(seatPos) > 0.5) {
+        const dx = seatPos.x - userH.position.x;
+        const dz = seatPos.z - userH.position.z;
+        const targetAngle = Math.atan2(dx, dz);
+
+        gsap.timeline()
+          .to(userH.rotation, { y: targetAngle, duration: 0.4, ease: 'power1.inOut' })
+          .call(() => {
+            isWalkingRef.current = true;
+          })
+          .to(userH.position, {
+            x: seatPos.x,
+            z: seatPos.z,
+            duration: 3.5,
+            ease: 'power1.inOut',
+            onUpdate: () => {
+              const userBadge = seatPositionsRef.current.find((s) => s.isUser);
+              if (userBadge) {
+                userBadge.position.copy(userH.position).add(new THREE.Vector3(0, 2.3, 0));
+              }
+            },
+            onComplete: () => {
+              isWalkingRef.current = false;
+              gsap.timeline()
+                .to(userH.rotation, { y: 0, duration: 0.4 })
+                .to([thighL.rotation, thighR.rotation], { x: Math.PI / 2, duration: 0.5, ease: 'power1.inOut' }, 0)
+                .to(userH.position, { y: 0.74, duration: 0.5, ease: 'power1.inOut' }, 0)
+                .to(shinL.position, { x: -0.16, y: -0.15, z: 0.52, duration: 0.5 }, 0)
+                .to(shinR.position, { x: 0.16, y: -0.15, z: 0.52, duration: 0.5 }, 0)
+                .to(shoeL.position, { x: -0.16, y: -0.42, z: 0.56, duration: 0.5 }, 0)
+                .to(shoeR.position, { x: 0.16, y: -0.42, z: 0.56, duration: 0.5 }, 0);
+            },
+          });
+      }
     }
   }, [isEmergency]);
 
