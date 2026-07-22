@@ -1616,45 +1616,46 @@ export const WaitingRoom3DCanvas: React.FC<WaitingRoom3DProps> = ({
     camera.lookAt(0, 2, -2);
     cameraRef.current = camera;
 
-    // RENDERER
-    const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
+    // High-End Photorealistic Renderer Configuration
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance' });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.15;
+    renderer.toneMappingExposure = 1.25;
     container.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
-    // POST PROCESSING
+    // POST-PROCESSING PIPELINE
     const composer = new EffectComposer(renderer);
     composer.addPass(new RenderPass(scene, camera));
-
     const bloomPass = new UnrealBloomPass(
       new THREE.Vector2(width, height),
-      0.35,  // strength
-      0.30,  // radius
-      0.75   // threshold
+      0.40, // Strength
+      0.35, // Radius
+      0.82  // Threshold
     );
     composer.addPass(bloomPass);
     composer.addPass(new SMAAPass());
     composer.addPass(new OutputPass());
     composerRef.current = composer;
 
-    // ENVIRONMENT MAP GENERATION
+    // PROCEDURAL HIGH-DYNAMIC ENVIRONMENT MAP GENERATION (PMREM)
     const pmremGen = new THREE.PMREMGenerator(renderer);
+    pmremGen.compileCubemapShader();
+    
     const envScene = new THREE.Scene();
-    envScene.background = new THREE.Color('#0b1326');
+    envScene.background = new THREE.Color('#080d1a');
     const envSphere = new THREE.Mesh(
-      new THREE.SphereGeometry(50, 32, 16),
-      new THREE.MeshBasicMaterial({ color: '#0d1830', side: THREE.BackSide })
+      new THREE.SphereGeometry(60, 32, 16),
+      new THREE.MeshBasicMaterial({ color: '#091224', side: THREE.BackSide })
     );
     envScene.add(envSphere);
-    const eL1 = new THREE.PointLight('#38bdf8', 10);
+    const eL1 = new THREE.PointLight('#38bdf8', 12);
     eL1.position.set(15, 15, 15);
     envScene.add(eL1);
-    const eL2 = new THREE.PointLight('#f59e0b', 4);
+    const eL2 = new THREE.PointLight('#ffe082', 6);
     eL2.position.set(-15, 12, -10);
     envScene.add(eL2);
 
