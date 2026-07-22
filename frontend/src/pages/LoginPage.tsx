@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import PageTransition from '../components/PageTransition';
-import TiltCard from '../components/TiltCard';
+import GlassCard3D from '../components/GlassCard3D';
+import HolographicPortal3D from '../components/HolographicPortal3D';
 import { 
   Phone, ArrowRight, ShieldCheck, Lock, CheckCircle2, 
   Sparkles, KeyRound, Smartphone, AlertCircle, RefreshCw
@@ -130,23 +131,28 @@ export default function LoginPage() {
     <PageTransition className="flex-1 max-w-6xl mx-auto w-full px-6 py-12 flex flex-col justify-center text-zinc-100">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
         
-        {/* Left Side: Hospital Branding & Access Lock Info */}
+        {/* Left Side: Hospital Branding & 3D WebGL Holographic Portal */}
         <div className="lg:col-span-5 flex">
-          <TiltCard className="w-full bg-gradient-to-br from-[#0b0d18] to-[#04050a] rounded-3xl p-8 text-white flex flex-col justify-between border border-white/[0.08] clinical-shadow">
+          <GlassCard3D glowColor="cyan" className="w-full flex flex-col justify-between">
             <div>
-              <motion.div 
-                animate={{ y: [0, -6, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                className="inline-flex items-center justify-center p-3.5 bg-clinical-blue/10 border border-clinical-blue/25 rounded-2xl mb-6 shadow-[0_0_25px_rgba(56,189,248,0.2)] translate-z-30"
-              >
-                <Lock className="w-7 h-7 text-clinical-blue animate-pulse" />
-              </motion.div>
-              
-              <span className="text-[9px] font-bold text-clinical-blue uppercase tracking-widest bg-clinical-blue/10 border border-clinical-blue/20 px-2.5 py-1 rounded-md translate-z-10">
+              <div className="flex items-center justify-between mb-6">
+                <motion.div 
+                  animate={{ y: [0, -6, 0] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                  className="inline-flex items-center justify-center p-3.5 bg-[#00f2fe]/10 border border-[#00f2fe]/25 rounded-2xl shadow-[0_0_25px_rgba(0,242,254,0.2)]"
+                >
+                  <Lock className="w-7 h-7 text-[#00f2fe] animate-pulse" />
+                </motion.div>
+                
+                {/* Embedded WebGL 3D Holographic Ring Visualizer */}
+                <HolographicPortal3D className="w-24 h-24" color="#00f2fe" />
+              </div>
+
+              <span className="text-[9px] font-bold text-[#00f2fe] uppercase tracking-widest bg-[#00f2fe]/10 border border-[#00f2fe]/20 px-2.5 py-1 rounded-md">
                 Secure OPD Gateway
               </span>
 
-              <h2 className="text-2xl font-bold tracking-tight mt-3 mb-3 text-zinc-100 font-display translate-z-20">
+              <h2 className="text-2xl font-bold tracking-tight mt-3 mb-3 text-zinc-100 font-display">
                 Authentication <br />Required
               </h2>
               <p className="text-zinc-400 text-xs leading-relaxed mb-8">
@@ -154,44 +160,38 @@ export default function LoginPage() {
               </p>
               
               <div className="space-y-4">
-                <motion.div 
-                  whileHover={{ scale: 1.02, x: 4 }}
-                  className="flex items-center gap-3 bg-[#06070d] p-3 rounded-2xl border border-white/[0.05] transition-all hover:border-clinical-teal/30"
-                >
+                <div className="flex items-center gap-3 bg-[#04050a] p-3 rounded-2xl border border-white/[0.05]">
                   <div className="w-8 h-8 rounded-xl bg-clinical-teal/10 border border-clinical-teal/20 flex items-center justify-center text-clinical-teal shrink-0">
                     <ShieldCheck className="w-4 h-4" />
                   </div>
                   <div>
                     <h4 className="text-xs font-bold text-zinc-200">HIPAA Compliant Security</h4>
-                    <p className="text-[10px] text-zinc-550">End-to-end encrypted session identity.</p>
+                    <p className="text-[10px] text-zinc-500">End-to-end encrypted session identity.</p>
                   </div>
-                </motion.div>
+                </div>
 
-                <motion.div 
-                  whileHover={{ scale: 1.02, x: 4 }}
-                  className="flex items-center gap-3 bg-[#06070d] p-3 rounded-2xl border border-white/[0.05] transition-all hover:border-clinical-purple/30"
-                >
+                <div className="flex items-center gap-3 bg-[#04050a] p-3 rounded-2xl border border-white/[0.05]">
                   <div className="w-8 h-8 rounded-xl bg-clinical-purple/10 border border-clinical-purple/20 flex items-center justify-center text-clinical-purple shrink-0">
                     <Sparkles className="w-4 h-4" />
                   </div>
                   <div>
                     <h4 className="text-xs font-bold text-zinc-200">Single Sign-On (SSO)</h4>
-                    <p className="text-[10px] text-zinc-550">Instant authentication via Google or Phone OTP.</p>
+                    <p className="text-[10px] text-zinc-500">Instant authentication via Google or Phone OTP.</p>
                   </div>
-                </motion.div>
+                </div>
               </div>
             </div>
 
             <div className="mt-8 pt-5 border-t border-white/[0.04] flex items-center gap-2 text-[10px] text-zinc-500 font-medium">
-              <Lock className="w-3.5 h-3.5 text-zinc-650" />
+              <Lock className="w-3.5 h-3.5 text-zinc-600" />
               <span>Authorized access only. City General Hospital OPD Logix.</span>
             </div>
-          </TiltCard>
+          </GlassCard3D>
         </div>
 
         {/* Right Side: Auth Selector Card (Google & Phone Options) */}
         <div className="lg:col-span-7 flex">
-          <TiltCard className="w-full bg-[#070914]/90 backdrop-blur-xl rounded-3xl p-8 border border-white/[0.08] clinical-shadow flex flex-col justify-between">
+          <GlassCard3D glowColor="teal" className="w-full flex flex-col justify-between">
           <div>
             <div className="mb-6">
               <h3 className="text-xl font-bold text-zinc-100 font-display">Sign In to Curaa</h3>
@@ -417,7 +417,7 @@ export default function LoginPage() {
           <div className="mt-8 pt-5 border-t border-white/[0.04] text-center text-[10px] text-zinc-650 font-semibold">
             <span>Hospital Logistics Engine &bull; Protected Access Controls &bull; v1.2.0</span>
           </div>
-        </TiltCard>
+        </GlassCard3D>
       </div>
 
       </div>

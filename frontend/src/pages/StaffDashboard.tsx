@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
 import { mockDatabase } from '../lib/mockDatabase';
 import PageTransition from '../components/PageTransition';
-import TiltCard from '../components/TiltCard';
+import GlassCard3D from '../components/GlassCard3D';
 import { 
   Users, UserCheck, AlertTriangle, Play, CheckCircle2, 
   UserMinus, ShieldAlert, RefreshCw, ShieldCheck
@@ -359,9 +359,9 @@ export default function StaffDashboard() {
           {/* LEFT: Active Patient Panel (1/3 Width) */}
           <div className="lg:col-span-4 space-y-6">
             
-            {/* Now Serving Card - 3D Perspective Tilt */}
-            <TiltCard className="glass-panel border border-white/[0.08] rounded-3xl p-6 clinical-shadow">
-              <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-4 translate-z-10">Now Serving</h3>
+            {/* Now Serving Card - 3D Glassmorphic Panel */}
+            <GlassCard3D glowColor="teal">
+              <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-4">Now Serving</h3>
               
               <AnimatePresence mode="wait">
                 {activeToken ? (
@@ -373,21 +373,21 @@ export default function StaffDashboard() {
                     transition={{ type: 'spring', damping: 20 }}
                     className="space-y-6"
                   >
-                    <div className="text-center bg-[#040407] border border-white/[0.04] shadow-inner rounded-3xl py-6 relative overflow-hidden translate-z-30">
+                    <div className="text-center bg-[#040407] border border-white/[0.04] shadow-inner rounded-3xl py-6 relative overflow-hidden">
                       <div className="absolute top-3 right-3">
                         <span className="text-[8px] font-bold text-clinical-teal uppercase bg-clinical-teal/10 border border-clinical-teal/20 px-2 py-0.5 rounded shadow-sm animate-pulse">
                           Active
                         </span>
                       </div>
                       
-                      <h1 className="text-5xl font-extrabold text-zinc-100 tracking-tight mt-4 font-display translate-z-40">
+                      <h1 className="text-5xl font-extrabold text-zinc-100 tracking-tight mt-4 font-display">
                         {activeToken.token_number}
                       </h1>
                       <p className="text-sm font-bold text-zinc-200 mt-3 font-display">{activeToken.patients.name}</p>
                       <p className="text-xs text-zinc-500 mt-1 font-mono">{activeToken.patients.phone}</p>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3 translate-z-20">
+                    <div className="grid grid-cols-2 gap-3">
                       <button
                         onClick={handleCompleteActive}
                         disabled={loading}
@@ -413,7 +413,7 @@ export default function StaffDashboard() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="text-center py-12 border border-dashed border-white/[0.08] rounded-2xl translate-z-20"
+                    className="text-center py-12 border border-dashed border-white/[0.08] rounded-2xl"
                   >
                     <UserCheck className="w-10 h-10 text-zinc-700 mx-auto mb-3" />
                     <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">No Active Patient</p>
@@ -432,12 +432,12 @@ export default function StaffDashboard() {
                   </motion.div>
                 )}
               </AnimatePresence>
-            </TiltCard>
+            </GlassCard3D>
 
             {/* Department Bottleneck Control Switch */}
-            <TiltCard className="glass-panel border border-white/[0.08] rounded-3xl p-6 clinical-shadow">
+            <GlassCard3D glowColor="amber">
               <div className="flex items-start gap-4">
-                <div className="p-2.5 bg-amber-500/10 border border-amber-500/20 rounded-xl text-amber-450 shrink-0 translate-z-20">
+                <div className="p-2.5 bg-amber-500/10 border border-amber-500/20 rounded-xl text-amber-450 shrink-0">
                   <AlertTriangle className="w-5 h-5 text-amber-500" />
                 </div>
                 <div>
@@ -460,7 +460,7 @@ export default function StaffDashboard() {
                   </button>
                 </div>
               </div>
-            </TiltCard>
+            </GlassCard3D>
 
           </div>
 

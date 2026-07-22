@@ -3,7 +3,7 @@ import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
 import { mockDatabase } from '../lib/mockDatabase';
 import PageTransition from '../components/PageTransition';
 import AnimatedCounter from '../components/AnimatedCounter';
-import TiltCard from '../components/TiltCard';
+import GlassCard3D from '../components/GlassCard3D';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 import { 
   Clock, CheckCircle2, UserX, Users, ShieldCheck, RefreshCw, BarChart3, TrendingUp, CalendarDays
@@ -215,74 +215,70 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
         
         {/* Total Queue Tickets */}
-        <TiltCard className="glass-panel border border-white/[0.08] rounded-3xl p-5 clinical-shadow relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-16 h-16 bg-clinical-blue/5 rounded-full blur-xl"></div>
+        <GlassCard3D glowColor="cyan" className="p-5 relative overflow-hidden">
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest translate-z-10">Total Outpatients</p>
-              <h2 className="text-3xl font-black text-zinc-100 mt-2 font-display translate-z-30">
+              <p className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Total Outpatients</p>
+              <h2 className="text-3xl font-black text-zinc-100 mt-2 font-display">
                 <AnimatedCounter value={metrics.totalTokens} />
               </h2>
             </div>
-            <div className="p-3 bg-clinical-blue/10 text-clinical-blue border border-clinical-blue/20 rounded-2xl shadow-inner translate-z-40">
+            <div className="p-3 bg-clinical-blue/10 text-clinical-blue border border-clinical-blue/20 rounded-2xl shadow-inner">
               <Users className="w-5 h-5 text-clinical-blue" />
             </div>
           </div>
-          <span className="text-[10px] text-zinc-500 font-semibold block mt-4 translate-z-10">Total tickets issued today</span>
-        </TiltCard>
+          <span className="text-[10px] text-zinc-500 font-semibold block mt-4">Total tickets issued today</span>
+        </GlassCard3D>
 
         {/* Completed Visits */}
-        <TiltCard className="glass-panel border border-white/[0.08] rounded-3xl p-5 clinical-shadow relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-16 h-16 bg-clinical-emerald/5 rounded-full blur-xl"></div>
+        <GlassCard3D glowColor="emerald" className="p-5 relative overflow-hidden">
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest translate-z-10">OPD Processed</p>
-              <h2 className="text-3xl font-black text-zinc-100 mt-2 font-display translate-z-30">
+              <p className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">OPD Processed</p>
+              <h2 className="text-3xl font-black text-zinc-100 mt-2 font-display">
                 <AnimatedCounter value={metrics.completed} />
               </h2>
             </div>
-            <div className="p-3 bg-clinical-emerald/10 text-clinical-emerald border border-clinical-emerald/20 rounded-2xl shadow-inner translate-z-40">
+            <div className="p-3 bg-clinical-emerald/10 text-clinical-emerald border border-clinical-emerald/20 rounded-2xl shadow-inner">
               <CheckCircle2 className="w-5 h-5 text-clinical-emerald" />
             </div>
           </div>
-          <span className="text-[10px] text-clinical-emerald font-semibold block mt-4 translate-z-10">
+          <span className="text-[10px] text-clinical-emerald font-semibold block mt-4">
             {metrics.totalTokens > 0 ? Math.round((metrics.completed / metrics.totalTokens) * 100) : 0}% consultation throughput
           </span>
-        </TiltCard>
+        </GlassCard3D>
 
         {/* Absent/Skipped */}
-        <TiltCard className="glass-panel border border-white/[0.08] rounded-3xl p-5 clinical-shadow relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-16 h-16 bg-clinical-rose/5 rounded-full blur-xl"></div>
+        <GlassCard3D glowColor="rose" className="p-5 relative overflow-hidden">
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest translate-z-10">Patients Skipped</p>
-              <h2 className="text-3xl font-black text-zinc-100 mt-2 font-display translate-z-30">
+              <p className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Patients Skipped</p>
+              <h2 className="text-3xl font-black text-zinc-100 mt-2 font-display">
                 <AnimatedCounter value={metrics.skipped} />
               </h2>
             </div>
-            <div className="p-3 bg-clinical-rose/10 text-clinical-rose border border-clinical-rose/20 rounded-2xl shadow-inner translate-z-40">
+            <div className="p-3 bg-clinical-rose/10 text-clinical-rose border border-clinical-rose/20 rounded-2xl shadow-inner">
               <UserX className="w-5 h-5 text-clinical-rose" />
             </div>
           </div>
-          <span className="text-[10px] text-clinical-rose font-semibold block mt-4 translate-z-10">Missed calls / absent status</span>
-        </TiltCard>
+          <span className="text-[10px] text-clinical-rose font-semibold block mt-4">Missed calls / absent status</span>
+        </GlassCard3D>
 
         {/* Avg Wait Time */}
-        <TiltCard className="glass-panel border border-white/[0.08] rounded-3xl p-5 clinical-shadow relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-16 h-16 bg-clinical-purple/5 rounded-full blur-xl"></div>
+        <GlassCard3D glowColor="purple" className="p-5 relative overflow-hidden">
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest translate-z-10">Avg Cycle Time</p>
-              <h2 className="text-3xl font-black text-zinc-100 mt-2 font-display translate-z-30">
+              <p className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Avg Cycle Time</p>
+              <h2 className="text-3xl font-black text-zinc-100 mt-2 font-display">
                 <AnimatedCounter value={metrics.avgWaitMinutes} suffix="m" />
               </h2>
             </div>
-            <div className="p-3 bg-clinical-purple/10 text-clinical-purple border border-clinical-purple/20 rounded-2xl shadow-inner translate-z-40">
+            <div className="p-3 bg-clinical-purple/10 text-clinical-purple border border-clinical-purple/20 rounded-2xl shadow-inner">
               <Clock className="w-5 h-5 text-clinical-purple" />
             </div>
           </div>
-          <span className="text-[10px] text-clinical-purple font-semibold block mt-4 translate-z-10">Mean delay per counter</span>
-        </TiltCard>
+          <span className="text-[10px] text-clinical-purple font-semibold block mt-4">Mean delay per counter</span>
+        </GlassCard3D>
 
       </div>
 

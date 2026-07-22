@@ -3,7 +3,8 @@ import { useParams, Link } from 'react-router-dom';
 import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
 import { mockDatabase } from '../lib/mockDatabase';
 import PageTransition from '../components/PageTransition';
-import TiltCard from '../components/TiltCard';
+import GlassCard3D from '../components/GlassCard3D';
+import HolographicPortal3D from '../components/HolographicPortal3D';
 import { 
   Bot, Send, Clock, User, ArrowRight, CheckCircle2, 
   AlertTriangle, RefreshCw, Volume2, VolumeX, AlertCircle, MapPin, Sparkles, X
@@ -606,7 +607,7 @@ export default function PatientPortal() {
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ type: 'spring', damping: 22 }}
           >
-            <TiltCard className="glass-panel rounded-[32px] border border-white/[0.08] p-6 clinical-shadow mb-6">
+            <GlassCard3D glowColor="cyan" className="mb-6">
             {/* Active Station & Floor Info */}
             <div className="flex items-center justify-between border-b border-white/[0.04] pb-4 mb-4">
               <div>
@@ -631,15 +632,16 @@ export default function PatientPortal() {
               </span>
             </div>
 
-            {/* Glowing Digital Ticket Card */}
-            <div className="bg-[#040406] border border-white/[0.02] shadow-inner rounded-3xl py-6 my-4 grid grid-cols-2 gap-4 text-center relative overflow-hidden">
-              <div className="absolute top-[-50px] left-[-50px] w-24 h-24 bg-clinical-blue/5 rounded-full blur-2xl"></div>
-              <div className="absolute bottom-[-50px] right-[-50px] w-24 h-24 bg-clinical-teal/5 rounded-full blur-2xl"></div>
+            {/* Glowing Digital Ticket Card with Embedded WebGL 3D Holographic Portal */}
+            <div className="bg-[#04050a] border border-[#00f2fe]/20 shadow-inner rounded-3xl py-6 my-4 grid grid-cols-2 gap-4 text-center relative overflow-hidden">
+              <div className="absolute inset-0 flex items-center justify-center opacity-30 pointer-events-none">
+                <HolographicPortal3D className="w-36 h-36" color="#00f2fe" />
+              </div>
               
               {/* Patient Token Ticket */}
-              <div className="border-r border-white/[0.04] flex flex-col justify-center items-center py-2">
+              <div className="border-r border-white/[0.04] flex flex-col justify-center items-center py-2 relative z-10">
                 <p className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5">Your Queue ID</p>
-                <h1 className="text-4xl font-extrabold text-zinc-100 tracking-tight leading-none depth-3d-text font-display">
+                <h1 className="text-4xl font-extrabold text-zinc-100 tracking-tight leading-none font-display">
                   {tokenData.token_number}
                 </h1>
                 {tokenData.is_urgent && (
@@ -650,9 +652,9 @@ export default function PatientPortal() {
               </div>
 
               {/* Serving Now ID */}
-              <div className="flex flex-col justify-center items-center py-2">
+              <div className="flex flex-col justify-center items-center py-2 relative z-10">
                 <p className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5">Serving Now</p>
-                <h1 className="text-4xl font-extrabold text-clinical-teal tracking-tight leading-none depth-3d-text filter drop-shadow-[0_0_12px_rgba(45,212,191,0.3)] font-display">
+                <h1 className="text-4xl font-extrabold text-clinical-teal tracking-tight leading-none filter drop-shadow-[0_0_12px_rgba(45,212,191,0.3)] font-display">
                   {currentServingToken}
                 </h1>
               </div>
@@ -734,7 +736,7 @@ export default function PatientPortal() {
               <span>Launch 3D VR Hospital Waiting Room</span>
             </Link>
 
-          </TiltCard>
+          </GlassCard3D>
         </motion.div>
         )}
       </AnimatePresence>

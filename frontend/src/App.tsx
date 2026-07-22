@@ -9,6 +9,7 @@ import LoginPage from './pages/LoginPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import AmbientBackground from './components/AmbientBackground';
 import CursorSpotlight from './components/CursorSpotlight';
+import Hero3DVisualizer from './components/Hero3DVisualizer';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Activity, LayoutDashboard, UserCheck, Users, Cpu, LogOut, User as UserIcon, LogIn, Box } from 'lucide-react';
 import { isSupabaseConfigured } from './lib/supabaseClient';
@@ -237,9 +238,10 @@ function App() {
     <AuthProvider>
       <Router>
         <div className="min-h-screen flex flex-col bg-[#050508] text-zinc-100 relative overflow-hidden">
-          {/* Ambient Motion Orbs & Dot Grid Background */}
+          {/* Ambient Motion Orbs, Cursor Spotlight & 3D Three.js WebGL Particles */}
           <AmbientBackground />
           <CursorSpotlight />
+          <Hero3DVisualizer />
           
           <DemoNavBar />
           

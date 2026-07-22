@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { UserCheck, ClipboardList, Info, ShieldCheck, Sparkles, Ticket } from 'lucide-react';
 import { motion } from 'framer-motion';
 import PageTransition from '../components/PageTransition';
-import TiltCard from '../components/TiltCard';
+import GlassCard3D from '../components/GlassCard3D';
+import HolographicPortal3D from '../components/HolographicPortal3D';
 import { isSupabaseConfigured } from '../lib/supabaseClient';
 import { mockDatabase } from '../lib/mockDatabase';
 
@@ -137,37 +138,39 @@ export default function PatientCheckIn() {
         
         {/* Left Side: Information & Live Ticket Preview */}
         <div className="lg:col-span-5 flex">
-          <TiltCard className="w-full bg-gradient-to-br from-[#0b0d18] to-[#04050a] rounded-3xl p-5 sm:p-8 text-white flex flex-col justify-between border border-white/[0.08] clinical-shadow">
+          <GlassCard3D glowColor="cyan" className="w-full flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between mb-6">
                 <motion.div 
                   whileHover={{ rotate: 10, scale: 1.05 }}
-                  className="inline-flex items-center justify-center p-3 bg-clinical-blue/10 border border-clinical-blue/20 rounded-2xl shadow-inner translate-z-30"
+                  className="inline-flex items-center justify-center p-3 bg-clinical-blue/10 border border-clinical-blue/20 rounded-2xl shadow-inner"
                 >
                   <ClipboardList className="w-7 h-7 text-clinical-blue" />
                 </motion.div>
 
-                <span className="text-[9px] font-bold text-clinical-emerald uppercase tracking-widest bg-clinical-emerald/10 border border-clinical-emerald/20 px-2.5 py-1 rounded-full flex items-center gap-1.5 translate-z-20">
+                <span className="text-[9px] font-bold text-clinical-emerald uppercase tracking-widest bg-clinical-emerald/10 border border-clinical-emerald/20 px-2.5 py-1 rounded-full flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-clinical-emerald animate-pulse"></span>
                   <span>Active Terminal</span>
                 </span>
               </div>
 
-              <h2 className="text-2xl font-bold tracking-tight mb-3 text-zinc-100 font-display translate-z-20">
+              <h2 className="text-2xl font-bold tracking-tight mb-3 text-zinc-100 font-display">
                 Smart OPD <br />Queue Navigator
               </h2>
               <p className="text-zinc-400 text-xs leading-relaxed mb-6">
                 Skip crowded lobbies and long billing queues. Register below to receive a dynamic digital tracking token on your phone.
               </p>
               
-              {/* Live Dynamic Ticket Preview Card */}
+              {/* Live Dynamic Ticket Preview Card with Embedded 3D WebGL Holographic Visualizer */}
               <motion.div 
                 layout
-                className="bg-[#05060c] border border-clinical-blue/30 rounded-2xl p-4 shadow-[0_0_25px_rgba(56,189,248,0.15)] relative overflow-hidden mb-6 translate-z-40"
+                className="bg-[#04050a] border border-[#00f2fe]/30 rounded-2xl p-4 shadow-[0_0_30px_rgba(0,242,254,0.18)] relative overflow-hidden mb-6"
               >
-                <div className="absolute top-0 right-0 w-24 h-24 bg-clinical-blue/10 rounded-full blur-2xl pointer-events-none" />
+                <div className="absolute -right-4 -bottom-4 opacity-70 pointer-events-none">
+                  <HolographicPortal3D className="w-28 h-28" color="#00f2fe" />
+                </div>
                 
-                <div className="flex items-center justify-between border-b border-white/[0.06] pb-3 mb-3">
+                <div className="flex items-center justify-between border-b border-white/[0.06] pb-3 mb-3 relative z-10">
                   <div className="flex items-center gap-2">
                     <Ticket className="w-4 h-4 text-clinical-blue" />
                     <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Live Token Draft</span>
@@ -177,7 +180,7 @@ export default function PatientCheckIn() {
                   </span>
                 </div>
 
-                <div className="space-y-2 text-xs">
+                <div className="space-y-2 text-xs relative z-10">
                   <div className="flex justify-between items-center">
                     <span className="text-zinc-500 text-[11px]">Patient:</span>
                     <span className="font-bold text-zinc-100 truncate max-w-[180px]">
@@ -200,34 +203,34 @@ export default function PatientCheckIn() {
               </motion.div>
 
               <div className="space-y-4">
-                <div className="flex gap-4 items-center bg-[#06070d] p-2.5 rounded-2xl border border-white/[0.04]">
+                <div className="flex gap-4 items-center bg-[#04050a] p-2.5 rounded-2xl border border-white/[0.04]">
                   <div className="w-7 h-7 rounded-full bg-clinical-blue/10 border border-clinical-blue/20 flex items-center justify-center text-xs font-bold text-clinical-blue shrink-0 shadow-sm">1</div>
                   <div>
                     <h4 className="text-xs font-bold text-zinc-200">Generate Digital Token</h4>
-                    <p className="text-[10px] text-zinc-550">Register in seconds with your name and phone number.</p>
+                    <p className="text-[10px] text-zinc-500">Register in seconds with your name and phone number.</p>
                   </div>
                 </div>
                 
-                <div className="flex gap-4 items-center bg-[#06070d] p-2.5 rounded-2xl border border-white/[0.04]">
+                <div className="flex gap-4 items-center bg-[#04050a] p-2.5 rounded-2xl border border-white/[0.04]">
                   <div className="w-7 h-7 rounded-full bg-clinical-teal/10 border border-clinical-teal/20 flex items-center justify-center text-xs font-bold text-clinical-teal shrink-0 shadow-sm">2</div>
                   <div>
                     <h4 className="text-xs font-bold text-zinc-200">Live Pathway Progress</h4>
-                    <p className="text-[10px] text-zinc-550">See exact queue positioning in real-time on your mobile device.</p>
+                    <p className="text-[10px] text-zinc-500">See exact queue positioning in real-time on your mobile device.</p>
                   </div>
                 </div>
               </div>
             </div>
 
             <div className="mt-6 pt-5 border-t border-white/[0.04] flex items-center gap-3 text-[10px] text-zinc-500 font-medium leading-relaxed">
-              <Info className="w-4 h-4 shrink-0 text-zinc-650" />
+              <Info className="w-4 h-4 shrink-0 text-zinc-600" />
               <span>Secure logistics portal. This tool does not issue medical diagnosis or triage priority.</span>
             </div>
-          </TiltCard>
+          </GlassCard3D>
         </div>
 
         {/* Right Side: Check-in Actions (3D Dark Glass Panel) */}
         <div className="lg:col-span-7 flex">
-          <TiltCard className="w-full bg-[#070914]/80 backdrop-blur-xl rounded-3xl p-5 sm:p-8 border border-white/[0.08] clinical-shadow flex flex-col justify-between">
+          <GlassCard3D glowColor="teal" className="w-full flex flex-col justify-between">
           <div>
             <div className="flex flex-wrap items-center justify-between gap-3 mb-8">
               <div>
@@ -346,7 +349,7 @@ export default function PatientCheckIn() {
               <span>Instant AI ticket mapping enabled</span>
             </span>
           </div>
-        </TiltCard>
+        </GlassCard3D>
       </div>
 
       </div>
