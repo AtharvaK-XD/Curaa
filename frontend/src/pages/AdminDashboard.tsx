@@ -308,7 +308,8 @@ export default function AdminDashboard() {
                 <XAxis dataKey="name" stroke="#52525b" fontSize={10} tickLine={false} />
                 <YAxis stroke="#52525b" fontSize={10} tickLine={false} />
                 <Tooltip 
-                  contentStyle={{ backgroundColor: '#09090f', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', fontSize: '11px', color: '#f4f4f5' }} 
+                  cursor={{ fill: 'rgba(255, 255, 255, 0.05)', rx: 8 }}
+                  contentStyle={{ backgroundColor: '#070914', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', fontSize: '11px', color: '#f4f4f5', boxShadow: '0 10px 30px rgba(0,0,0,0.8)' }} 
                   labelStyle={{ fontWeight: 'bold', color: '#f4f4f5', fontFamily: 'Outfit' }}
                 />
                 <Bar dataKey="Average Wait (Mins)" fill="url(#barBlue)" radius={[6, 6, 0, 0]} barSize={28} />
@@ -340,7 +341,8 @@ export default function AdminDashboard() {
                 <XAxis dataKey="hour" stroke="#52525b" fontSize={10} tickLine={false} />
                 <YAxis stroke="#52525b" fontSize={10} tickLine={false} />
                 <Tooltip 
-                  contentStyle={{ backgroundColor: '#09090f', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', fontSize: '11px', color: '#f4f4f5' }}
+                  cursor={{ stroke: 'rgba(45, 212, 191, 0.3)', strokeWidth: 1, strokeDasharray: '3 3' }}
+                  contentStyle={{ backgroundColor: '#070914', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', fontSize: '11px', color: '#f4f4f5', boxShadow: '0 10px 30px rgba(0,0,0,0.8)' }}
                   labelStyle={{ fontWeight: 'bold', color: '#f4f4f5', fontFamily: 'Outfit' }}
                 />
                 <Area type="monotone" dataKey="Patient Volume" stroke="#2dd4bf" fillOpacity={1} fill="url(#areaTeal)" strokeWidth={2} dot={{ r: 3, fill: '#09090f', stroke: '#2dd4bf' }} />
