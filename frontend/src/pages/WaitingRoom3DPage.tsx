@@ -4,6 +4,7 @@ import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
 import { mockDatabase } from '../lib/mockDatabase';
 import WaitingRoom3DCanvas from '../components/WaitingRoom3DCanvas';
 import PageTransition from '../components/PageTransition';
+import TiltCard from '../components/TiltCard';
 import { 
   Clock, User, AlertTriangle, ShieldAlert, Globe, ArrowLeft, MapPin
 } from 'lucide-react';
@@ -338,27 +339,27 @@ export default function WaitingRoom3DPage() {
         <div className="lg:col-span-4 flex flex-col justify-between space-y-4 sm:space-y-6">
           
           {/* Active Token & ETA HUD Card */}
-          <div className="glass-panel border border-white/[0.05] rounded-3xl p-4 sm:p-6 clinical-shadow card-3d space-y-4 sm:space-y-5">
+          <TiltCard className="glass-panel border border-white/[0.08] rounded-3xl p-4 sm:p-6 clinical-shadow space-y-4 sm:space-y-5">
             
             <div className="flex items-center justify-between border-b border-white/[0.04] pb-4">
               <div>
-                <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">{t.yourToken}</span>
-                <h1 className="text-3xl sm:text-4xl font-extrabold text-zinc-100 tracking-tight depth-3d-text font-display mt-0.5">
+                <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest translate-z-10">{t.yourToken}</span>
+                <h1 className="text-3xl sm:text-4xl font-extrabold text-zinc-100 tracking-tight font-display mt-0.5 translate-z-40">
                   {tokenNum}
                 </h1>
               </div>
 
               <div className="text-right">
-                <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">{t.serving}</span>
-                <h2 className="text-xl sm:text-2xl font-extrabold text-clinical-teal font-display filter drop-shadow-[0_0_10px_rgba(45,212,191,0.3)]">
+                <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest translate-z-10">{t.serving}</span>
+                <h2 className="text-xl sm:text-2xl font-extrabold text-clinical-teal font-display filter drop-shadow-[0_0_10px_rgba(45,212,191,0.3)] translate-z-30">
                   {servingToken}
                 </h2>
               </div>
             </div>
 
             {/* Patients Ahead & Dynamic ETA Countdown */}
-            <div className="grid grid-cols-2 gap-3 sm:gap-4">
-              <div className="bg-[#050508] border border-white/[0.05] p-3 sm:p-4 rounded-2xl">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 translate-z-20">
+              <div className="bg-[#04050a] border border-white/[0.05] p-3 sm:p-4 rounded-2xl">
                 <div className="flex items-center gap-2 text-clinical-blue mb-1">
                   <User className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   <span className="text-[9px] font-bold uppercase tracking-wider text-zinc-400">{t.patientsAhead}</span>
@@ -366,7 +367,7 @@ export default function WaitingRoom3DPage() {
                 <h3 className="text-xl sm:text-2xl font-bold text-zinc-150 font-display">{patientsAhead}</h3>
               </div>
 
-              <div className="bg-[#050508] border border-white/[0.05] p-3 sm:p-4 rounded-2xl">
+              <div className="bg-[#04050a] border border-white/[0.05] p-3 sm:p-4 rounded-2xl">
                 <div className="flex items-center gap-2 text-clinical-rose mb-1">
                   <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   <span className="text-[9px] font-bold uppercase tracking-wider text-zinc-400">{t.estWaitTime}</span>
@@ -378,7 +379,7 @@ export default function WaitingRoom3DPage() {
             </div>
 
             {/* Department & Floor Information */}
-            <div className="bg-[#08080c] border border-white/[0.04] p-3.5 sm:p-4 rounded-2xl flex items-center justify-between text-xs">
+            <div className="bg-[#05060d] border border-white/[0.04] p-3.5 sm:p-4 rounded-2xl flex items-center justify-between text-xs translate-z-20">
               <div className="flex items-center gap-2.5">
                 <MapPin className="w-4 h-4 text-clinical-teal shrink-0" />
                 <div>
@@ -392,22 +393,22 @@ export default function WaitingRoom3DPage() {
               </span>
             </div>
 
-            <p className="text-[11px] text-zinc-500 font-medium leading-relaxed italic text-center">
+            <p className="text-[11px] text-zinc-500 font-medium leading-relaxed italic text-center translate-z-10">
               "{t.liveWaitMsg}"
             </p>
-          </div>
+          </TiltCard>
 
           {/* CRITICAL EMERGENCY ROOM FAST-TRACK SWITCH */}
-          <div className={`rounded-3xl p-4 sm:p-6 border transition-all duration-300 ${
+          <TiltCard className={`rounded-3xl p-4 sm:p-6 border transition-all duration-300 ${
             isEmergency 
               ? 'bg-rose-500/15 border-rose-500/40 shadow-[0_0_30px_rgba(244,63,94,0.25)]' 
-              : 'glass-panel border-white/[0.05]'
+              : 'glass-panel border-white/[0.08]'
           }`}>
             <div className="flex items-start gap-3 sm:gap-4 mb-4">
-              <div className={`p-2.5 sm:p-3 rounded-2xl shrink-0 ${isEmergency ? 'bg-rose-500 text-zinc-950 animate-bounce' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'}`}>
+              <div className={`p-2.5 sm:p-3 rounded-2xl shrink-0 translate-z-30 ${isEmergency ? 'bg-rose-500 text-zinc-950 animate-bounce' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'}`}>
                 <ShieldAlert className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
-              <div>
+              <div className="translate-z-20">
                 <h3 className={`text-xs sm:text-sm font-bold font-display uppercase tracking-wider ${isEmergency ? 'text-rose-400' : 'text-zinc-200'}`}>
                   {isEmergency ? t.emergencyActiveTitle : 'Emergency Fast-Track Triage'}
                 </h3>
@@ -419,7 +420,7 @@ export default function WaitingRoom3DPage() {
 
             <button
               onClick={handleToggleEmergency}
-              className={`w-full py-3 sm:py-3.5 px-4 sm:px-6 rounded-2xl text-[11px] sm:text-xs font-bold transition-all duration-200 flex items-center justify-center gap-2 uppercase tracking-widest font-display btn-3d cursor-pointer ${
+              className={`w-full py-3 sm:py-3.5 px-4 sm:px-6 rounded-2xl text-[11px] sm:text-xs font-bold transition-all duration-200 flex items-center justify-center gap-2 uppercase tracking-widest font-display btn-3d cursor-pointer translate-z-30 ${
                 isEmergency
                   ? 'bg-rose-600 hover:bg-rose-500 text-white shadow-lg'
                   : 'bg-rose-500/15 hover:bg-rose-500/25 text-rose-400 border border-rose-500/30'
@@ -428,7 +429,7 @@ export default function WaitingRoom3DPage() {
               <AlertTriangle className="w-4 h-4 fill-current shrink-0" />
               <span>{isEmergency ? t.emergencyUndo : t.emergencyBtn}</span>
             </button>
-          </div>
+          </TiltCard>
 
         </div>
 

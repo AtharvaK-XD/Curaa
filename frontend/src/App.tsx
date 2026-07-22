@@ -8,6 +8,7 @@ import WaitingRoom3DPage from './pages/WaitingRoom3DPage';
 import LoginPage from './pages/LoginPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import AmbientBackground from './components/AmbientBackground';
+import CursorSpotlight from './components/CursorSpotlight';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Activity, LayoutDashboard, UserCheck, Users, Cpu, LogOut, User as UserIcon, LogIn, Box } from 'lucide-react';
 import { isSupabaseConfigured } from './lib/supabaseClient';
@@ -238,6 +239,7 @@ function App() {
         <div className="min-h-screen flex flex-col bg-[#050508] text-zinc-100 relative overflow-hidden">
           {/* Ambient Motion Orbs & Dot Grid Background */}
           <AmbientBackground />
+          <CursorSpotlight />
           
           <DemoNavBar />
           

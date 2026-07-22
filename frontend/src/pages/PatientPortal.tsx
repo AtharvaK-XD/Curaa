@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
 import { mockDatabase } from '../lib/mockDatabase';
 import PageTransition from '../components/PageTransition';
+import TiltCard from '../components/TiltCard';
 import { 
   Bot, Send, Clock, User, ArrowRight, CheckCircle2, 
   AlertTriangle, RefreshCw, Volume2, VolumeX, AlertCircle, MapPin, Sparkles, X
@@ -604,8 +605,8 @@ export default function PatientPortal() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ type: 'spring', damping: 22 }}
-            className="glass-panel rounded-[32px] border border-white/[0.05] p-6 clinical-shadow mb-6 card-3d"
           >
+            <TiltCard className="glass-panel rounded-[32px] border border-white/[0.08] p-6 clinical-shadow mb-6">
             {/* Active Station & Floor Info */}
             <div className="flex items-center justify-between border-b border-white/[0.04] pb-4 mb-4">
               <div>
@@ -731,10 +732,10 @@ export default function PatientPortal() {
             >
               <Sparkles className="w-4 h-4 text-clinical-teal animate-pulse" />
               <span>Launch 3D VR Hospital Waiting Room</span>
-              <ArrowRight className="w-4 h-4 text-clinical-blue" />
             </Link>
 
-          </motion.div>
+          </TiltCard>
+        </motion.div>
         )}
       </AnimatePresence>
 
