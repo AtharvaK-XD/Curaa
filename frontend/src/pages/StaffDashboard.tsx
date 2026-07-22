@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
 import { mockDatabase } from '../lib/mockDatabase';
+import PageTransition from '../components/PageTransition';
 import { 
   Users, UserCheck, AlertTriangle, Play, CheckCircle2, 
   UserMinus, ShieldAlert, RefreshCw, ShieldCheck
@@ -311,12 +312,7 @@ export default function StaffDashboard() {
   };
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 15 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      className="flex-1 max-w-[1800px] mx-auto w-full px-6 lg:px-10 py-8 text-zinc-100"
-    >
+    <PageTransition className="flex-1 max-w-[1800px] mx-auto w-full px-6 lg:px-10 py-8 text-zinc-100">
       
       {/* Header and Desk Select panel */}
       <div className="bg-[#0a0a10]/80 border border-white/[0.05] rounded-3xl p-6 mb-8 clinical-shadow flex flex-col md:flex-row items-center justify-between gap-6">
@@ -665,9 +661,10 @@ export default function StaffDashboard() {
         )}
       </AnimatePresence>
 
-    </motion.div>
+    </PageTransition>
   );
 }
+
 
 const DB_PREFIX = 'curaa_mock_';
 const getStorageItem = <T,>(key: string, defaultValue: T): T => {

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
 import { mockDatabase } from '../lib/mockDatabase';
+import PageTransition from '../components/PageTransition';
 import { 
   Bot, Send, Clock, User, ArrowRight, CheckCircle2, 
   AlertTriangle, RefreshCw, Volume2, VolumeX, AlertCircle, MapPin, Sparkles, X
@@ -441,12 +442,7 @@ export default function PatientPortal() {
   const deptColor = tokenData.departments.color_code;
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 15 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      className="flex-1 max-w-2xl 2xl:max-w-3xl mx-auto w-full px-4 md:px-8 py-8 flex flex-col justify-between relative text-zinc-100"
-    >
+    <PageTransition className="flex-1 max-w-2xl 2xl:max-w-3xl mx-auto w-full px-4 md:px-8 py-8 flex flex-col justify-between relative text-zinc-100">
       
       {/* 1. Connection Status Toast */}
       {connStatus === 'polling' && (
@@ -476,14 +472,11 @@ export default function PatientPortal() {
               </div>
               <div>
                 <h4 className="text-[10px] font-bold uppercase tracking-widest text-clinical-blue font-display">OPD Announcement</h4>
-                <p className="text-xs font-medium mt-1 leading-relaxed text-zinc-300">{activeAlert}</p>
+                <p className="text-xs font-semibold text-zinc-200 mt-0.5 leading-relaxed">{activeAlert}</p>
               </div>
             </div>
-            <button 
-              onClick={() => setActiveAlert(null)}
-              className="text-zinc-550 hover:text-zinc-350 p-1 hover:bg-white/[0.04] rounded-lg transition-colors shrink-0"
-            >
-              <X className="w-4.5 h-4.5" />
+            <button onClick={() => setActiveAlert(null)} className="p-1 text-zinc-500 hover:text-zinc-300">
+              <X className="w-4 h-4" />
             </button>
           </motion.div>
         )}
@@ -864,6 +857,7 @@ export default function PatientPortal() {
         )}
       </AnimatePresence>
 
-    </motion.div>
+    </PageTransition>
   );
 }
+

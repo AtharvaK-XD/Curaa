@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import PageTransition from '../components/PageTransition';
 import { 
   Phone, ArrowRight, ShieldCheck, Lock, CheckCircle2, 
   Sparkles, KeyRound, Smartphone, AlertCircle, RefreshCw
@@ -125,7 +126,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex-1 max-w-6xl mx-auto w-full px-6 py-12 flex flex-col justify-center text-zinc-100">
+    <PageTransition className="flex-1 max-w-6xl mx-auto w-full px-6 py-12 flex flex-col justify-center text-zinc-100">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
         
         {/* Left Side: Hospital Branding & Access Lock Info */}
@@ -136,9 +137,13 @@ export default function LoginPage() {
           className="lg:col-span-5 bg-gradient-to-br from-[#0b0c16] to-[#05060d] rounded-3xl p-8 text-white flex flex-col justify-between border border-white/[0.05] card-3d clinical-shadow"
         >
           <div>
-            <div className="inline-flex items-center justify-center p-3 bg-clinical-blue/10 border border-clinical-blue/20 rounded-2xl mb-6 shadow-inner depth-3d-element">
+            <motion.div 
+              animate={{ y: [0, -6, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="inline-flex items-center justify-center p-3.5 bg-clinical-blue/10 border border-clinical-blue/25 rounded-2xl mb-6 shadow-[0_0_25px_rgba(56,189,248,0.2)] depth-3d-element"
+            >
               <Lock className="w-7 h-7 text-clinical-blue animate-pulse" />
-            </div>
+            </motion.div>
             
             <span className="text-[9px] font-bold text-clinical-blue uppercase tracking-widest bg-clinical-blue/10 border border-clinical-blue/20 px-2.5 py-1 rounded-md">
               Secure OPD Gateway
@@ -152,7 +157,10 @@ export default function LoginPage() {
             </p>
             
             <div className="space-y-4">
-              <div className="flex items-center gap-3 bg-[#08080c] p-3 rounded-2xl border border-white/[0.04]">
+              <motion.div 
+                whileHover={{ scale: 1.02, x: 4 }}
+                className="flex items-center gap-3 bg-[#08080c] p-3 rounded-2xl border border-white/[0.04] transition-all hover:border-clinical-teal/30"
+              >
                 <div className="w-8 h-8 rounded-xl bg-clinical-teal/10 border border-clinical-teal/20 flex items-center justify-center text-clinical-teal shrink-0">
                   <ShieldCheck className="w-4 h-4" />
                 </div>
@@ -160,9 +168,12 @@ export default function LoginPage() {
                   <h4 className="text-xs font-bold text-zinc-200">HIPAA Compliant Security</h4>
                   <p className="text-[10px] text-zinc-550">End-to-end encrypted session identity.</p>
                 </div>
-              </div>
+              </motion.div>
 
-              <div className="flex items-center gap-3 bg-[#08080c] p-3 rounded-2xl border border-white/[0.04]">
+              <motion.div 
+                whileHover={{ scale: 1.02, x: 4 }}
+                className="flex items-center gap-3 bg-[#08080c] p-3 rounded-2xl border border-white/[0.04] transition-all hover:border-clinical-purple/30"
+              >
                 <div className="w-8 h-8 rounded-xl bg-clinical-purple/10 border border-clinical-purple/20 flex items-center justify-center text-clinical-purple shrink-0">
                   <Sparkles className="w-4 h-4" />
                 </div>
@@ -170,7 +181,7 @@ export default function LoginPage() {
                   <h4 className="text-xs font-bold text-zinc-200">Single Sign-On (SSO)</h4>
                   <p className="text-[10px] text-zinc-550">Instant authentication via Google or Phone OTP.</p>
                 </div>
-              </div>
+              </motion.div>
             </div>
           </div>
 
@@ -193,37 +204,44 @@ export default function LoginPage() {
               <p className="text-xs text-zinc-500 mt-1">Choose your preferred login method below to proceed.</p>
             </div>
 
-            {/* Auth Method Selector Tabs */}
-            <div className="grid grid-cols-2 gap-2 bg-[#050508] p-1.5 rounded-2xl border border-white/[0.06] mb-8">
+            {/* Auth Method Selector Tabs with Motion layoutId */}
+            <div className="grid grid-cols-2 gap-2 bg-[#050508] p-1.5 rounded-2xl border border-white/[0.06] mb-8 relative">
               <button
                 onClick={() => { setAuthMethod('google'); setError(''); setSuccessMsg(''); }}
-                className={`py-2.5 px-4 rounded-xl text-xs font-bold transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer ${
-                  authMethod === 'google'
-                    ? 'bg-clinical-blue text-zinc-950 shadow-[0_0_15px_rgba(56,189,248,0.3)]'
-                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900'
-                }`}
+                className="relative py-2.5 px-4 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-2 cursor-pointer z-10 select-none"
               >
-                <svg className="w-4 h-4" viewBox="0 0 24 24">
+                {authMethod === 'google' && (
+                  <motion.div
+                    layoutId="authTab"
+                    className="absolute inset-0 bg-clinical-blue rounded-xl shadow-[0_0_20px_rgba(56,189,248,0.35)] -z-10"
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
+                <svg className={`w-4 h-4 ${authMethod === 'google' ? 'text-zinc-950' : 'text-zinc-400'}`} viewBox="0 0 24 24">
                   <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
                   <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
                   <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
                   <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
                 </svg>
-                <span>Google Sign In</span>
+                <span className={authMethod === 'google' ? 'text-zinc-950 font-extrabold' : 'text-zinc-400'}>Google Sign In</span>
               </button>
 
               <button
                 onClick={() => { setAuthMethod('phone'); setError(''); setSuccessMsg(''); }}
-                className={`py-2.5 px-4 rounded-xl text-xs font-bold transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer ${
-                  authMethod === 'phone'
-                    ? 'bg-clinical-teal text-zinc-950 shadow-[0_0_15px_rgba(45,212,191,0.3)]'
-                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900'
-                }`}
+                className="relative py-2.5 px-4 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-2 cursor-pointer z-10 select-none"
               >
-                <Smartphone className="w-4 h-4" />
-                <span>Phone OTP Login</span>
+                {authMethod === 'phone' && (
+                  <motion.div
+                    layoutId="authTab"
+                    className="absolute inset-0 bg-clinical-teal rounded-xl shadow-[0_0_20px_rgba(45,212,191,0.35)] -z-10"
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
+                <Smartphone className={`w-4 h-4 ${authMethod === 'phone' ? 'text-zinc-950' : 'text-zinc-400'}`} />
+                <span className={authMethod === 'phone' ? 'text-zinc-950 font-extrabold' : 'text-zinc-400'}>Phone OTP Login</span>
               </button>
             </div>
+
 
             {/* Error Alert */}
             {error && (
@@ -408,6 +426,7 @@ export default function LoginPage() {
         </motion.div>
 
       </div>
-    </div>
+    </PageTransition>
   );
 }
+

@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
 import { mockDatabase } from '../lib/mockDatabase';
+import PageTransition from '../components/PageTransition';
+import AnimatedCounter from '../components/AnimatedCounter';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 import { 
   Clock, CheckCircle2, UserX, Users, ShieldCheck, RefreshCw, BarChart3, TrendingUp, CalendarDays
@@ -190,7 +192,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="flex-1 max-w-[1800px] mx-auto w-full px-6 lg:px-10 py-8 text-zinc-100">
+    <PageTransition className="flex-1 max-w-[1800px] mx-auto w-full px-6 lg:px-10 py-8 text-zinc-100">
       
       {/* Header and Sync controls */}
       <div className="flex flex-col md:flex-row items-center justify-between mb-8 gap-4">
@@ -223,7 +225,9 @@ export default function AdminDashboard() {
           <div className="flex justify-between items-start">
             <div>
               <p className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Total Outpatients</p>
-              <h2 className="text-3xl font-black text-zinc-100 mt-2 font-display">{metrics.totalTokens}</h2>
+              <h2 className="text-3xl font-black text-zinc-100 mt-2 font-display">
+                <AnimatedCounter value={metrics.totalTokens} />
+              </h2>
             </div>
             <div className="p-3 bg-clinical-blue/10 text-clinical-blue border border-clinical-blue/20 rounded-2xl shadow-inner">
               <Users className="w-5 h-5 text-clinical-blue" />
@@ -243,7 +247,9 @@ export default function AdminDashboard() {
           <div className="flex justify-between items-start">
             <div>
               <p className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">OPD Processed</p>
-              <h2 className="text-3xl font-black text-zinc-100 mt-2 font-display">{metrics.completed}</h2>
+              <h2 className="text-3xl font-black text-zinc-100 mt-2 font-display">
+                <AnimatedCounter value={metrics.completed} />
+              </h2>
             </div>
             <div className="p-3 bg-clinical-emerald/10 text-clinical-emerald border border-clinical-emerald/20 rounded-2xl shadow-inner">
               <CheckCircle2 className="w-5 h-5 text-clinical-emerald" />
@@ -265,7 +271,9 @@ export default function AdminDashboard() {
           <div className="flex justify-between items-start">
             <div>
               <p className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Patients Skipped</p>
-              <h2 className="text-3xl font-black text-zinc-100 mt-2 font-display">{metrics.skipped}</h2>
+              <h2 className="text-3xl font-black text-zinc-100 mt-2 font-display">
+                <AnimatedCounter value={metrics.skipped} />
+              </h2>
             </div>
             <div className="p-3 bg-clinical-rose/10 text-clinical-rose border border-clinical-rose/20 rounded-2xl shadow-inner">
               <UserX className="w-5 h-5 text-clinical-rose" />
@@ -285,7 +293,9 @@ export default function AdminDashboard() {
           <div className="flex justify-between items-start">
             <div>
               <p className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Avg Cycle Time</p>
-              <h2 className="text-3xl font-black text-zinc-100 mt-2 font-display">{metrics.avgWaitMinutes}m</h2>
+              <h2 className="text-3xl font-black text-zinc-100 mt-2 font-display">
+                <AnimatedCounter value={metrics.avgWaitMinutes} suffix="m" />
+              </h2>
             </div>
             <div className="p-3 bg-clinical-purple/10 text-clinical-purple border border-clinical-purple/20 rounded-2xl shadow-inner">
               <Clock className="w-5 h-5 text-clinical-purple" />
@@ -424,6 +434,7 @@ export default function AdminDashboard() {
         )}
       </div>
 
-    </div>
+    </PageTransition>
   );
 }
+

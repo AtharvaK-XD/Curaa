@@ -3,10 +3,10 @@ import { useParams, Link } from 'react-router-dom';
 import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
 import { mockDatabase } from '../lib/mockDatabase';
 import WaitingRoom3DCanvas from '../components/WaitingRoom3DCanvas';
+import PageTransition from '../components/PageTransition';
 import { 
   Clock, User, AlertTriangle, ShieldAlert, Globe, ArrowLeft, MapPin
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 // Translations Dictionary (English, Hindi, Gujarati)
 const i18n = {
@@ -201,12 +201,7 @@ export default function WaitingRoom3DPage() {
   const [cameraView, setCameraView] = useState<'orbit' | 'user' | 'doctor' | 'emergency'>('orbit');
 
   return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className="flex-1 max-w-[1800px] mx-auto w-full px-3 sm:px-6 py-4 sm:py-6 flex flex-col justify-between text-zinc-100 overflow-x-hidden"
-    >
+    <PageTransition className="flex-1 max-w-[1800px] mx-auto w-full px-3 sm:px-6 py-4 sm:py-6 flex flex-col justify-between text-zinc-100 overflow-x-hidden">
       
       {/* 1. Header Navigation Bar & Language Selector Controls */}
       <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
@@ -439,6 +434,7 @@ export default function WaitingRoom3DPage() {
 
       </div>
 
-    </motion.div>
+    </PageTransition>
   );
 }
+
