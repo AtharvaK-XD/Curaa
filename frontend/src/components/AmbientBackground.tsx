@@ -4,8 +4,8 @@ export default function AmbientBackground() {
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none">
       {/* Background Dot & Grid Pattern Overlay */}
-      <div className="absolute inset-0 bg-dot-pattern opacity-40" />
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#050508]/60 to-[#050508]" />
+      <div className="absolute inset-0 bg-dot-pattern opacity-30" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#050508]/40 via-transparent to-[#050508]/20" />
 
       {/* Floating Luminous Orbs */}
       <motion.div

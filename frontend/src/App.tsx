@@ -27,7 +27,7 @@ function DemoNavBar() {
   const { user, isAuthenticated, logout } = useAuth();
 
   return (
-    <div className="bg-[#050508]/85 border-b border-white/[0.05] py-2.5 sm:py-3.5 px-3 sm:px-6 sticky top-0 z-50 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
+    <div className="bg-[#050508]/30 border-b border-white/[0.06] py-2.5 sm:py-3.5 px-3 sm:px-6 sticky top-0 z-50 backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.25)]">
       <div className="max-w-[1800px] w-full mx-auto flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 sm:gap-4">
         
         {/* Brand Logo & Sync Mode */}
@@ -250,7 +250,7 @@ function App() {
             <MainContent />
           </main>
           
-          <footer className="bg-[#08080c]/80 border-t border-white/[0.04] py-4 sm:py-5 text-center text-xs text-zinc-500 font-medium px-4 backdrop-blur-md relative z-10">
+          <footer className="bg-[#050508]/20 border-t border-white/[0.05] py-4 sm:py-5 text-center text-xs text-zinc-500 font-medium px-4 backdrop-blur-sm relative z-10">
             &copy; {new Date().getFullYear()} Curaa. Hospital OPD Logistics Engine. Dynamic Queue Navigator.
           </footer>
         </div>
