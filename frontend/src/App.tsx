@@ -74,35 +74,37 @@ function DemoNavBar() {
           </div>
         </div>
         
-        {/* Navigation Link Pills with Motion layoutId Active Indicator */}
-        <div className="flex items-center gap-1 sm:gap-1.5 bg-[#090a12]/90 p-1.5 rounded-2xl border border-white/[0.07] shadow-inner overflow-x-auto max-w-full no-scrollbar relative">
-          {navItems.map((item) => {
-            const isActive = item.matchPrefix 
-              ? location.pathname.startsWith(item.matchPrefix)
-              : location.pathname === item.path;
-            const Icon = item.icon;
+        {/* Navigation Link Pills with Motion layoutId Active Indicator - Only visible when logged in */}
+        {isAuthenticated && (
+          <div className="flex items-center gap-1 sm:gap-1.5 bg-[#090a12]/90 p-1.5 rounded-2xl border border-white/[0.07] shadow-inner overflow-x-auto max-w-full no-scrollbar relative">
+            {navItems.map((item) => {
+              const isActive = item.matchPrefix 
+                ? location.pathname.startsWith(item.matchPrefix)
+                : location.pathname === item.path;
+              const Icon = item.icon;
 
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                className="relative flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-semibold tracking-wide transition-colors shrink-0 whitespace-nowrap z-10 select-none"
-              >
-                {isActive && (
-                  <motion.div
-                    layoutId="activeNavTab"
-                    className="absolute inset-0 bg-gradient-to-r from-clinical-blue to-clinical-teal rounded-xl shadow-[0_0_20px_rgba(56,189,248,0.35)] -z-10"
-                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                  />
-                )}
-                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-zinc-950 font-bold' : item.extraIconClass || 'text-zinc-400'}`} />
-                <span className={isActive ? 'text-zinc-950 font-bold' : 'text-zinc-400 hover:text-zinc-100 transition-colors'}>
-                  {item.label}
-                </span>
-              </Link>
-            );
-          })}
-        </div>
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className="relative flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-semibold tracking-wide transition-colors shrink-0 whitespace-nowrap z-10 select-none"
+                >
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeNavTab"
+                      className="absolute inset-0 bg-gradient-to-r from-clinical-blue to-clinical-teal rounded-xl shadow-[0_0_20px_rgba(56,189,248,0.35)] -z-10"
+                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                  <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-zinc-950 font-bold' : item.extraIconClass || 'text-zinc-400'}`} />
+                  <span className={isActive ? 'text-zinc-950 font-bold' : 'text-zinc-400 hover:text-zinc-100 transition-colors'}>
+                    {item.label}
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        )}
 
         {/* Desktop Sync Mode & User Session Controls */}
         <div className="flex items-center justify-between md:justify-end gap-3 text-xs font-semibold">
