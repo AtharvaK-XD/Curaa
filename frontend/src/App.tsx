@@ -11,6 +11,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import AmbientBackground from './components/AmbientBackground';
 import CursorSpotlight from './components/CursorSpotlight';
 import Hero3DVisualizer from './components/Hero3DVisualizer';
+import SmoothScroll from './components/SmoothScroll';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Activity, LayoutDashboard, UserCheck, Users, Cpu, LogOut, User as UserIcon, LogIn, Box, Compass } from 'lucide-react';
 import { isSupabaseConfigured } from './lib/supabaseClient';
@@ -244,23 +245,25 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="min-h-screen flex flex-col bg-[#050508] text-zinc-100 relative overflow-hidden">
-          {/* Ambient Motion Orbs, Cursor Spotlight & 3D Three.js WebGL Particles */}
-          <AmbientBackground />
-          <CursorSpotlight />
-          <Hero3DVisualizer />
-          
-          <DemoNavBar />
-          
-          {/* Main Content Area */}
-          <main className="flex-1 flex flex-col relative z-10">
-            <MainContent />
-          </main>
-          
-          <footer className="bg-[#050508]/20 border-t border-white/[0.05] py-4 sm:py-5 text-center text-xs text-zinc-500 font-medium px-4 backdrop-blur-sm relative z-10">
-            &copy; {new Date().getFullYear()} Curaa. Hospital OPD Logistics Engine. Dynamic Queue Navigator.
-          </footer>
-        </div>
+        <SmoothScroll>
+          <div className="min-h-screen flex flex-col bg-[#050508] text-zinc-100 relative overflow-hidden">
+            {/* Ambient Motion Orbs, Cursor Spotlight & 3D Three.js WebGL Particles */}
+            <AmbientBackground />
+            <CursorSpotlight />
+            <Hero3DVisualizer />
+            
+            <DemoNavBar />
+            
+            {/* Main Content Area */}
+            <main className="flex-1 flex flex-col relative z-10">
+              <MainContent />
+            </main>
+            
+            <footer className="bg-[#050508]/20 border-t border-white/[0.05] py-4 sm:py-5 text-center text-xs text-zinc-500 font-medium px-4 backdrop-blur-sm relative z-10">
+              &copy; {new Date().getFullYear()} Curaa. Hospital OPD Logistics Engine. Dynamic Queue Navigator.
+            </footer>
+          </div>
+        </SmoothScroll>
       </Router>
     </AuthProvider>
   );
