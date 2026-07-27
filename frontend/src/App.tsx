@@ -6,16 +6,18 @@ import StaffDashboard from './pages/StaffDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import WaitingRoom3DPage from './pages/WaitingRoom3DPage';
 import LoginPage from './pages/LoginPage';
+import LandingPage from './pages/LandingPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import AmbientBackground from './components/AmbientBackground';
 import CursorSpotlight from './components/CursorSpotlight';
 import Hero3DVisualizer from './components/Hero3DVisualizer';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import { Activity, LayoutDashboard, UserCheck, Users, Cpu, LogOut, User as UserIcon, LogIn, Box } from 'lucide-react';
+import { Activity, LayoutDashboard, UserCheck, Users, Cpu, LogOut, User as UserIcon, LogIn, Box, Compass } from 'lucide-react';
 import { isSupabaseConfigured } from './lib/supabaseClient';
 
 const navItems = [
-  { path: '/', label: 'Check-in', icon: UserCheck },
+  { path: '/', label: 'Overview', icon: Compass },
+  { path: '/check-in', label: 'Check-in', icon: UserCheck },
   { path: '/patient/demo', matchPrefix: '/patient', label: 'Patient Portal', icon: Activity },
   { path: '/waiting-room', label: '3D VR Lounge', icon: Box, extraIconClass: 'text-clinical-teal animate-pulse' },
   { path: '/staff', label: 'Staff Desk', icon: Users },
@@ -168,12 +170,15 @@ function MainContent() {
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
+        {/* Public Landing Page & Info */}
+        <Route path="/" element={<LandingPage />} />
+
         {/* Public Authentication Route */}
         <Route path="/login" element={<LoginPage />} />
 
         {/* Protected Routes (Requires Login) */}
         <Route 
-          path="/" 
+          path="/check-in" 
           element={
             <ProtectedRoute>
               <PatientCheckIn />
