@@ -14,7 +14,7 @@ export default function Hero3DVisualizer() {
     const width = container.clientWidth || window.innerWidth;
     const height = container.clientHeight || window.innerHeight;
 
-    // 1. Three.js Scene, Camera & High-Performance Renderer
+    // 1. Three.js Scene, Camera & Renderer
     const scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2(0x02040b, 0.0035);
 
@@ -54,7 +54,6 @@ export default function Hero3DVisualizer() {
       const ctx = canvas.getContext('2d');
       if (!ctx) return null;
 
-      // Clear Canvas for True Liquid Glass Passthrough
       ctx.clearRect(0, 0, 2048, 1280);
 
       // Translucent Liquid Frosted Glass Gradient
@@ -172,9 +171,9 @@ export default function Hero3DVisualizer() {
       emissiveIntensity: 0.4,
       roughness: 0.05,
       metalness: 0.1,
-      transmission: 0.92, // High transmission for true liquid glass passthrough!
+      transmission: 0.92,
       thickness: 1.5,
-      ior: 1.52, // Glass Refractive Index
+      ior: 1.52,
       clearcoat: 1.0,
       clearcoatRoughness: 0.02,
       reflectivity: 1.0,
@@ -197,7 +196,9 @@ export default function Hero3DVisualizer() {
       envMap: envTexture,
     });
 
-    const materials = [sideGlassMat, sideGlassMat, sideGlassMat, sideGlassMat, liquidGlassMat, sideGlassMat];
+    // BoxGeometry materials order: [0: Right, 1: Left, 2: Top, 3: Bottom, 4: Front, 5: Back]
+    // Apply liquidGlassMat to BOTH Front (4) AND Back (5) so REG-104 is visible on both sides!
+    const materials = [sideGlassMat, sideGlassMat, sideGlassMat, sideGlassMat, liquidGlassMat, liquidGlassMat];
     const cardMesh = new THREE.Mesh(cardGeo, materials);
     cardMesh.castShadow = true;
     cardMesh.receiveShadow = true;
@@ -225,7 +226,7 @@ export default function Hero3DVisualizer() {
     ring2.rotation.y = Math.PI / 4;
     mainGroup.add(ring2);
 
-    // 5. PHOTOREALISTIC BOKEH DEPTH PARTICLE FIELD (VISIBLE THROUGH LIQUID GLASS)
+    // 5. PHOTOREALISTIC BOKEH DEPTH PARTICLE FIELD
     const particleCount = 5000;
     const particleGeo = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
@@ -320,7 +321,7 @@ export default function Hero3DVisualizer() {
       onUpdate: (self) => {
         const p = self.progress;
 
-        // A. Liquid Glass Card Smooth Multi-Axis Rotation
+        // Liquid Glass Card Smooth Multi-Axis Rotation
         gsap.to(mainGroup.rotation, {
           y: p * Math.PI * 4,
           x: p * Math.PI * 1.3,
@@ -329,7 +330,7 @@ export default function Hero3DVisualizer() {
           ease: 'power1.out',
         });
 
-        // B. Position Glide across sections
+        // Position Glide across sections
         gsap.to(mainGroup.position, {
           x: 16 - p * 32,
           y: 2 - Math.sin(p * Math.PI * 2) * 10,
@@ -339,7 +340,7 @@ export default function Hero3DVisualizer() {
           ease: 'power1.out',
         });
 
-        // C. Particle Vortex Acceleration & Depth Stretch
+        // Particle Vortex Acceleration
         gsap.to(particleVortex.rotation, {
           z: p * Math.PI * 3.5,
           duration: 0.5,
@@ -352,7 +353,7 @@ export default function Hero3DVisualizer() {
           ease: 'power1.out',
         });
 
-        // D. Camera Path Zoom
+        // Camera Path Zoom
         gsap.to(camera.position, {
           z: 38 - p * 10,
           y: -p * 5,
