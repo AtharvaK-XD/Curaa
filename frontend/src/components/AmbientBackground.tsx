@@ -3,56 +3,62 @@ import { motion } from 'framer-motion';
 export default function AmbientBackground() {
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none">
-      {/* Background Dot & Grid Pattern Overlay */}
-      <div className="absolute inset-0 bg-dot-pattern opacity-30" />
-      <div className="absolute inset-0 bg-gradient-to-b from-[#050508]/40 via-transparent to-[#050508]/20" />
+      {/* Dynamic Ambient Grid & Radial Mesh */}
+      <div 
+        className="absolute inset-0 opacity-20"
+        style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.15) 1px, transparent 0)`,
+          backgroundSize: '36px 36px',
+        }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#030408]/60 via-transparent to-[#030408]/90" />
 
-      {/* Floating Luminous Orbs */}
+      {/* Floating Liquid Glass Glow Orbs */}
       <motion.div
         animate={{
-          x: [0, 50, -30, 0],
-          y: [0, -40, 30, 0],
-          scale: [1, 1.2, 0.9, 1],
-          opacity: [0.25, 0.4, 0.25, 0.25],
+          x: [0, 80, -40, 0],
+          y: [0, -60, 40, 0],
+          scale: [1, 1.3, 0.85, 1],
+          opacity: [0.35, 0.55, 0.3, 0.35],
         }}
         transition={{
-          duration: 18,
+          duration: 16,
           repeat: Infinity,
           ease: "easeInOut"
         }}
-        className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-clinical-blue/20 blur-[130px]"
+        className="absolute -top-32 -left-32 w-[34rem] h-[34rem] rounded-full bg-gradient-to-tr from-clinical-blue/30 to-purple-500/20 blur-[140px]"
       />
 
       <motion.div
         animate={{
-          x: [0, -60, 40, 0],
-          y: [0, 50, -30, 0],
-          scale: [1.1, 0.85, 1.15, 1.1],
-          opacity: [0.2, 0.35, 0.15, 0.2],
+          x: [0, -90, 50, 0],
+          y: [0, 70, -40, 0],
+          scale: [1.15, 0.9, 1.25, 1.15],
+          opacity: [0.25, 0.45, 0.2, 0.25],
         }}
         transition={{
-          duration: 22,
+          duration: 20,
           repeat: Infinity,
           ease: "easeInOut",
           delay: 2
         }}
-        className="absolute top-1/3 -right-32 w-[30rem] h-[30rem] rounded-full bg-clinical-teal/15 blur-[150px]"
+        className="absolute top-1/3 -right-32 w-[36rem] h-[36rem] rounded-full bg-gradient-to-br from-clinical-teal/25 to-emerald-400/15 blur-[160px]"
       />
 
       <motion.div
         animate={{
-          x: [0, 40, -40, 0],
-          y: [0, -30, 50, 0],
-          scale: [0.9, 1.1, 0.95, 0.9],
-          opacity: [0.15, 0.3, 0.2, 0.15],
+          x: [0, 60, -60, 0],
+          y: [0, -40, 60, 0],
+          scale: [0.9, 1.2, 0.95, 0.9],
+          opacity: [0.2, 0.4, 0.25, 0.2],
         }}
         transition={{
-          duration: 25,
+          duration: 24,
           repeat: Infinity,
           ease: "easeInOut",
-          delay: 5
+          delay: 4
         }}
-        className="absolute -bottom-40 left-1/4 w-[28rem] h-[28rem] rounded-full bg-clinical-purple/15 blur-[140px]"
+        className="absolute -bottom-40 left-1/4 w-[32rem] h-[32rem] rounded-full bg-gradient-to-tr from-purple-600/20 to-clinical-blue/20 blur-[150px]"
       />
     </div>
   );
