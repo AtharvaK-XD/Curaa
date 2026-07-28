@@ -230,9 +230,9 @@ export default function LandingPage() {
             </p>
           </div>
 
-          {/* Feature Badges */}
+          {/* Liquid Glass Feature Badges */}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
-            <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.08] backdrop-blur-md">
+            <div className="flex items-center gap-3 p-3.5 rounded-2xl liquid-glass-card">
               <div className="p-2.5 rounded-xl bg-clinical-blue/15 text-clinical-blue shrink-0 border border-clinical-blue/20">
                 <Globe className="w-4 h-4" />
               </div>
@@ -242,7 +242,7 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.08] backdrop-blur-md">
+            <div className="flex items-center gap-3 p-3.5 rounded-2xl liquid-glass-card">
               <div className="p-2.5 rounded-xl bg-clinical-teal/15 text-clinical-teal shrink-0 border border-clinical-teal/20">
                 <Box className="w-4 h-4" />
               </div>
@@ -252,7 +252,7 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.08] backdrop-blur-md col-span-2 sm:col-span-1">
+            <div className="flex items-center gap-3 p-3.5 rounded-2xl liquid-glass-card col-span-2 sm:col-span-1">
               <div className="p-2.5 rounded-xl bg-purple-500/15 text-purple-400 shrink-0 border border-purple-500/20">
                 <Zap className="w-4 h-4" />
               </div>
@@ -293,9 +293,9 @@ export default function LandingPage() {
 
         </div>
 
-        {/* Right Column: Liquid Glass Auth Card */}
+        {/* Right Column: Ultra-Translucent Liquid Glass Auth Card */}
         <div className="lg:col-span-5">
-          <GlassCard3D className="p-6 sm:p-8 rounded-3xl border border-white/[0.14] bg-[#080914]/85 backdrop-blur-3xl shadow-[0_25px_60px_rgba(0,0,0,0.7)] relative overflow-hidden">
+          <GlassCard3D className="relative">
             
             {/* Ambient Corner Glow */}
             <div className="absolute -top-24 -right-24 w-56 h-56 bg-clinical-blue/25 rounded-full blur-3xl pointer-events-none" />
@@ -344,7 +344,7 @@ export default function LandingPage() {
                 </div>
 
                 {/* Tabs */}
-                <div className="grid grid-cols-2 p-1 rounded-2xl bg-white/[0.04] border border-white/[0.08]">
+                <div className="grid grid-cols-2 p-1 rounded-2xl bg-white/[0.05] border border-white/[0.1]">
                   <button
                     onClick={() => { setAuthMethod('google'); setError(''); setSuccessMsg(''); }}
                     className={`py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
@@ -476,7 +476,7 @@ export default function LandingPage() {
       </section>
 
       {/* ------------------------------------------------------------- */}
-      {/* 2. INTERACTIVE OPD STAFF DISPATCH DEMO (LIVE SIMULATOR)       */}
+      {/* 2. INTERACTIVE OPD STAFF DISPATCH DEMO (LIQUID GLASS PANELS)   */}
       {/* ------------------------------------------------------------- */}
       <section className="space-y-8 pt-4">
         <div className="text-center max-w-3xl mx-auto space-y-3">
@@ -494,10 +494,10 @@ export default function LandingPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
           
-          {/* Staff Dispatch Desk Controls */}
-          <div className="lg:col-span-6 p-6 sm:p-8 rounded-3xl bg-[#080914]/90 border border-white/[0.12] backdrop-blur-2xl flex flex-col justify-between space-y-6">
+          {/* Staff Dispatch Desk Controls - Liquid Glass Panel */}
+          <div className="lg:col-span-6 p-6 sm:p-8 rounded-[32px] liquid-glass-card flex flex-col justify-between space-y-6">
             <div>
-              <div className="flex items-center justify-between border-b border-white/[0.08] pb-4 mb-4">
+              <div className="flex items-center justify-between border-b border-white/[0.1] pb-4 mb-4">
                 <div className="flex items-center gap-2.5">
                   <div className="p-2 rounded-xl bg-clinical-blue/20 text-clinical-blue border border-clinical-blue/30">
                     <Users className="w-5 h-5" />
@@ -513,12 +513,12 @@ export default function LandingPage() {
               </div>
 
               <div className="grid grid-cols-2 gap-3 mb-6">
-                <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
-                  <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Physician</span>
-                  <div className="text-sm font-bold text-zinc-200 mt-0.5">Dr. Ananya Roy</div>
+                <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.08]">
+                  <span className="text-[10px] text-zinc-400 uppercase font-bold tracking-wider">Physician</span>
+                  <div className="text-sm font-bold text-zinc-100 mt-0.5">Dr. Ananya Roy</div>
                 </div>
-                <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
-                  <span className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Active Room</span>
+                <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.08]">
+                  <span className="text-[10px] text-zinc-400 uppercase font-bold tracking-wider">Active Room</span>
                   <div className="text-sm font-bold text-clinical-teal mt-0.5">Consultation Room 4</div>
                 </div>
               </div>
@@ -537,7 +537,7 @@ export default function LandingPage() {
 
                   <button
                     onClick={handleEmergencyPriority}
-                    className="py-3 px-4 rounded-xl bg-rose-500/20 border border-rose-500/30 text-rose-300 font-bold text-xs flex items-center justify-center gap-2 hover:bg-rose-500/30 transition-all cursor-pointer"
+                    className="py-3 px-4 rounded-xl bg-rose-500/20 border border-rose-500/35 text-rose-300 font-bold text-xs flex items-center justify-center gap-2 hover:bg-rose-500/30 transition-all cursor-pointer"
                   >
                     <AlertCircle className="w-4 h-4 text-rose-400" />
                     <span>Emergency Priority</span>
@@ -547,9 +547,9 @@ export default function LandingPage() {
             </div>
 
             {/* Live Terminal Log */}
-            <div className="space-y-2 pt-2 border-t border-white/[0.08]">
-              <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider">Live System Event Log</span>
-              <div className="p-3 rounded-xl bg-black/60 border border-white/[0.06] font-mono text-[11px] text-emerald-400 space-y-1.5 overflow-hidden">
+            <div className="space-y-2 pt-2 border-t border-white/[0.1]">
+              <span className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider">Live System Event Log</span>
+              <div className="p-3.5 rounded-2xl bg-black/40 border border-white/[0.08] font-mono text-[11px] text-emerald-400 space-y-1.5 overflow-hidden backdrop-blur-md">
                 {eventLogs.map((log, idx) => (
                   <div key={idx} className="truncate">{log}</div>
                 ))}
@@ -557,8 +557,8 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Active LED Queue Display Widget */}
-          <div className="lg:col-span-6 p-6 sm:p-8 rounded-3xl bg-gradient-to-b from-[#090c1a]/90 to-[#05060f]/90 border border-white/[0.12] backdrop-blur-2xl flex flex-col justify-between space-y-6 relative overflow-hidden">
+          {/* Active LED Queue Display Widget - Liquid Glass Panel */}
+          <div className="lg:col-span-6 p-6 sm:p-8 rounded-[32px] liquid-glass-card flex flex-col justify-between space-y-6 relative overflow-hidden">
             
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -582,7 +582,7 @@ export default function LandingPage() {
             </div>
 
             {/* Voice Broadcaster Bar */}
-            <div className="p-4 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-between">
+            <div className="p-4 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-between backdrop-blur-md">
               <div className="flex items-center gap-3">
                 <div className={`p-2.5 rounded-xl ${isPlayingAudio ? 'bg-clinical-teal/20 text-clinical-teal animate-bounce' : 'bg-white/10 text-zinc-400'}`}>
                   <Volume2 className="w-5 h-5" />
@@ -608,7 +608,7 @@ export default function LandingPage() {
       </section>
 
       {/* ------------------------------------------------------------- */}
-      {/* 3. SYSTEM FEATURES BENTO GRID (GSAP REVEAL)                   */}
+      {/* 3. SYSTEM FEATURES BENTO GRID (LIQUID GLASS CARDS)            */}
       {/* ------------------------------------------------------------- */}
       <section className="bento-container space-y-10 pt-4" ref={bentoRef}>
         <div className="text-center max-w-3xl mx-auto space-y-3">
@@ -624,22 +624,22 @@ export default function LandingPage() {
           </p>
         </div>
 
-        {/* 6-Card Bento Grid */}
+        {/* 6-Card Liquid Glass Bento Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           
           {/* Card 1 */}
           <TiltCard className="bento-card h-full">
-            <div className="p-6 sm:p-7 rounded-3xl bg-[#080914]/85 border border-white/[0.1] hover:border-clinical-blue/50 transition-all flex flex-col justify-between h-full group backdrop-blur-xl">
+            <div className="p-6 sm:p-7 rounded-[32px] liquid-glass-card hover:border-clinical-blue/60 transition-all flex flex-col justify-between h-full group">
               <div className="space-y-4">
                 <div className="w-12 h-12 rounded-2xl bg-clinical-blue/15 border border-clinical-blue/30 text-clinical-blue flex items-center justify-center group-hover:scale-110 transition-transform">
                   <Activity className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-bold text-white font-display">Live Mobile Ticket Tracker</h3>
-                <p className="text-xs text-zinc-400 leading-relaxed">
+                <p className="text-xs text-zinc-300 leading-relaxed">
                   Patients scan a QR code or check in online to track their exact token position, queue ahead count, and estimated wait times in real time on their mobile devices.
                 </p>
               </div>
-              <div className="pt-6 border-t border-white/[0.06] flex items-center justify-between text-xs font-semibold text-clinical-blue">
+              <div className="pt-6 border-t border-white/[0.1] flex items-center justify-between text-xs font-semibold text-clinical-blue">
                 <span>REG-104 live ETA tracker</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </div>
@@ -648,17 +648,17 @@ export default function LandingPage() {
 
           {/* Card 2 */}
           <TiltCard className="bento-card h-full">
-            <div className="p-6 sm:p-7 rounded-3xl bg-[#080914]/85 border border-white/[0.1] hover:border-clinical-teal/50 transition-all flex flex-col justify-between h-full group backdrop-blur-xl">
+            <div className="p-6 sm:p-7 rounded-[32px] liquid-glass-card hover:border-clinical-teal/60 transition-all flex flex-col justify-between h-full group">
               <div className="space-y-4">
                 <div className="w-12 h-12 rounded-2xl bg-clinical-teal/15 border border-clinical-teal/30 text-clinical-teal flex items-center justify-center group-hover:scale-110 transition-transform">
                   <Globe className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-bold text-white font-display">Multilingual AI Voice Guidance</h3>
-                <p className="text-xs text-zinc-400 leading-relaxed">
+                <p className="text-xs text-zinc-300 leading-relaxed">
                   Speaks fluent English, Hindi, and Gujarati. Calls out tokens clearly over audio, and responds instantly to patient text inquiries like "How many minutes until Room 4?".
                 </p>
               </div>
-              <div className="pt-6 border-t border-white/[0.06] flex items-center justify-between text-xs font-semibold text-clinical-teal">
+              <div className="pt-6 border-t border-white/[0.1] flex items-center justify-between text-xs font-semibold text-clinical-teal">
                 <span>NLP Voice Synthesis Engine</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </div>
@@ -667,17 +667,17 @@ export default function LandingPage() {
 
           {/* Card 3 */}
           <TiltCard className="bento-card h-full">
-            <div className="p-6 sm:p-7 rounded-3xl bg-[#080914]/85 border border-white/[0.1] hover:border-purple-500/50 transition-all flex flex-col justify-between h-full group backdrop-blur-xl">
+            <div className="p-6 sm:p-7 rounded-[32px] liquid-glass-card hover:border-purple-500/60 transition-all flex flex-col justify-between h-full group">
               <div className="space-y-4">
                 <div className="w-12 h-12 rounded-2xl bg-purple-500/15 border border-purple-500/30 text-purple-400 flex items-center justify-center group-hover:scale-110 transition-transform">
                   <Box className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-bold text-white font-display">3D VR Waiting Lounge</h3>
-                <p className="text-xs text-zinc-400 leading-relaxed">
+                <p className="text-xs text-zinc-300 leading-relaxed">
                   Turn waiting stress into relaxation. Patients enjoy high-fidelity 3D panoramic natural environments and calming spatial soundscapes directly from their smartphone screen.
                 </p>
               </div>
-              <div className="pt-6 border-t border-white/[0.06] flex items-center justify-between text-xs font-semibold text-purple-400">
+              <div className="pt-6 border-t border-white/[0.1] flex items-center justify-between text-xs font-semibold text-purple-400">
                 <span>Three.js Spatial Engine</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </div>
@@ -686,17 +686,17 @@ export default function LandingPage() {
 
           {/* Card 4 */}
           <TiltCard className="bento-card h-full">
-            <div className="p-6 sm:p-7 rounded-3xl bg-[#080914]/85 border border-white/[0.1] hover:border-clinical-blue/50 transition-all flex flex-col justify-between h-full group backdrop-blur-xl">
+            <div className="p-6 sm:p-7 rounded-[32px] liquid-glass-card hover:border-clinical-blue/60 transition-all flex flex-col justify-between h-full group">
               <div className="space-y-4">
                 <div className="w-12 h-12 rounded-2xl bg-clinical-blue/15 border border-clinical-blue/30 text-clinical-blue flex items-center justify-center group-hover:scale-110 transition-transform">
                   <Users className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-bold text-white font-display">Staff Control Desk</h3>
-                <p className="text-xs text-zinc-400 leading-relaxed">
+                <p className="text-xs text-zinc-300 leading-relaxed">
                   Staff members dispatch queues, request emergency priorities, reroute patients to empty clinical rooms, and signal high-priority delay status with 1 click.
                 </p>
               </div>
-              <div className="pt-6 border-t border-white/[0.06] flex items-center justify-between text-xs font-semibold text-clinical-blue">
+              <div className="pt-6 border-t border-white/[0.1] flex items-center justify-between text-xs font-semibold text-clinical-blue">
                 <span>Real-Time Operator Control</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </div>
@@ -705,17 +705,17 @@ export default function LandingPage() {
 
           {/* Card 5 */}
           <TiltCard className="bento-card h-full">
-            <div className="p-6 sm:p-7 rounded-3xl bg-[#080914]/85 border border-white/[0.1] hover:border-emerald-500/50 transition-all flex flex-col justify-between h-full group backdrop-blur-xl">
+            <div className="p-6 sm:p-7 rounded-[32px] liquid-glass-card hover:border-emerald-500/60 transition-all flex flex-col justify-between h-full group">
               <div className="space-y-4">
                 <div className="w-12 h-12 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center group-hover:scale-110 transition-transform">
                   <LayoutDashboard className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-bold text-white font-display">Operational Analytics</h3>
-                <p className="text-xs text-zinc-400 leading-relaxed">
+                <p className="text-xs text-zinc-300 leading-relaxed">
                   Spot bottlenecks instantly. Live heatmaps highlight rooms with long waiting queues, delayed consultations, or sudden clinical service spikes.
                 </p>
               </div>
-              <div className="pt-6 border-t border-white/[0.06] flex items-center justify-between text-xs font-semibold text-emerald-400">
+              <div className="pt-6 border-t border-white/[0.1] flex items-center justify-between text-xs font-semibold text-emerald-400">
                 <span>Telemetry Dashboard</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </div>
@@ -724,17 +724,17 @@ export default function LandingPage() {
 
           {/* Card 6 */}
           <TiltCard className="bento-card h-full">
-            <div className="p-6 sm:p-7 rounded-3xl bg-[#080914]/85 border border-white/[0.1] hover:border-amber-500/50 transition-all flex flex-col justify-between h-full group backdrop-blur-xl">
+            <div className="p-6 sm:p-7 rounded-[32px] liquid-glass-card hover:border-amber-500/60 transition-all flex flex-col justify-between h-full group">
               <div className="space-y-4">
                 <div className="w-12 h-12 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-400 flex items-center justify-center group-hover:scale-110 transition-transform">
                   <MessageSquare className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-bold text-white font-display">WhatsApp Notifications</h3>
-                <p className="text-xs text-zinc-400 leading-relaxed">
+                <p className="text-xs text-zinc-300 leading-relaxed">
                   Push priority reminders straight to the patient's chat thread as they walk around the facility. Let them grab a cup of coffee and receive alerts when 2 patients are ahead.
                 </p>
               </div>
-              <div className="pt-6 border-t border-white/[0.06] flex items-center justify-between text-xs font-semibold text-amber-400">
+              <div className="pt-6 border-t border-white/[0.1] flex items-center justify-between text-xs font-semibold text-amber-400">
                 <span>Twilio WhatsApp Gateway</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </div>
@@ -745,9 +745,9 @@ export default function LandingPage() {
       </section>
 
       {/* ------------------------------------------------------------- */}
-      {/* 4. 3D VR LOUNGE PORTAL SHOWCASE                               */}
+      {/* 4. 3D VR LOUNGE PORTAL SHOWCASE (LIQUID GLASS PANEL)           */}
       {/* ------------------------------------------------------------- */}
-      <section className="p-8 sm:p-12 rounded-3xl bg-gradient-to-r from-[#090b1c]/90 via-[#070815]/90 to-[#0d091a]/90 border border-white/[0.14] backdrop-blur-3xl relative overflow-hidden space-y-8">
+      <section className="p-8 sm:p-12 rounded-[36px] liquid-glass-card border border-white/[0.18] relative overflow-hidden space-y-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           
           <div className="lg:col-span-6 space-y-6">
@@ -774,7 +774,7 @@ export default function LandingPage() {
           </div>
 
           <div className="lg:col-span-6">
-            <GlassCard3D className="p-6 rounded-3xl bg-black/60 border border-white/[0.12] space-y-6">
+            <GlassCard3D className="p-6 rounded-3xl bg-black/40 border border-white/[0.15] space-y-6">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-purple-400 uppercase tracking-wider">Interactive 3D Waiting Room Lounge</span>
                 <span className="text-[10px] px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 font-mono">Three.js Mode</span>
@@ -829,7 +829,7 @@ export default function LandingPage() {
       </section>
 
       {/* ------------------------------------------------------------- */}
-      {/* 5. 3-STEP TIMELINE WORKFLOW (GSAP REVEAL)                      */}
+      {/* 5. 3-STEP TIMELINE WORKFLOW (LIQUID GLASS CARDS)              */}
       {/* ------------------------------------------------------------- */}
       <section className="timeline-container space-y-10 pt-4">
         <div className="text-center max-w-3xl mx-auto space-y-3">
@@ -847,35 +847,35 @@ export default function LandingPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           
-          <div className="timeline-step p-7 rounded-3xl bg-[#080914]/85 border border-white/[0.1] backdrop-blur-xl relative space-y-4">
+          <div className="timeline-step p-7 rounded-[32px] liquid-glass-card relative space-y-4">
             <div className="text-4xl font-black text-clinical-blue/40 font-display absolute top-6 right-6">01</div>
             <div className="w-12 h-12 rounded-2xl bg-clinical-blue/15 text-clinical-blue border border-clinical-blue/30 flex items-center justify-center">
               <UserCheck className="w-6 h-6" />
             </div>
             <h3 className="text-xl font-bold text-white font-display">Scan & Self Register</h3>
-            <p className="text-xs text-zinc-400 leading-relaxed">
+            <p className="text-xs text-zinc-300 leading-relaxed">
               Patient scans the hospital floor QR code or uses our Google/Mobile OTP portal to quickly log check-in details.
             </p>
           </div>
 
-          <div className="timeline-step p-7 rounded-3xl bg-[#080914]/85 border border-white/[0.1] backdrop-blur-xl relative space-y-4">
+          <div className="timeline-step p-7 rounded-[32px] liquid-glass-card relative space-y-4">
             <div className="text-4xl font-black text-clinical-teal/40 font-display absolute top-6 right-6">02</div>
             <div className="w-12 h-12 rounded-2xl bg-clinical-teal/15 text-clinical-teal border border-clinical-teal/30 flex items-center justify-center">
               <Compass className="w-6 h-6" />
             </div>
             <h3 className="text-xl font-bold text-white font-display">Track & Relax Anywhere</h3>
-            <p className="text-xs text-zinc-400 leading-relaxed">
+            <p className="text-xs text-zinc-300 leading-relaxed">
               The live token widget shows queue positioning, waiting times, and active multilingual AI voice instructions. No app download needed.
             </p>
           </div>
 
-          <div className="timeline-step p-7 rounded-3xl bg-[#080914]/85 border border-white/[0.1] backdrop-blur-xl relative space-y-4">
+          <div className="timeline-step p-7 rounded-[32px] liquid-glass-card relative space-y-4">
             <div className="text-4xl font-black text-purple-400/40 font-display absolute top-6 right-6">03</div>
             <div className="w-12 h-12 rounded-2xl bg-purple-500/15 text-purple-400 border border-purple-500/30 flex items-center justify-center">
               <CheckCircle2 className="w-6 h-6" />
             </div>
             <h3 className="text-xl font-bold text-white font-display">1-Click Doctor Consultation</h3>
-            <p className="text-xs text-zinc-400 leading-relaxed">
+            <p className="text-xs text-zinc-300 leading-relaxed">
               When called, walk straight inside consultation. The system updates status automatically for the next patient.
             </p>
           </div>
@@ -884,9 +884,9 @@ export default function LandingPage() {
       </section>
 
       {/* ------------------------------------------------------------- */}
-      {/* 6. CALL TO ACTION & ENTERPRISE FOOTER                         */}
+      {/* 6. CALL TO ACTION & ENTERPRISE FOOTER (LIQUID GLASS BANNER)   */}
       {/* ------------------------------------------------------------- */}
-      <section className="p-10 sm:p-14 rounded-3xl bg-gradient-to-r from-clinical-blue/20 via-clinical-teal/20 to-purple-500/20 border border-white/[0.15] backdrop-blur-3xl text-center space-y-6 relative overflow-hidden">
+      <section className="p-10 sm:p-14 rounded-[36px] liquid-glass-card text-center space-y-6 relative overflow-hidden">
         <div className="max-w-3xl mx-auto space-y-4 relative z-10">
           <h2 className="text-3xl sm:text-5xl font-black text-white font-display leading-tight">
             Transform Waiting Room Stress into Calm Today.
@@ -914,7 +914,7 @@ export default function LandingPage() {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center justify-center gap-8 pt-8 border-t border-white/[0.08] text-xs text-zinc-400 font-medium">
+        <div className="flex flex-wrap items-center justify-center gap-8 pt-8 border-t border-white/[0.1] text-xs text-zinc-300 font-medium">
           <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4 text-emerald-400" /> HIPAA & GDPR Secure</span>
           <span className="flex items-center gap-1.5"><Zap className="w-4 h-4 text-clinical-blue" /> HL7 FHIR Standard Integration</span>
           <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-purple-400" /> ISO 27001 Certified Cloud</span>
