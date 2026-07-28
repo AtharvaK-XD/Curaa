@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useAuth } from '../context/AuthContext';
@@ -11,8 +11,8 @@ import AnimatedCounter from '../components/AnimatedCounter';
 import {
   Sparkles, ArrowRight, ShieldCheck, Activity, Box, Users,
   LayoutDashboard, UserCheck, Phone, CheckCircle2,
-  AlertCircle, Zap, MessageSquare, Bell, Volume2,
-  Globe, ChevronRight, Lock, Compass, Play, Radio, Cpu, RefreshCw
+  AlertCircle, Zap, MessageSquare, Volume2,
+  Globe, Lock, Compass, Play, Radio
 } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -33,7 +33,7 @@ export default function LandingPage() {
   // Dispatch Simulator State
   const [currentToken, setCurrentToken] = useState(103);
   const [currentPatient, setCurrentPatient] = useState('Suresh Kumar');
-  const [currentRoom, setCurrentRoom] = useState('Room 4 - Cardiology');
+  const [currentRoom] = useState('Room 4 - Cardiology');
   const [isEmergency, setIsEmergency] = useState(false);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [eventLogs, setEventLogs] = useState<string[]>([
@@ -166,6 +166,13 @@ export default function LandingPage() {
     if (value && index < 5) {
       const nextInput = document.getElementById(`landing-otp-${index + 1}`);
       nextInput?.focus();
+    }
+  };
+
+  const handleOtpKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Backspace' && !otp[index] && index > 0) {
+      const prevInput = document.getElementById(`landing-otp-${index - 1}`);
+      prevInput?.focus();
     }
   };
 
