@@ -52,7 +52,7 @@
 - **Logistics & Workflow Guidance**: Answers questions regarding room numbers, queue positions, delays, and department locations.
 - **Built-In Medical Guardrails**: Strictly refuses medical/diagnostic queries to protect patient safety.
 - **Multilingual NLP**: Seamlessly responds in the patient's selected language.
-- **Rule-Based Fallback Engine**: Local fallback ensures continuous uptime even without an active AI API key.
+- **Rule-Based AI Engine**: Local engine provides instantaneous response and guidance.
 
 ### 👓 4. Immersive 3D VR Waiting Lounge (Three.js WebGL & GSAP)
 - **Interactive 3D Environment**: Relaxing WebGL 3D virtual environment with dynamic particle lighting, glassmorphic UI overlay, and ambient audio controls.
@@ -188,7 +188,6 @@ Ensure you have the following installed on your development machine:
 - **Node.js** (v18.0.0 or higher)
 - **npm** (v9.0.0 or higher)
 - A **Supabase** account (Free tier works great)
-- *(Optional)* An **Anthropic API key** (for Claude AI Assistant)
 - *(Optional)* A **Twilio** Account (for SMS dispatch)
 
 ---
@@ -230,9 +229,6 @@ cd Curaa
    SUPABASE_URL=https://your-project-id.supabase.co
    SUPABASE_ANON_KEY=your-supabase-anon-key
    SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
-
-   # AI Assistant Key (Optional - Fallback Engine will be used if omitted)
-   ANTHROPIC_API_KEY=your-anthropic-api-key
 
    # Twilio Config (Optional - Simulated in console if omitted)
    TWILIO_ACCOUNT_SID=
@@ -300,7 +296,6 @@ cd Curaa
 | `SUPABASE_URL` | Yes | Your Supabase project URL |
 | `SUPABASE_ANON_KEY` | Yes | Supabase Anonymous public API key |
 | `SUPABASE_SERVICE_ROLE_KEY` | Yes | Supabase Service Role key (bypasses RLS for worker tasks) |
-| `ANTHROPIC_API_KEY` | No | Anthropic Claude API key for AI OPD Assistant |
 | `TWILIO_ACCOUNT_SID` | No | Twilio Account SID for SMS notifications |
 | `TWILIO_AUTH_TOKEN` | No | Twilio Auth Token |
 | `TWILIO_PHONE_NUMBER` | No | Twilio Phone Number |
@@ -362,7 +357,7 @@ Curaa features a specialized AI Assistant tailored for hospital logistics:
 2. **Multilingual Intelligence**: Native fluency in **English**, **Hindi**, and **Gujarati**.
 3. **Medical Safety Policy**: Automatic query inspection blocks diagnostic advice and redirects patients to attending doctors:
    > *"I am a queue navigation assistant and cannot provide medical advice. Please consult your doctor directly."*
-4. **Local Fallback Engine**: If no Anthropic API key is supplied, a smart, multilingual regex engine provides instantaneous guidance for room locations and wait time inquiries.
+4. **Local Rule-Based Engine**: A smart, multilingual regex engine provides instantaneous guidance for room locations and wait time inquiries.
 
 ---
 
