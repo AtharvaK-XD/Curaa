@@ -8,7 +8,6 @@
 [![Three.js](https://img.shields.io/badge/Three.js-0.185-black?style=flat-square&logo=three.js&logoColor=white)](https://threejs.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-Express-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/)
 [![Supabase](https://img.shields.io/badge/Supabase-Realtime-3ECF8E?style=flat-square&logo=supabase&logoColor=white)](https://supabase.com/)
-[![Anthropic Claude](https://img.shields.io/badge/Anthropic-Claude_3.5_Sonnet-D97706?style=flat-square&logo=anthropic&logoColor=white)](https://www.anthropic.com/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 
 **Curaa** is an intelligent, real-time hospital Outpatient Department (OPD) queue navigation platform. Designed to eliminate waiting room anxiety and hospital overcrowding, Curaa turns complex hospital visits into streamlined, stress-free journeys through dynamic queue routing, multilingual AI logistics guidance, immersive 3D virtual waiting lounges, real-time status updates, and predictive analytics for hospital administration.
@@ -48,7 +47,7 @@
 - **Visual OPD Progression**: Interactive step-by-step hospital workflow tracker (*Registration ➔ Billing ➔ Lab ➔ OPD Consultation ➔ Pharmacy*).
 - **Interactive Floor Map**: Highlights department floor numbers, room numbers, and color-coded zones.
 
-### 🤖 3. Multilingual AI OPD Logistics Assistant (Claude 3.5 Sonnet)
+### 🤖 3. Multilingual AI OPD Logistics Assistant
 - **Logistics & Workflow Guidance**: Answers questions regarding room numbers, queue positions, delays, and department locations.
 - **Built-In Medical Guardrails**: Strictly refuses medical/diagnostic queries to protect patient safety.
 - **Multilingual NLP**: Seamlessly responds in the patient's selected language.
@@ -96,8 +95,8 @@
              │                     │                          │
              ▼                     ▼                          ▼
  ┌──────────────────────┐  ┌──────────────────────┐  ┌─────────────────────────┐
- │   Supabase Database  │  │ Claude 3.5 Sonnet AI │  │   Twilio SMS / WhatsApp │
- │  (PostgreSQL + RLS)  │  │ (Anthropic SDK / NLP)│  │    (Background Worker)  │
+ │   Supabase Database  │  │   Multilingual AI    │  │   Twilio SMS / WhatsApp │
+ │  (PostgreSQL + RLS)  │  │  (Logistics Engine)  │  │    (Background Worker)  │
  └──────────────────────┘  └──────────────────────┘  └─────────────────────────┘
 ```
 
@@ -117,7 +116,7 @@
 ### **Backend**
 - **Runtime**: [Node.js](https://nodejs.org/) + Express
 - **Language**: TypeScript (`ts-node-dev`)
-- **AI Agent**: `@anthropic-ai/sdk` (Claude 3.5 Sonnet)
+- **AI Agent**: Rule-Based Multilingual Logistics Engine
 - **Database Client**: `@supabase/supabase-js`
 - **Communications**: Twilio SMS Integration
 
@@ -164,7 +163,7 @@ Curaa/
 │
 ├── backend/                      # Express TypeScript Backend API
 │   ├── src/
-│   │   ├── agent.ts              # Anthropic Claude 3.5 Sonnet & Fallback Agent
+│   │   ├── agent.ts              # Rule-Based Multilingual Logistics Agent
 │   │   ├── db.ts                 # Supabase Backend Service Role Client
 │   │   ├── routes.ts             # REST API Controllers (Check-in, Queue, Call)
 │   │   ├── seed.ts               # Programmatic Database Seeder
