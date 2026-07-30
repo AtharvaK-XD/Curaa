@@ -244,29 +244,40 @@ function MainContent() {
   );
 }
 
+function AppLayout() {
+  const location = useLocation();
+  const isLandingPage = location.pathname === '/';
+
+  return (
+    <SmoothScroll>
+      <div className="min-h-screen flex flex-col bg-[#050508] text-zinc-100 relative overflow-hidden">
+        {/* Ambient Motion Orbs & Cursor Spotlight */}
+        <AmbientBackground />
+        <CursorSpotlight />
+        
+        {/* 3D Visualizer & Orbiting Rings - Only rendered on the Landing Page ('/') */}
+        {isLandingPage && <Hero3DVisualizer />}
+        
+        <DemoNavBar />
+        
+        {/* Main Content Area */}
+        <main className="flex-1 flex flex-col relative z-10">
+          <MainContent />
+        </main>
+        
+        <footer className="bg-[#050508]/20 border-t border-white/[0.05] py-4 sm:py-5 text-center text-xs text-zinc-500 font-medium px-4 backdrop-blur-sm relative z-10">
+          &copy; {new Date().getFullYear()} Curaa. Hospital OPD Logistics Engine. Dynamic Queue Navigator.
+        </footer>
+      </div>
+    </SmoothScroll>
+  );
+}
+
 function App() {
   return (
     <AuthProvider>
       <Router>
-        <SmoothScroll>
-          <div className="min-h-screen flex flex-col bg-[#050508] text-zinc-100 relative overflow-hidden">
-            {/* Ambient Motion Orbs, Cursor Spotlight & 3D Three.js WebGL Particles */}
-            <AmbientBackground />
-            <CursorSpotlight />
-            <Hero3DVisualizer />
-            
-            <DemoNavBar />
-            
-            {/* Main Content Area */}
-            <main className="flex-1 flex flex-col relative z-10">
-              <MainContent />
-            </main>
-            
-            <footer className="bg-[#050508]/20 border-t border-white/[0.05] py-4 sm:py-5 text-center text-xs text-zinc-500 font-medium px-4 backdrop-blur-sm relative z-10">
-              &copy; {new Date().getFullYear()} Curaa. Hospital OPD Logistics Engine. Dynamic Queue Navigator.
-            </footer>
-          </div>
-        </SmoothScroll>
+        <AppLayout />
       </Router>
     </AuthProvider>
   );
