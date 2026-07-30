@@ -255,8 +255,8 @@ function AppLayout() {
         <AmbientBackground />
         <CursorSpotlight />
         
-        {/* 3D Visualizer & Orbiting Rings - Only rendered on the Landing Page ('/') */}
-        {isLandingPage && <Hero3DVisualizer />}
+        {/* 3D Visualizer & Stars Background (Orbit rings and 3D card visible on Landing Page only) */}
+        <Hero3DVisualizer showRingsAndCard={isLandingPage} />
         
         <DemoNavBar />
         

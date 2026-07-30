@@ -5,8 +5,19 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function Hero3DVisualizer() {
+interface Hero3DVisualizerProps {
+  showRingsAndCard?: boolean;
+}
+
+export default function Hero3DVisualizer({ showRingsAndCard = true }: Hero3DVisualizerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const mainGroupRef = useRef<THREE.Group | null>(null);
+
+  useEffect(() => {
+    if (mainGroupRef.current) {
+      mainGroupRef.current.visible = showRingsAndCard;
+    }
+  }, [showRingsAndCard]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -157,6 +168,8 @@ export default function Hero3DVisualizer() {
     // 4. Main 3D Composition Group (ScrollTrigger Tracked)
     const mainGroup = new THREE.Group();
     mainGroup.position.set(16, 2, 0);
+    mainGroup.visible = showRingsAndCard;
+    mainGroupRef.current = mainGroup;
     scene.add(mainGroup);
 
     // Thick Glass Smart Card Geometry
