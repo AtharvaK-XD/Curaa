@@ -131,12 +131,11 @@ export default function LandingPage() {
 
         {/* Main Title */}
         <div className="space-y-5">
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white font-display leading-[1.08]">
-            Zero Waiting Room <br />
-            <span className="bg-gradient-to-r from-clinical-blue via-clinical-teal to-purple-400 bg-clip-text text-transparent drop-shadow-[0_0_35px_rgba(56,189,248,0.3)]">
-              Anxiety.
-            </span>{' '}
-            Dynamic OPD.
+          <h1 className="text-6xl sm:text-8xl lg:text-[10rem] font-normal tracking-normal text-white font-display uppercase leading-[0.85] pb-2">
+            Zero Waiting<br />
+            <span className="font-accent lowercase tracking-widest text-5xl sm:text-7xl lg:text-[8rem] bg-gradient-to-r from-clinical-blue via-clinical-teal to-purple-400 bg-clip-text text-transparent drop-shadow-[0_0_35px_rgba(56,189,248,0.3)]">
+              Anxiety
+            </span>
           </h1>
           <p className="text-zinc-300 text-base sm:text-lg max-w-2xl font-normal leading-relaxed">
             Curaa streamlines outpatient visits into smooth, predictable digital journeys. Skip crowded lobbies, track live queue tokens on your phone, get AI guidance in your native language, and relax in a 3D virtual lounge.
