@@ -133,7 +133,7 @@ export default function LandingPage() {
         <div className="space-y-5">
           <h1 className="text-6xl sm:text-8xl lg:text-[10rem] font-normal tracking-normal text-white font-display uppercase leading-[0.85] pb-2">
             Zero Waiting<br />
-            <span className="font-accent lowercase tracking-widest text-5xl sm:text-7xl lg:text-[8rem] bg-gradient-to-r from-clinical-blue via-clinical-teal to-purple-400 bg-clip-text text-transparent drop-shadow-[0_0_35px_rgba(56,189,248,0.3)]">
+            <span className="font-accent uppercase tracking-widest text-5xl sm:text-7xl lg:text-[8rem] bg-gradient-to-r from-clinical-blue via-clinical-teal to-purple-400 bg-clip-text text-transparent drop-shadow-[0_0_35px_rgba(56,189,248,0.3)]">
               Anxiety
             </span>
           </h1>
