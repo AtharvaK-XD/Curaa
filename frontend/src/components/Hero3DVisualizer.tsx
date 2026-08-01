@@ -88,7 +88,7 @@ export default function Hero3DVisualizer({ showRingsAndCard = true }: Hero3DVisu
       // Glowing Glass Top Pill
       ctx.fillStyle = 'rgba(56, 189, 248, 0.2)';
       ctx.beginPath();
-      ctx.roundRect(100, 100, 520, 96, 48);
+      ctx.roundRect(100, 100, 650, 96, 48);
       ctx.fill();
       ctx.strokeStyle = '#38bdf8';
       ctx.lineWidth = 4;
