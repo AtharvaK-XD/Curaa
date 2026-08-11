@@ -382,12 +382,6 @@ Contributions are warmly welcomed! To contribute:
 
 ---
 
-## 📄 License
-
-Distributed under the MIT License. See `LICENSE` for more information.
-
----
-
 <p align="center">
   Crafted with ❤️ for modern healthcare facilities & patient comfort.
 </p>
