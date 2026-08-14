@@ -380,8 +380,3 @@ Contributions are warmly welcomed! To contribute:
 4. Push to the Branch (`git push origin feature/AmazingFeature`).
 5. Open a Pull Request.
 
----
-
-<p align="center">
-  Crafted with ❤️ for modern healthcare facilities & patient comfort.
-</p>
